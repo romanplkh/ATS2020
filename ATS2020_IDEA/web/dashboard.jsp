@@ -20,6 +20,7 @@
         <div class="row">
             <div class="col">
                 <p>DASHBOARD!!</p>
+                <h2 class="display-4">Merge</h2>
             </div>
         </div>
     </div>

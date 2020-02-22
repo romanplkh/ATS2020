@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
 <header>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark indigo">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="#"><strong>Advanced Technology Solutions</strong></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
