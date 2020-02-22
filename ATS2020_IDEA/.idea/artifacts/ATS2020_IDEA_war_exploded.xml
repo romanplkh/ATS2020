@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ATS2020_IDEA:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/ATS2020_IDEA_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="ATS2020_IDEA/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ATS2020_IDEA" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
