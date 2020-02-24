@@ -6,4 +6,22 @@
     <welcome-file-list>
         <welcome-file>dashboard.jsp</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>TasksController</servlet-name>
+        <servlet-class>ats.controllers.TasksController</servlet-class>
+    </servlet>
+
+    <!--    tasks list page-->
+    <servlet-mapping>
+        <servlet-name>TasksController</servlet-name>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
+
+    <!--    create task page-->
+    <servlet-mapping>
+        <servlet-name>TasksController</servlet-name>
+        <url-pattern>/task/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>

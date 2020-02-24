@@ -19,7 +19,7 @@
 <body>
 <%@include file="WEB-INF/jspf/navigation.jspf" %>
 <div class="container py-5">
-    <div class="row mb-4">
+    <div class="row pt-5 mb-4">
         <div class="col-12">
             <h3>Task</h3>
         </div>
@@ -42,10 +42,12 @@
 
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea name="taskDescription" cols="10" rows="6"></textarea>
+                    <textarea name="taskDescription"
+                              class="form-control"
+                              cols="10" rows="6"></textarea>
                 </div>
 
-                <button class="btn btn-primary" name="saveBtn">Save</button>
+                <button class="btn btn-primary btn-lg" name="saveBtn">Save</button>
 
             </form>
 

@@ -14,7 +14,7 @@
                             <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                        <a class="nav-link dropdown-toggle" href="#"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             Employees
@@ -26,7 +26,7 @@
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                        <a class="nav-link dropdown-toggle" href="#"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             Teams
@@ -38,19 +38,18 @@
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                        <a class="nav-link dropdown-toggle" href="#"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             Tasks
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Create new
-                                task</a>
-                            <a class="dropdown-item" href="#">List of tasks</a>
+                            <a class="dropdown-item" href="task.jsp">Create new task</a>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/tasks">List of tasks</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                        <a class="nav-link dropdown-toggle" href="#"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             Jobs
