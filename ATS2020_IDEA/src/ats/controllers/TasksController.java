@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author Olena Stepanova 
+ * @author Olena Stepanova
  */
 
 @WebServlet(name = "TasksController")
