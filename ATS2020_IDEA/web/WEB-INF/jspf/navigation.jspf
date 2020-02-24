@@ -44,7 +44,7 @@
                             Tasks
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Create new task</a>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Create new task</a>
                             <a class="dropdown-item" href="#">List of tasks</a>
                         </div>
                     </li>
