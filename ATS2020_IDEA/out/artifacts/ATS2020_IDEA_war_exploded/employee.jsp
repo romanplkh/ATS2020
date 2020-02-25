@@ -1,11 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Roman Pelikh
-  Date: 2020-02-24
-  Time: 6:47 p.m.
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -17,12 +10,11 @@
 
 
 <div class="container my-5">
-
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="display-4 text-center">Add Employee</h1>
 
-            <form>
+            <form action="employee.jsp" method="post">
                 <div class="form-group">
                     <label>First Name</label>
                     <input type="text" class="form-control" name="firstName" required>
@@ -43,7 +35,7 @@
                 </div>
 
                 <input type="submit" value="Add" class="btn btn-success">
-                <a href="#" class="btn btn-secondary">Cancel</a>
+                <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>
