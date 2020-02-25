@@ -34,8 +34,8 @@
                     <input type="text" class="form-control" name="hRate" required>
                 </div>
 
-                <input type="submit" value="Add" class="btn btn-success">
-                <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Add" class="btn btn-success btn-lg">
+                <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary btn-lg">Cancel</a>
             </form>
         </div>
     </div>

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "EmployeeController")
-public class EmployeeController extends CommonController {
+@WebServlet(name = "EmployeesController")
+public class EmployeesController extends CommonController {
 
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
