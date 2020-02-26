@@ -34,7 +34,16 @@
                     <input type="text" class="form-control" name="hRate" required>
                 </div>
 
-                <input type="submit" value="Add" class="btn btn-success btn-lg">
+                <c:choose>
+                    <c:when test="${$employee.id == 0 || employee == null}">
+                        <input type="submit" value="Add" class="btn btn-success btn-lg" name="action">
+                    </c:when>
+                    <c:otherwise>
+                        <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action" />
+                        <input class="btn btn-warning btn-lg" type="submit" value="Update" name="action" />
+                    </c:otherwise>
+                </c:choose>
+
                 <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary btn-lg">Cancel</a>
             </form>
         </div>
