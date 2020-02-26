@@ -17,8 +17,8 @@
     <%@include file="WEB-INF/jspf/header.jspf" %>
 </head>
 <body>
+<%@include file="WEB-INF/jspf/navigation.jspf" %>
 <main>
-    <%@include file="WEB-INF/jspf/navigation.jspf" %>
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-12 text-center">
