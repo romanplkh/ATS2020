@@ -11,6 +11,7 @@
           <element id="file-copy" path="D:/NBCC_Fall2019/Java/external/lib/mysql-connertor-java-8.0.12/mysql-connector-java-8.0.12.jar" />
           <element id="library" level="project" name="lib" />
           <element id="library" level="project" name="javax.servlet:jstl:1.2" />
+          <element id="file-copy" path="$PROJECT_DIR$/../com.ats.models/dist/com.ats.models.jar" />
         </element>
       </element>
     </root>

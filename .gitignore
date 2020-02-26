@@ -24,4 +24,7 @@ hs_err_pid*
 /ATS/nbproject/private/
 /ATS/ATS-war/nbproject/private/
 /ATS/ATS-ejb/nbproject/private/
-/ATS2020_IDEA/ats.models/nbproject/private/
+/ats.models/nbproject/private/
+/com.ats.models/nbproject/private/
+/com.ats.models/build/
+/com.ats.models/dist/
