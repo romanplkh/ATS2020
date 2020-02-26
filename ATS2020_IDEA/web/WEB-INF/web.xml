@@ -21,19 +21,19 @@
     </welcome-file-list>
 
     <servlet>
-        <servlet-name>TasksController</servlet-name>
-        <servlet-class>ats.controllers.TasksController</servlet-class>
+        <servlet-name>TaskController</servlet-name>
+        <servlet-class>ats.controllers.TaskController</servlet-class>
     </servlet>
 
     <!--    tasks list page-->
     <servlet-mapping>
-        <servlet-name>TasksController</servlet-name>
+        <servlet-name>TaskController</servlet-name>
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
 
     <!--    create task page-->
     <servlet-mapping>
-        <servlet-name>TasksController</servlet-name>
+        <servlet-name>TaskController</servlet-name>
         <url-pattern>/task/*</url-pattern>
     </servlet-mapping>
 

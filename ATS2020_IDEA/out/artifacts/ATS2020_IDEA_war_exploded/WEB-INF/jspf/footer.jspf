@@ -1,6 +1,6 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page pageEncoding="UTF-8" %>
-<footer class="bg-primary text-white">
+<footer class="bg-primary text-white footer">
     <div class="container p-4">
         <div class="row">
             <div class="col text-center">
