@@ -1,4 +1,4 @@
-package ats.controllers;
+package com.ats.controllers;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
