@@ -28,11 +28,15 @@
         <div class="row justify-content-center">
             <div class="col-md-8 ">
 
-                <form action="" method="post">
+                <form method="post">
+
+                    <input type="hidden" value="">
 
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="taskName">
+                        <input type="text" class="form-control"
+                               value=""
+                               name="taskName">
                     </div>
 
                     <div class="form-group">
@@ -44,11 +48,16 @@
 
                     <div class="form-group">
                         <label>Duration</label>
-                        <input type="text" class="form-control" name="taskDuration">
+                        <input type="text" class="form-control"
+                               value=""
+                               name="taskDuration">
                         <small class="form-text text-muted">Task duration in minutes</small>
                     </div>
 
+
                     <button class="btn btn-success btn-lg" name="saveBtn">Save</button>
+
+                    <button class="btn btn-warning btn-lg" name="updateBtn">Update</button>
 
                 </form>
 
