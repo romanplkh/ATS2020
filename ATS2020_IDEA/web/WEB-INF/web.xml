@@ -22,7 +22,7 @@
 
     <servlet>
         <servlet-name>TaskController</servlet-name>
-        <servlet-class>ats.controllers.TaskController</servlet-class>
+        <servlet-class>com.ats.controllers.TaskController</servlet-class>
     </servlet>
 
     <!--    tasks list page-->
@@ -40,21 +40,21 @@
 
     <!--    Employee Servlet-->
     <servlet>
-        <servlet-name>EmployeesController</servlet-name>
-        <servlet-class>ats.controllers.EmployeesController</servlet-class>
+        <servlet-name>EmployeeController</servlet-name>
+        <servlet-class>com.ats.controllers.EmployeeController</servlet-class>
     </servlet>
 
 
     <!--    GET ALL EMPLOYEES-->
     <servlet-mapping>
-        <servlet-name>EmployeesController</servlet-name>
+        <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employees</url-pattern>
     </servlet-mapping>
 
 
     <!--    EMPLOYEE MAINTENANCE-->
     <servlet-mapping>
-        <servlet-name>EmployeesController</servlet-name>
+        <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employee/*</url-pattern>
     </servlet-mapping>
 

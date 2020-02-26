@@ -26,31 +26,31 @@
 
                 <c:set var="tasksCount" value="${tasks.size()}"/>
 
-                <%--                <c:choose>--%>
-                <%--                    <c:when test="${tasksCount > 0}">--%>
-                <%--                    show a list of tasks in a table--%>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <%--                            <c:forEach items="${tasks}" var="task">--%>
-                    <tr>
-                        <td>test</td>
-                        <td>test</td>
-                    </tr>
-                    <%--                            </c:forEach>--%>
+                <c:choose>
+                    <c:when test="${tasksCount > 0}">
+                        show a list of tasks in a table
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach items="${tasks}" var="task">
+                                <tr>
+                                    <td>test</td>
+                                    <td>test</td>
+                                </tr>
+                            </c:forEach>
 
-                    </tbody>
-                </table>
-                <%--                    </c:when>--%>
-                <%--                    <c:otherwise>--%>
-                <%--                        <h4>There are no tasks in a system yet</h4>--%>
-                <%--                    </c:otherwise>--%>
-                <%--                </c:choose>--%>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <h4>There are no tasks in a system yet</h4>
+                    </c:otherwise>
+                </c:choose>
 
 
             </div>

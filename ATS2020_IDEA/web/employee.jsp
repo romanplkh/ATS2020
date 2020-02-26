@@ -36,7 +36,7 @@
 
                     <c:choose>
                         <c:when test="${$employee.id == 0 || employee == null}">
-                            <input type="submit" value="Add" class="btn btn-success btn-lg" name="action">
+                            <input type="submit" value="Save" class="btn btn-success btn-lg" name="action">
                         </c:when>
                         <c:otherwise>
                             <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action"/>
