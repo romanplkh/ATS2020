@@ -14,8 +14,9 @@
     <%@include file="WEB-INF/jspf/header.jspf" %>
 </head>
 <body>
-<main>
+
     <%@include file="WEB-INF/jspf/navigation.jspf" %>
+    <main>
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-12 text-center">
@@ -27,8 +28,8 @@
 
                 <c:set var="tasksCount" value="${tasks.size()}"/>
 
-                <c:choose>
-                    <c:when test="${tasksCount > 0}">
+<%--                <c:choose>--%>
+<%--                    <c:when test="${tasksCount > 0}">--%>
                         <%--                    show a list of tasks in a table--%>
                         <table class="table table-striped">
                             <thead>
@@ -41,23 +42,23 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${tasks}" var="task">
+<%--                            <c:forEach items="${tasks}" var="task">--%>
                                 <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
                                 </tr>
-                            </c:forEach>
+<%--                            </c:forEach>--%>
 
                             </tbody>
                         </table>
-                    </c:when>
-                    <c:otherwise>
-                        <h4>There are no tasks in a system yet</h4>
-                    </c:otherwise>
-                </c:choose>
+<%--                    </c:when>--%>
+<%--                    <c:otherwise>--%>
+<%--                        <h4>There are no tasks in a system yet</h4>--%>
+<%--                    </c:otherwise>--%>
+<%--                </c:choose>--%>
 
 
             </div>
