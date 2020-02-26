@@ -21,7 +21,6 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <c:choose>
-
                 <c:when test="${employeeCount > 0}">
                     <table class="table">
                         <thead class="thead-dark">
@@ -44,7 +43,6 @@
                     <h4 class="mt-5">No employees to display</h4>
                 </c:otherwise>
             </c:choose>
-
         </div>
     </div>
 </main>

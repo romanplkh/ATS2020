@@ -7,16 +7,14 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="ftm" %>
 <html>
 <head>
     <title>List of Tasks</title>
     <%@include file="WEB-INF/jspf/header.jspf" %>
 </head>
 <body>
-
-    <%@include file="WEB-INF/jspf/navigation.jspf" %>
-    <main>
+<%@include file="WEB-INF/jspf/navigation.jspf" %>
+<main>
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-12 text-center">
@@ -28,37 +26,31 @@
 
                 <c:set var="tasksCount" value="${tasks.size()}"/>
 
-<%--                <c:choose>--%>
-<%--                    <c:when test="${tasksCount > 0}">--%>
-                        <%--                    show a list of tasks in a table--%>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Duration</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-<%--                            <c:forEach items="${tasks}" var="task">--%>
-                                <tr>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                </tr>
-<%--                            </c:forEach>--%>
+                <%--                <c:choose>--%>
+                <%--                    <c:when test="${tasksCount > 0}">--%>
+                <%--                    show a list of tasks in a table--%>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%--                            <c:forEach items="${tasks}" var="task">--%>
+                    <tr>
+                        <td>test</td>
+                        <td>test</td>
+                    </tr>
+                    <%--                            </c:forEach>--%>
 
-                            </tbody>
-                        </table>
-<%--                    </c:when>--%>
-<%--                    <c:otherwise>--%>
-<%--                        <h4>There are no tasks in a system yet</h4>--%>
-<%--                    </c:otherwise>--%>
-<%--                </c:choose>--%>
+                    </tbody>
+                </table>
+                <%--                    </c:when>--%>
+                <%--                    <c:otherwise>--%>
+                <%--                        <h4>There are no tasks in a system yet</h4>--%>
+                <%--                    </c:otherwise>--%>
+                <%--                </c:choose>--%>
 
 
             </div>
