@@ -1,33 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.ats.business;
+package com.ats.models;
+
 
 import com.sun.istack.internal.Nullable;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Olena Stepanova
- *
- *
  */
 public class Task implements Serializable {
-    
     private int id;
     private String name;
     private String description;
     private int duration;
     private LocalDateTime createdAt;
-    
+
     @Nullable
     private LocalDateTime updatedAt;
-    
+
     private List<String> errors = new ArrayList();
 
     public Task() {
@@ -92,8 +85,4 @@ public class Task implements Serializable {
     public List<String> getErrors() {
         return errors;
     }
-
-    
-    
-
 }
