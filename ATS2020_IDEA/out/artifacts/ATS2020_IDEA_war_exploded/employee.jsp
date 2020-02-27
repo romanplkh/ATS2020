@@ -12,38 +12,39 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <c:if test="${error.errors != null}">
+                <c:if test="${error.errors != null || modelErrors != null}">
                     <div class="alert alert-danger" role="alert">
-                        <c:forEach items="${error.errors}" var="err">
+                        <c:forEach items="${error.errors ? error.errors : modelErrors}" var="err">
                             <p>${err}</p>
                         </c:forEach>
                     </div>
                 </c:if>
                 <h1 class="display-4 text-center">Add Employee</h1>
 
-                <form action="employee.jsp" method="post">
+                <form method="post">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" class="form-control" name="firstName" required>
+                        <input type="text" class="form-control" name="firstName" value="${employee.firstName}">
                         <input type="hidden" value='${employee.id}' name="empId"/>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" class="form-control" name="lastName" required>
+                        <input type="text" class="form-control" value="${employee.lastName}" name="lastName">
                     </div>
                     <div class="form-group">
                         <label>SIN</label>
-                        <input type="text" class="form-control" name="sin" max="11" min="11" required
-                               pattern="^\d{3}-\d{3}-\d{3}$">
+                        <input type="text" class="form-control" name="sin" value="${employee.sin}"
+                        >
                         <small class="text-muted">XXX-XXX-XXX</small>
                     </div>
                     <div class="form-group">
                         <label>Hourly Rate</label>
-                        <input type="text" class="form-control" name="hRate" required>
+                        <input type="text" class="form-control" name="hRate"
+                               value="${employee.hourlyRate != 0 ? employee.hourlyRate : "" }">
                     </div>
 
                     <c:choose>
-                        <c:when test="${$employee.id == 0 || employee == null}">
+                        <c:when test="${$employee.id == null}">
                             <input type="submit" value="Save" class="btn btn-success btn-lg" name="action">
                         </c:when>
                         <c:otherwise>

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorViewModel implements Serializable {
-    private List<String> errors = new ArrayList();
+    private List<String> errors = new ArrayList<>();
 
     public ErrorViewModel(){}
 

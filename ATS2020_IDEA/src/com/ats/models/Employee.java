@@ -11,22 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Roman Pelikh
  */
-public class Employee  implements Serializable{
-    
+public class Employee implements Serializable {
+
     private int id;
     private String firstName;
     private String lastName;
     private String sin;
     private double hourlyRate;
     private boolean isDeleted;
-    
+
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private LocalDate deletedAt;
-    
+
     private List<String> errors = new ArrayList();
 
     public Employee() {
@@ -42,6 +41,14 @@ public class Employee  implements Serializable{
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+    }
+
+
+    public Employee(String firstName, String lastName, String sin, double hourlyRate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sin = sin;
+        this.hourlyRate = hourlyRate;
     }
 
     public int getId() {
@@ -119,11 +126,10 @@ public class Employee  implements Serializable{
     public List<String> getErrors() {
         return errors;
     }
-    
-    
-    
-    
-    
-    
-    
+
+    public void addError(String error) {
+        this.errors.add(error);
+    }
+
+
 }
