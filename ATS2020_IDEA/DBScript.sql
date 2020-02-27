@@ -30,7 +30,7 @@ USE `ats`;
 DROP procedure IF EXISTS `Employee_ADD`;
 
 DELIMITER $$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `Employee_ADD`(IN firstNameParam NVARCHAR(255), IN lastNameParam NVARCHAR(255), 
+CREATE PROCEDURE `Employee_ADD`(IN firstNameParam NVARCHAR(255), IN lastNameParam NVARCHAR(255),
 IN sinParam NVARCHAR(11), IN hourlyRateParam DECIMAL(13,2))
 BEGIN
     INSERT INTO employees (firstName, lastName, sin, hourlyRate, isDeleted, createdAt, updatedAt, deletedAt) 
@@ -48,5 +48,36 @@ CREATE PROCEDURE `Employee_Lookup` ()
 BEGIN
 SELECT id, firstName, lastName from employees;
 END$$
+
+DELIMITER ;
+
+-- Get a LIST of TASKS procedure
+DROP PROCEDURE IF EXISTS GetAllTasks;
+DELIMITER //
+
+CREATE PROCEDURE GetAllTasks()
+BEGIN
+    SELECT *  FROM tasks;
+END //
+
+DELIMITER ;
+
+-- CREATE TASK procedure
+DROP PROCEDURE IF EXISTS CreateTask;
+
+DELIMITER //
+
+CREATE PROCEDURE CreateTask(
+	IN name nvarchar(255),
+    IN duration int,
+    IN descr nvarchar(255),
+    IN created datetime,
+    IN updated datetime
+)
+BEGIN
+
+    INSERT INTO tasks(`name`, `duration`, `description`, `createdAt`, `updatedAt`)
+    VALUES(name, duration, descr, created, null);
+END //
 
 DELIMITER ;
