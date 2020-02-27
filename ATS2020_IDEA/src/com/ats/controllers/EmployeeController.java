@@ -15,6 +15,7 @@ public class EmployeeController extends CommonController {
 
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
+    private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,8 +66,14 @@ public class EmployeeController extends CommonController {
         //IF WE DO NOT HAVE ANYTHING IN URL
         if (pathInfo == null) {
 
+
+            //Get data from service
+
+
             //Show all employees
 
+
+            //request.setAttribute("employees", List<Employee>);
 
             //Attach employees object to view
 
@@ -75,29 +82,47 @@ public class EmployeeController extends CommonController {
         } else {
 
 
-            String[] pathParts = pathInfo.split("/");
+            String[] pathParts = getUrlParts(pathInfo);
+
+
+            //Check update or details
 
             // employee/:id - get ID
+
+
             int id = getInteger(pathParts[1]);
+            String mode = "update";
+
+            if (pathParts.length == 3) {
+                mode = pathParts[2];
+            }
 
 
-//            if (id != 0) {
-//
-//                if (employee founded in db) {
-//                    //find employee
-//                    throw new UnsupportedOperationException("Not supported yet");
-//                } else {
-//                    //Set error message to view Em,ployee not found
-//                    throw new UnsupportedOperationException("Not supported yet");
-//                }
-//
-//
-//            } else {
-//
-//                //If not a valid number -> THEN CREATE
-//                throw new UnsupportedOperationException("Not supported yet");
-//
-//            }
+            //Get details
+            if (id != 0 && mode.equals("details")) {
+
+                //Get employee from db by id
+
+                //Populate employee model with data
+
+                //Employee emp = data from db()
+
+
+               // request.setAttribute("employee", emp);
+                super.setView(request, EMPLOYEE_DETAILS_VIEW);
+
+                //Get to update
+            } else if (id != 0) {
+                //find employee
+
+                //Populate employee model with data
+
+                //Employee emp = data from db()
+
+            }else {
+                //If not a valid number or not update the
+            }
+
 
             super.setView(request, EMPLOYEE_MAINT_VIEW);
 
@@ -107,6 +132,10 @@ public class EmployeeController extends CommonController {
 
         super.getView().forward(request, response);
 
+    }
+
+    private String[] getUrlParts(String pathInfo) {
+        return pathInfo.split("/");
     }
 
     private void populateEmployeeModel(HttpServletRequest request, Employee emp) {
