@@ -24,3 +24,29 @@ CREATE TABLE IF NOT EXISTS `employees` (
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+USE `ats`;
+DROP procedure IF EXISTS `Employee_ADD`;
+
+DELIMITER $$
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `Employee_ADD`(IN firstNameParam NVARCHAR(255), IN lastNameParam NVARCHAR(255), 
+IN sinParam NVARCHAR(11), IN hourlyRateParam DECIMAL(13,2))
+BEGIN
+    INSERT INTO employees (firstName, lastName, sin, hourlyRate, isDeleted, createdAt, updatedAt, deletedAt) 
+    values(firstNameParam,lastNameParam, sinParam, hourlyRateParam, false, now(), null, null);
+END$$
+DELIMITER ;
+
+
+USE `ats`;
+DROP procedure IF EXISTS `Employee_Lookup`;
+
+DELIMITER $$
+USE `ats`$$
+CREATE PROCEDURE `Employee_Lookup` ()
+BEGIN
+SELECT id, firstName, lastName from employees;
+END$$
+
+DELIMITER ;
