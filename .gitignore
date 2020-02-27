@@ -28,3 +28,6 @@ hs_err_pid*
 /com.ats.models/nbproject/private/
 /com.ats.models/build/
 /com.ats.models/dist/
+/com.ats.dataaccess/nbproject/private/
+/ATS/build/
+/ATS/dist/
