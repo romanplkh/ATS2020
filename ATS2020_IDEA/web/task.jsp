@@ -46,7 +46,7 @@
 
                 <form method="post" action="tasks.jsp">
 
-                    <input type="hidden" value="${task.id}">
+                    <input type="hidden" name="taskId" value="${task.id}">
 
                     <div class="form-group">
                         <label>Name</label>
@@ -72,10 +72,10 @@
 
                     <c:choose>
                         <c:when test="${task.id == 0}">
-                            <button class="btn btn-success btn-lg" name="saveBtn">Save</button>
+                            <button class="btn btn-success btn-lg" value="save" name="action">Save</button>
                         </c:when>
                         <c:otherwise>
-                            <button class="btn btn-warning btn-lg" name="updateBtn">Update</button>
+                            <button class="btn btn-warning btn-lg" value="update" name="action">Update</button>
                         </c:otherwise>
                     </c:choose>
                     <a href="${pageContext.request.contextPath}/tasks"

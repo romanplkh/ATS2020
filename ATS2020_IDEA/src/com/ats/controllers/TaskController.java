@@ -108,6 +108,38 @@ public class TaskController extends CommonController {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+
+        //set view for POST
+        super.setView(request, TASK_MAINT_VIEW);
+        try {
+
+            String action = super.getValue(request, "action").toLowerCase();
+
+            Task task = new Task();
+            int taskId = super.getInteger(request, "taskId");
+
+            switch (action) {
+                case "save":
+                    populateTaskProperties(request, task);
+                    //create new task in DB
+
+                    request.setAttribute("newTask", task);
+                    break;
+
+                case "update":
+
+                    break;
+
+            }
+
+
+        } catch (Exception e) {
+            request.setAttribute("error", new ErrorViewModel(
+                    "Sorry, an error occurred. Try again later"
+            ));
+        }
+
+
     }
 
     /**
@@ -125,6 +157,10 @@ public class TaskController extends CommonController {
         task.setDescription(description);
         task.setDuration(duration);
         task.setCreatedAt(LocalDateTime.now());
+
+    }
+
+    private void validateModel(){
 
     }
 
