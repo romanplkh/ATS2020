@@ -1,6 +1,8 @@
 package com.ats.controllers;
 
 import com.ats.controllers.CommonController;
+import com.ats.models.Employee;
+import com.ats.models.ErrorViewModel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +18,41 @@ public class EmployeeController extends CommonController {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            ///WHERE TO REDIRECT AFTER SUCCESSFUL POST
+            super.setView(request, EMPLOYEES_VIEW);
+
+            //Get action of button
+            String action = super.getValue(request, "action").toLowerCase();
+            Employee emp = new Employee();
+            int empId = super.getInteger(request, "empId");
+
+
+            switch (action) {
+                case "create":
+                    populateEmployeeModel(request, emp);
+
+                    //Add employee to DB
+
+                    //If rows affected == 0
+                    //request.setAttribute("error", new ErrorViewModel("Something went wrong. Employee is not added"));
+                    //super.setView(request, EMPLOYEE_MAINT_VIEW);
+
+                    break;
+                case "update":
+                    break;
+                case "delete":
+                    break;
+
+
+            }
+        } catch (Exception e) {
+            super.setView(request, EMPLOYEE_MAINT_VIEW);
+            request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
+        }
+
+        //REDIRECT TO VIEW
+        super.getView().forward(request, response);
 
     }
 
@@ -71,4 +108,19 @@ public class EmployeeController extends CommonController {
         super.getView().forward(request, response);
 
     }
+
+    private void populateEmployeeModel(HttpServletRequest request, Employee emp) {
+
+        String firstName = super.getValue(request, "firstName");
+        String lastName = super.getValue(request, "lastName");
+        String sin = super.getValue(request, "sin");
+        double hRate = super.getDouble(request, "hRate");
+
+        emp.setFirstName(firstName);
+        emp.setLastName(lastName);
+        emp.setSin(sin);
+        emp.setHourlyRate(hRate);
+
+    }
 }
+

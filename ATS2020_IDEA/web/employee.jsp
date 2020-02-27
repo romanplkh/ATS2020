@@ -12,16 +12,24 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
+                <c:if test="${error.errors != null}">
+                    <div class="alert alert-danger" role="alert">
+                        <c:forEach items="${error.errors}" var="err">
+                            <p>${err}</p>
+                        </c:forEach>
+                    </div>
+                </c:if>
                 <h1 class="display-4 text-center">Add Employee</h1>
 
                 <form action="employee.jsp" method="post">
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" class="form-control" name="firstName" required>
+                        <input type="hidden" value='${employee.id}' name="empId"/>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" class="form-control" name="firstName" required>
+                        <input type="text" class="form-control" name="lastName" required>
                     </div>
                     <div class="form-group">
                         <label>SIN</label>
