@@ -3,7 +3,8 @@
   User: Olena Stepanova
   Date: 2/25/2020
   Time: 7:22 PM
-  To change this template use File | Settings | File Templates.
+
+  This view supports a list of tasks
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -24,23 +25,27 @@
         <div class="row">
             <div class="col-12">
 
-                <c:set var="tasksCount" value="${tasks.size()}"/>
+                <c:set var="tasksCount" value="${taskList.size()}"/>
 
                 <c:choose>
                     <c:when test="${tasksCount > 0}">
-                        show a list of tasks in a table
+<%--                        show a list of tasks in a table--%>
                         <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Description</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${tasks}" var="task">
+                            <c:forEach items="${taskList}" var="task">
                                 <tr>
-                                    <td>test</td>
-                                    <td>test</td>
+                                    <td>${task.name}</td>
+                                    <td>${task.description}</td>
+                                    <td><a class="mr-5"
+                                            href="${pageContext.request.contextPath}/task/${task.id}/details">Details</a>
+                                        <a href="${pageContext.request.contextPath}/task/${task.id}/update">Edit</a></td>
                                 </tr>
                             </c:forEach>
 

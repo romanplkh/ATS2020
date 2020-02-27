@@ -22,20 +22,36 @@
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-12 text-center">
-                <h1 class="display-4">Add Task</h1>
+                <c:if test="${task.id != 0}">
+                    <h1 class="display-4">Update Task</h1>
+                </c:if>
+                <c:if test="${task.id == 0}">
+                    <h1 class="display-4">Create Task</h1>
+                </c:if>
+
             </div>
         </div>
         <div class="row justify-content-center">
+            <div class="col-md-8">
+                <c:if test="${error.errors != null}">
+                    <div class="alert alert-danger" role="alert">
+                        <c:forEach items="${error.errors}" var="err">
+                            <p>${err}</p>
+                        </c:forEach>
+                    </div>
+                </c:if>
+            </div>
+
             <div class="col-md-8 ">
 
-                <form method="post">
+                <form method="post" action="tasks.jsp">
 
-                    <input type="hidden" value="">
+                    <input type="hidden" value="${task.id}">
 
                     <div class="form-group">
                         <label>Name</label>
                         <input type="text" class="form-control"
-                               value=""
+                               value="${task.name}"
                                name="taskName">
                     </div>
 
@@ -43,22 +59,27 @@
                         <label>Description</label>
                         <textarea name="taskDescription"
                                   class="form-control"
-                                  cols="10" rows="6"></textarea>
+                                  cols="10" rows="6">${task.description}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Duration</label>
                         <input type="text" class="form-control"
-                               value=""
+                               value="${task.duration == 0 ? '' : task.duration}"
                                name="taskDuration">
                         <small class="form-text text-muted">Task duration in minutes</small>
                     </div>
 
-
-                    <button class="btn btn-success btn-lg" name="saveBtn">Save</button>
-
-                    <button class="btn btn-warning btn-lg" name="updateBtn">Update</button>
-
+                    <c:choose>
+                        <c:when test="${task.id == 0}">
+                            <button class="btn btn-success btn-lg" name="saveBtn">Save</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-warning btn-lg" name="updateBtn">Update</button>
+                        </c:otherwise>
+                    </c:choose>
+                    <a href="${pageContext.request.contextPath}/tasks"
+                       class="btn btn-secondary btn-lg">Cancel</a>
                 </form>
 
             </div>
