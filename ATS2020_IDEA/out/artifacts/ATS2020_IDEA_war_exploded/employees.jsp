@@ -19,7 +19,6 @@
     <c:set var="employeeCount" value="${employees.size()}"/>
     <div class="container">
 
-
         <h1 class="display-4 text-center mt-5">Employees</h1>
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -30,6 +29,8 @@
                             <tr>
                                 <th scope="col">First Name</th>
                                 <th scope="col">Last Name</th>
+                                <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -37,6 +38,8 @@
                                 <tr>
                                     <td>${employee.firstName}</td>
                                     <td>${employee.lastName}</td>
+                                    <td><a href="employee/${employee.id}">Edit</a></td>
+                                    <td><a href="employee/${employee.id}/details">Details</a></td>
                                 </tr>
                             </c:forEach>
                             </tbody>

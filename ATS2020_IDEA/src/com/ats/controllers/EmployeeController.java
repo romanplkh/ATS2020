@@ -1,7 +1,9 @@
 package com.ats.controllers;
 
+import com.ats.MockData;
 import com.ats.controllers.CommonController;
 import com.ats.models.Employee;
+import com.ats.models.EmployeeDetailsViewModel;
 import com.ats.models.ErrorViewModel;
 
 import javax.servlet.ServletException;
@@ -15,6 +17,7 @@ public class EmployeeController extends CommonController {
 
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
+    private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,8 +32,16 @@ public class EmployeeController extends CommonController {
 
 
             switch (action) {
-                case "create":
+                case "save":
                     populateEmployeeModel(request, emp);
+                    if (emp.getErrors().size() > 0) {
+                        request.setAttribute("modelErrors", emp.getErrors());
+                        request.setAttribute("employee", emp);
+                        super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    } else {
+                        super.setView(request, EMPLOYEES_VIEW);
+                    }
+
 
                     //Add employee to DB
 
@@ -65,8 +76,12 @@ public class EmployeeController extends CommonController {
         //IF WE DO NOT HAVE ANYTHING IN URL
         if (pathInfo == null) {
 
-            //Show all employees
 
+            //Get data from service
+
+
+            //Show all employees
+            request.setAttribute("employees", MockData.getEmployees());
 
             //Attach employees object to view
 
@@ -75,38 +90,70 @@ public class EmployeeController extends CommonController {
         } else {
 
 
-            String[] pathParts = pathInfo.split("/");
+            String[] pathParts = getUrlParts(pathInfo);
+
+
+            //Check update or details
 
             // employee/:id - get ID
             int id = getInteger(pathParts[1]);
+            String mode = "";
+
+            if (id != 0) {
+                mode = "update";
+            }
+
+            if (pathParts.length == 3 && pathParts[2].equalsIgnoreCase("details") && id != 0) {
+                mode = "details";
+            }
+
+            if (id == 0) {
+                mode = "create";
+            }
 
 
-//            if (id != 0) {
-//
-//                if (employee founded in db) {
-//                    //find employee
-//                    throw new UnsupportedOperationException("Not supported yet");
-//                } else {
-//                    //Set error message to view Em,ployee not found
-//                    throw new UnsupportedOperationException("Not supported yet");
-//                }
-//
-//
-//            } else {
-//
-//                //If not a valid number -> THEN CREATE
-//                throw new UnsupportedOperationException("Not supported yet");
-//
-//            }
+            switch (mode) {
+                case "create":
+                    super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    break;
+                case "update":
+                    //find employee
 
-            super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    //Populate employee model with data
 
+                    //Employee emp = data from db()
+
+                    super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    break;
+                case "details":
+                    EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
+                    //Get employee from db by id
+
+                    //Populate employee model with data
+
+                    //Employee emp = data from db()
+
+
+                    request.setAttribute("employeeDetailsVM", evm);
+                    super.setView(request, EMPLOYEE_DETAILS_VIEW);
+                    break;
+
+                default:
+                    request.setAttribute("error", new ErrorViewModel("Employee with this id does not exists"));
+                    super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    break;
+            }
 
         }
 
 
         super.getView().forward(request, response);
 
+    }
+
+
+    private String[] getUrlParts(String pathInfo) {
+        return pathInfo.split("/");
     }
 
     private void populateEmployeeModel(HttpServletRequest request, Employee emp) {
@@ -116,10 +163,32 @@ public class EmployeeController extends CommonController {
         String sin = super.getValue(request, "sin");
         double hRate = super.getDouble(request, "hRate");
 
-        emp.setFirstName(firstName);
-        emp.setLastName(lastName);
-        emp.setSin(sin);
-        emp.setHourlyRate(hRate);
+
+        if (firstName.trim().isEmpty()) {
+            emp.addError("First Name is required");
+        } else {
+            emp.setFirstName(firstName);
+        }
+
+        if (lastName.trim().isEmpty()) {
+            emp.addError("Last Name is required");
+        } else {
+            emp.setLastName(lastName);
+        }
+
+        String sinPattern = "\\d{3}-\\d{3}-\\d{3}";
+        if (!sin.matches(sinPattern)) {
+            emp.addError("SIN is invalid");
+        } else {
+            emp.setSin(sin);
+        }
+
+        if (hRate == 0 || hRate < 0) {
+            emp.addError("Rate should be a valid number greater than zero");
+        } else {
+            emp.setHourlyRate(hRate);
+        }
+
 
     }
 }
