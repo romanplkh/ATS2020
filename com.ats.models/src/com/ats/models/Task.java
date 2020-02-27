@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ats.business;
+package com.ats.models;
 
 import com.sun.istack.internal.Nullable;
 import java.io.Serializable;
