@@ -33,9 +33,9 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <c:if test="${error.errors != null}">
+                <c:if test="${error.errors != null || validationError != null}">
                     <div class="alert alert-danger" role="alert">
-                        <c:forEach items="${error.errors}" var="err">
+                        <c:forEach items="${error.errors ? error.errors : validationError}" var="err">
                             <p>${err}</p>
                         </c:forEach>
                     </div>
@@ -44,7 +44,7 @@
 
             <div class="col-md-8 ">
 
-                <form method="post" action="tasks.jsp">
+                <form method="post">
 
                     <input type="hidden" name="taskId" value="${task.id}">
 

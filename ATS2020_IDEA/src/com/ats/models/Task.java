@@ -88,4 +88,8 @@ public class Task implements Serializable {
     public List<String> getErrors() {
         return errors;
     }
+
+    public void addError(String error) {
+        this.errors.add(error);
+    }
 }

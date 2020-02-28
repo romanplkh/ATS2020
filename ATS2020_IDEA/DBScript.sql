@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `employees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-USE `ats`;
 DROP procedure IF EXISTS `Employee_ADD`;
 
 DELIMITER $$
@@ -39,7 +38,6 @@ END$$
 DELIMITER ;
 
 
-USE `ats`;
 DROP procedure IF EXISTS `Employee_Lookup`;
 
 DELIMITER $$
@@ -52,10 +50,10 @@ END$$
 DELIMITER ;
 
 -- Get a LIST of TASKS procedure
-DROP PROCEDURE IF EXISTS GetAllTasks;
+DROP PROCEDURE IF EXISTS spGetAllTasks;
 DELIMITER //
 
-CREATE PROCEDURE GetAllTasks()
+CREATE PROCEDURE spGetAllTasks()
 BEGIN
     SELECT *  FROM tasks;
 END //
@@ -63,11 +61,11 @@ END //
 DELIMITER ;
 
 -- CREATE TASK procedure
-DROP PROCEDURE IF EXISTS CreateTask;
+DROP PROCEDURE IF EXISTS spCreateTask;
 
 DELIMITER //
 
-CREATE PROCEDURE CreateTask(
+CREATE PROCEDURE spCreateTask(
 	IN name nvarchar(255),
     IN duration int,
     IN descr nvarchar(255),
@@ -78,6 +76,22 @@ BEGIN
 
     INSERT INTO tasks(`name`, `duration`, `description`, `createdAt`, `updatedAt`)
     VALUES(name, duration, descr, created, null);
+END //
+
+DELIMITER ;
+
+-- GET TASK details procedure
+DROP PROCEDURE IF EXISTS spGetTaskDetails;
+
+DELIMITER //
+
+CREATE PROCEDURE spGetTaskDetails(
+	IN taskId int
+)
+BEGIN
+   SELECT id, name, description, duration
+   FROM tasks
+   WHERE id = taskId;
 END //
 
 DELIMITER ;

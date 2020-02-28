@@ -1,5 +1,6 @@
 package com.ats.controllers;
 
+import com.ats.MockData;
 import com.ats.controllers.CommonController;
 import com.ats.models.ErrorViewModel;
 import com.ats.models.Task;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Olena Stepanova
@@ -33,17 +35,12 @@ public class TaskController extends CommonController {
 
         //Object to hold entity and pass to view
         Task task = new Task();
-        List<Task> taskList = new ArrayList();
+
 
         //List all tasks page
         if (pathInfo == null) {
             //Get a list of tasks ------MOCK DATA-----need to remove
-            task.setId(1);
-            task.setName("Router Config");
-            task.setDescription("Router configuration");
-            task.setDuration(30);
-            task.setCreatedAt(LocalDateTime.now());
-            taskList.add(task);
+            List<Task> taskList = MockData.getTaskList();
 
             //Attach to request
             request.setAttribute("taskList", taskList);
@@ -62,13 +59,10 @@ public class TaskController extends CommonController {
             if (taskId != 0) {
 
                 //get necessary task from DB
-                //Task task = new Task(); ------MOCK DATA
-                task.setId(1);
-                task.setName("Router Config");
-                task.setDescription("Router configuration");
-                task.setDuration(30);
-                task.setCreatedAt(LocalDateTime.now());
-                //if null --> set Error message
+                //------MOCK DATA----------------------------------------------
+                task = MockData.getTaskList().stream().filter(t -> t.getId() == taskId)
+                        .collect(Collectors.toList()).get(0);
+
 
                 if (task == null) {
                     request.setAttribute("error", new ErrorViewModel(
@@ -110,7 +104,9 @@ public class TaskController extends CommonController {
 
 
         //set view for POST
-        super.setView(request, TASK_MAINT_VIEW);
+        super.setView(request, TASKS_VIEW);
+
+        //NEED TO FIX URL PATH after save
         try {
 
             String action = super.getValue(request, "action").toLowerCase();
@@ -121,9 +117,17 @@ public class TaskController extends CommonController {
             switch (action) {
                 case "save":
                     populateTaskProperties(request, task);
-                    //create new task in DB
 
-                    request.setAttribute("newTask", task);
+                    if (task.getErrors().size() > 0) {
+                        request.setAttribute("validationError", task.getErrors());
+                        request.setAttribute("task", task);
+                        super.setView(request, TASK_MAINT_VIEW);
+                    } else {
+                        //create new task in DB
+
+
+                    }
+
                     break;
 
                 case "update":
@@ -138,7 +142,7 @@ public class TaskController extends CommonController {
                     "Sorry, an error occurred. Try again later"
             ));
         }
-
+        super.getView().forward(request, response);
 
     }
 
@@ -153,14 +157,24 @@ public class TaskController extends CommonController {
         String description = super.getValue(request, "taskDescription");
         int duration = super.getInteger(request, "taskDuration");
 
-        task.setName(name);
-        task.setDescription(description);
-        task.setDuration(duration);
+        if (name.trim().isEmpty()) {
+            task.addError("Name is required");
+        } else {
+            task.setName(name);
+        }
+
+        if (description.trim().isEmpty()) {
+            task.addError("Description is required");
+        } else {
+            task.setDescription(description);
+        }
+        if (duration <= 0) {
+            task.addError("Duration required and must be a positive number");
+        } else {
+            task.setDuration(duration);
+        }
+
         task.setCreatedAt(LocalDateTime.now());
-
-    }
-
-    private void validateModel(){
 
     }
 
