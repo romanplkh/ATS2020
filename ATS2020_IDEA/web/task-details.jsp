@@ -17,7 +17,7 @@
 <%@include file="WEB-INF/jspf/navigation.jspf" %>
 <main>
     <div class="container py-5">
-        <div class="row mb-4 justify-content-center">
+        <div class="row mb-4">
             <div class="col-12">
                 <h1 class="display-4">
                     Task Details
@@ -25,13 +25,21 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
-                <h3 class="font-weight-bolder">${task.name}</h3>
-                <ul class="list-unstyled">
-                    <li>Id: ${task.id}</li>
-                    <li>Name: ${task.name}</li>
-                    <li>Description: ${task.description}</li>
-                    <li>Duration: ${task.duration} min</li>
+            <div class="col-md-6">
+                <h3 class="font-weight-bolder mb-3">${task.name}</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Id:</strong> ${task.id}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Name:</strong> ${task.name}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Description:</strong> ${task.description}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Duration:</strong> ${task.duration} min
+                    </li>
                 </ul>
             </div>
 
