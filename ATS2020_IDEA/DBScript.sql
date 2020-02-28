@@ -1,6 +1,8 @@
-CREATE DATABASE IF NOT EXISTS ats;
+DROP SCHEMA IF EXISTS atsnovember;
 
-USE ats;
+CREATE DATABASE IF NOT EXISTS atsnovember;
+
+USE atsnovember;
 
 CREATE TABLE IF NOT EXISTS tasks (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,24 +27,33 @@ CREATE TABLE IF NOT EXISTS `employees` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
-DROP procedure IF EXISTS `Employee_ADD`;
+DELIMITER //
+DROP procedure IF EXISTS spAddEmployee;
+// DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `Employee_ADD`(IN firstNameParam NVARCHAR(255), IN lastNameParam NVARCHAR(255),
-IN sinParam NVARCHAR(11), IN hourlyRateParam DECIMAL(13,2))
+CREATE PROCEDURE spAddEmployee(
+    IN firstNameParam NVARCHAR(255),
+    IN lastNameParam NVARCHAR(255),
+    IN sinParam NVARCHAR(11),
+    IN hourlyRateParam DECIMAL(13,2),
+    OUT id_out INT
+    )
 BEGIN
     INSERT INTO employees (firstName, lastName, sin, hourlyRate, isDeleted, createdAt, updatedAt, deletedAt) 
     values(firstNameParam,lastNameParam, sinParam, hourlyRateParam, false, now(), null, null);
+
+     SET id_out = LAST_INSERT_ID();
 END$$
 DELIMITER ;
 
-
-DROP procedure IF EXISTS `Employee_Lookup`;
+DELIMITER //
+DROP procedure IF EXISTS spGetEmployeeLookup;
+// DELIMITER ;
 
 DELIMITER $$
 USE `ats`$$
-CREATE PROCEDURE `Employee_Lookup` ()
+CREATE PROCEDURE spGetEmployeeLookup()
 BEGIN
 SELECT id, firstName, lastName from employees;
 END$$
@@ -50,41 +61,52 @@ END$$
 DELIMITER ;
 
 -- Get a LIST of TASKS procedure
-DROP PROCEDURE IF EXISTS spGetAllTasks;
 DELIMITER //
+DROP PROCEDURE IF EXISTS spGetAllTasks;
+// DELIMITER ;
 
-CREATE PROCEDURE spGetAllTasks()
+DELIMETER //
+CREATE PROCEDURE spGetTasks(
+    IN idParam INT
+)
 BEGIN
     SELECT *  FROM tasks;
+    WHERE (idParam IS NULL OR id = idParam)
+    ORDER BY name;
 END //
 
 DELIMITER ;
 
 -- CREATE TASK procedure
+DELIMITER //
 DROP PROCEDURE IF EXISTS spCreateTask;
+// DELIMITER ;
 
 DELIMITER //
-
 CREATE PROCEDURE spCreateTask(
-	IN name nvarchar(255),
-    IN duration int,
+	IN taskName nvarchar(255),
+    IN taskDuration int,
     IN descr nvarchar(255),
     IN created datetime,
-    IN updated datetime
+    IN updated datetime,
+    OUT id_out INT
 )
 BEGIN
 
     INSERT INTO tasks(`name`, `duration`, `description`, `createdAt`, `updatedAt`)
-    VALUES(name, duration, descr, created, null);
+    VALUES(taskName, taskDuration, descr, created, null);
+
+    SET id_out = LAST_INSERT_ID();
 END //
 
 DELIMITER ;
 
 -- GET TASK details procedure
+DELIMITER //
 DROP PROCEDURE IF EXISTS spGetTaskDetails;
+// DELIMITER ;
 
 DELIMITER //
-
 CREATE PROCEDURE spGetTaskDetails(
 	IN taskId int
 )
