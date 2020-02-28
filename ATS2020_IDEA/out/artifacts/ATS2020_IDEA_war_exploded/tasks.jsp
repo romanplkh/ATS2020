@@ -4,7 +4,7 @@
   Date: 2/25/2020
   Time: 7:22 PM
 
-  This view supports a list of tasks
+  This view supports display of all tasks
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -29,7 +29,6 @@
 
                 <c:choose>
                     <c:when test="${tasksCount > 0}">
-<%--                        show a list of tasks in a table--%>
                         <table class="table table-striped">
                             <thead>
                             <tr>
