@@ -21,11 +21,11 @@
 
         <h1 class="display-4 text-center mt-5">Employees</h1>
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col">
                 <c:choose>
                     <c:when test="${employeeCount > 0}">
-                        <table class="table">
-                            <thead class="thead-dark">
+                        <table class="table table-striped mt-5">
+                            <thead>
                             <tr>
                                 <th scope="col">First Name</th>
                                 <th scope="col">Last Name</th>

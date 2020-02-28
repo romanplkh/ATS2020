@@ -52,7 +52,7 @@ DROP procedure IF EXISTS spGetEmployeeLookup;
 // DELIMITER ;
 
 DELIMITER $$
-USE `ats`$$
+USE `atsnovember`$$
 CREATE PROCEDURE spGetEmployeeLookup()
 BEGIN
 SELECT id, firstName, lastName from employees;
@@ -65,12 +65,12 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS spGetAllTasks;
 // DELIMITER ;
 
-DELIMETER //
+DELIMITER //
 CREATE PROCEDURE spGetTasks(
     IN idParam INT
 )
 BEGIN
-    SELECT *  FROM tasks;
+    SELECT *  FROM tasks
     WHERE (idParam IS NULL OR id = idParam)
     ORDER BY name;
 END //
