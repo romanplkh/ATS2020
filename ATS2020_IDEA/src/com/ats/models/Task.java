@@ -5,36 +5,33 @@ import com.sun.istack.internal.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * @author Olena Stepanova
  */
-public class Task implements Serializable {
+public class Task extends Base implements ITask, Serializable {
     private int id;
     private String name;
     private String description;
     private int duration;
     private LocalDateTime createdAt;
-
     @Nullable
     private LocalDateTime updatedAt;
 
-    private List<String> errors = new ArrayList();
 
     public Task() {
     }
 
-    public Task(int id, String name, String description, int duration, LocalDateTime createdAt) {
+    public Task(int id, String name, String description, int duration,
+                LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.duration = duration;
+        setName(name);
+        setDescription(description);
+        setDuration(duration);
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-
-
 
 
     public int getId() {
@@ -50,6 +47,10 @@ public class Task implements Serializable {
     }
 
     public void setName(String name) {
+        if (name == null) {
+            super.addError(ErrorFactory
+                    .createInstance(1, "Name is required"));
+        }
         this.name = name;
     }
 
@@ -58,6 +59,10 @@ public class Task implements Serializable {
     }
 
     public void setDescription(String description) {
+        if (description == null) {
+            super.addError(ErrorFactory
+                    .createInstance(2, "Description is required"));
+        }
         this.description = description;
     }
 
@@ -66,6 +71,13 @@ public class Task implements Serializable {
     }
 
     public void setDuration(int duration) {
+        if (duration == 0) {
+            super.addError(ErrorFactory
+                    .createInstance(3, "Duration is required"));
+        } else if (duration % 15 != 0) {
+            super.addError(ErrorFactory
+                    .createInstance(4, "Duration should be a set of 15 minutes"));
+        }
         this.duration = duration;
     }
 
@@ -85,11 +97,4 @@ public class Task implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public void addError(String error) {
-        this.errors.add(error);
-    }
 }
