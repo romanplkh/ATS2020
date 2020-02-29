@@ -40,10 +40,10 @@ public class TaskController extends CommonController {
         //List all tasks page
         if (pathInfo == null) {
             //Get a list of tasks ------MOCK DATA-----need to remove
-            List<Task> taskList = MockData.getTaskList();
+           // List<Task> taskList = MockData.getTaskList();
 
             //Attach to request
-            request.setAttribute("taskList", taskList);
+          //  request.setAttribute("taskList", taskList);
 
             //Render view
             super.setView(request, TASKS_VIEW);
@@ -60,8 +60,8 @@ public class TaskController extends CommonController {
 
                 //get necessary task from DB
                 //------MOCK DATA----------------------------------------------
-                task = MockData.getTaskList().stream().filter(t -> t.getId() == taskId)
-                        .collect(Collectors.toList()).get(0);
+               // task = MockData.getTaskList().stream().filter(t -> t.getId() == taskId)
+                   //     .collect(Collectors.toList()).get(0);
 
 
                 if (task == null) {
@@ -167,22 +167,22 @@ public class TaskController extends CommonController {
         String description = super.getValue(request, "taskDescription");
         int duration = super.getInteger(request, "taskDuration");
 
-        if (name.trim().isEmpty()) {
-            task.addError("Name is required");
-        } else {
-            task.setName(name);
-        }
-
-        if (description.trim().isEmpty()) {
-            task.addError("Description is required");
-        } else {
-            task.setDescription(description);
-        }
-        if (duration <= 0) {
-            task.addError("Duration required and must be a positive number");
-        } else {
-            task.setDuration(duration);
-        }
+//        if (name.trim().isEmpty()) {
+//            task.addError("Name is required");
+//        } else {
+//            task.setName(name);
+//        }
+//
+//        if (description.trim().isEmpty()) {
+//            task.addError("Description is required");
+//        } else {
+//            task.setDescription(description);
+//        }
+//        if (duration <= 0) {
+//            task.addError("Duration required and must be a positive number");
+//        } else {
+//            task.setDuration(duration);
+//        }
 
         task.setCreatedAt(LocalDateTime.now());
 
