@@ -104,24 +104,26 @@ public class TaskController extends CommonController {
 
 
         //set view for POST
-        super.setView(request, TASKS_VIEW);
+        //super.setView(request, TASKS_VIEW);
+        Task task = new Task();
 
         //NEED TO FIX URL PATH after save
         try {
 
             String action = super.getValue(request, "action").toLowerCase();
 
-            Task task = new Task();
+
             int taskId = super.getInteger(request, "taskId");
 
             switch (action) {
                 case "save":
                     populateTaskProperties(request, task);
 
-                    if (task.getErrors().size() > 0) {
-                        request.setAttribute("validationError", task.getErrors());
-                        request.setAttribute("task", task);
-                        super.setView(request, TASK_MAINT_VIEW);
+                    if (task.getErrors().size() != 0) {
+                         request.setAttribute("validationError", task.getErrors());
+                         request.setAttribute("task", task);
+                         super.setView(request, TASK_MAINT_VIEW);
+
                     } else {
                         //create new task in DB
 
@@ -137,12 +139,20 @@ public class TaskController extends CommonController {
             }
 
 
+
+
         } catch (Exception e) {
+            super.setView(request, TASK_MAINT_VIEW);
             request.setAttribute("error", new ErrorViewModel(
                     "Sorry, an error occurred. Try again later"
             ));
         }
-        super.getView().forward(request, response);
+
+        if (task.getErrors().size() > 0) {
+            super.getView().forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/tasks");
+        }
 
     }
 
