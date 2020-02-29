@@ -15,7 +15,7 @@ import java.io.IOException;
 @WebServlet(name = "EmployeeController")
 public class EmployeeController extends CommonController {
 
-    private static final String EMPLOYEES_VIEW = "/employees.jsp";
+    private static final String EMPLOYEES_VIEW = "/employees";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
     private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
 
@@ -37,6 +37,7 @@ public class EmployeeController extends CommonController {
                     if (emp.getErrors().size() > 0) {
                         request.setAttribute("modelErrors", emp.getErrors());
                         request.setAttribute("employee", emp);
+//                        request.setAttribute("employees", MockData.getEmployees());
                         super.setView(request, EMPLOYEE_MAINT_VIEW);
                     } else {
                         super.setView(request, EMPLOYEES_VIEW);
