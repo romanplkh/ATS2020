@@ -4,8 +4,6 @@ import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.dataaccess.*;
 
-
-
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -19,9 +17,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     private final String SPROC_SELECT_EMPLOYEES = "CALL spGetEmployeeLookup(?);";
     private final String SPROC_DELETE_EMPLOYEE = "CALL spAddEmployee(?,?,?,?);";
 
-
     private IDAL dataAccess;
-
 
     public EmployeeRepo() {
         dataAccess = DALFactory.createInstance();
@@ -44,7 +40,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
 
-
         returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
 
         try {
@@ -55,7 +50,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
 
         return returnedId;
     }
@@ -87,9 +81,11 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     public List<IEmployee> retrieveEmployees() {
 
         List<IEmployee> employees = EmployeeFactory.createListInstance();
+        List<IParameter> params = ParameterFactory.createListInstance();
+        params.add(ParameterFactory.createInstance(null));
 
         try {
-            CachedRowSet rs = this.dataAccess.executeFill(SPROC_SELECT_EMPLOYEES, null);
+            CachedRowSet rs = this.dataAccess.executeFill(SPROC_SELECT_EMPLOYEES, params);
             employees = toListOfEmployees(rs);
 
         } catch (Exception e) {
@@ -106,7 +102,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         try {
             List<IParameter> params = ParameterFactory.createListInstance();
 
-
             params.add(ParameterFactory.createInstance(id));
 
             CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_SELECT_EMPLOYEE, params);
@@ -117,10 +112,8 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             System.out.print(e.getMessage());
         }
 
-
         return employees.get(0);
     }
-
 
     private List<IEmployee> toListOfEmployees(CachedRowSet rs) throws SQLException {
         List<IEmployee> employees = EmployeeFactory.createListInstance();
@@ -136,7 +129,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         }
 
         return employees;
-
 
     }
 
