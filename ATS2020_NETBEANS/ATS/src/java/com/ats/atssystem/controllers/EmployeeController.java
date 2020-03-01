@@ -1,18 +1,22 @@
-package com.ats.controllers;
-import com.ats.business.EmployeeServiceFactory;
-import com.ats.business.IEmployeeService;
-import com.ats.models.*;
 
+package com.ats.atssystem.controllers;
+
+import com.ats.atssystem.business.EmployeeServiceFactory;
+import com.ats.atssystem.business.IEmployeeService;
+import com.ats.atssystem.models.Employee;
+import com.ats.atssystem.models.EmployeeDetailsViewModel;
+import com.ats.atssystem.models.EmployeeFactory;
+import com.ats.atssystem.models.ErrorViewModel;
+import com.ats.atssystem.models.IEmployee;
+import java.io.IOException;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-
-//TODO: FIX PROBLEM WITH DB CONNECTION db.properties
-
-@WebServlet(name = "EmployeeController")
+/**
+ *
+ * @author Roman Pelikh
+ */
 public class EmployeeController extends CommonController {
 
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
@@ -20,56 +24,8 @@ public class EmployeeController extends CommonController {
     private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
     private static final String PAGE_404 = "/404.jsp";
 
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            ///WHERE TO REDIRECT AFTER SUCCESSFUL POST
-            super.setView(request, EMPLOYEES_VIEW);
-
-            //Get action of button
-            String action = super.getValue(request, "action").toLowerCase();
-            Employee emp = new Employee();
-            int empId = super.getInteger(request, "empId");
-
-
-            switch (action) {
-                case "save":
-                    populateEmployeeModel(request, emp);
-                    if (emp.getErrors().size() > 0) {
-                        request.setAttribute("modelErrors", emp.getErrors());
-                        request.setAttribute("employee", emp);
-//                        request.setAttribute("employees", MockData.getEmployees());
-                        super.setView(request, EMPLOYEE_MAINT_VIEW);
-                    } else {
-                        super.setView(request, EMPLOYEES_VIEW);
-                    }
-
-
-                    //Add employee to DB
-
-                    //If rows affected == 0
-                    //request.setAttribute("error", new ErrorViewModel("Something went wrong. Employee is not added"));
-                    //super.setView(request, EMPLOYEE_MAINT_VIEW);
-
-                    break;
-                case "update":
-                    break;
-                case "delete":
-                    break;
-
-
-            }
-        } catch (Exception e) {
-            super.setView(request, EMPLOYEE_MAINT_VIEW);
-            request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
-        }
-
-        //REDIRECT TO VIEW
-        super.getView().forward(request, response);
-
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         //GET URL ATTRIBUTES
         String pathInfo = request.getPathInfo();
@@ -96,7 +52,6 @@ public class EmployeeController extends CommonController {
                 case "update":
                     Employee queryEmployee = null;
 
-
                     break;
                 case "details":
                     employee = employeeService.getEmployee(id);
@@ -118,7 +73,51 @@ public class EmployeeController extends CommonController {
 
         }
 
+        super.getView().forward(request, response);
 
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            ///WHERE TO REDIRECT AFTER SUCCESSFUL POST
+            super.setView(request, EMPLOYEES_VIEW);
+
+            //Get action of button
+            String action = super.getValue(request, "action").toLowerCase();
+            Employee emp = new Employee();
+            int empId = super.getInteger(request, "empId");
+
+            switch (action) {
+                case "save":
+                    populateEmployeeModel(request, emp);
+                    if (emp.getErrors().size() > 0) {
+                        request.setAttribute("modelErrors", emp.getErrors());
+                        request.setAttribute("employee", emp);
+//                        request.setAttribute("employees", MockData.getEmployees());
+                        super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    } else {
+                        super.setView(request, EMPLOYEES_VIEW);
+                    }
+
+                    //Add employee to DB
+                    //If rows affected == 0
+                    //request.setAttribute("error", new ErrorViewModel("Something went wrong. Employee is not added"));
+                    //super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    break;
+                case "update":
+                    break;
+                case "delete":
+                    break;
+
+            }
+        } catch (Exception e) {
+            super.setView(request, EMPLOYEE_MAINT_VIEW);
+            request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
+        }
+
+        //REDIRECT TO VIEW
         super.getView().forward(request, response);
 
     }
@@ -142,7 +141,6 @@ public class EmployeeController extends CommonController {
         return mode;
     }
 
-
     private String[] getUrlParts(String pathInfo) {
         return pathInfo.split("/");
     }
@@ -159,7 +157,6 @@ public class EmployeeController extends CommonController {
         emp.setSin(sin);
         emp.setHourlyRate(hRate);
 
-
     }
-}
 
+}
