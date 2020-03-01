@@ -53,9 +53,13 @@ DROP procedure IF EXISTS spGetEmployeeLookup;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE PROCEDURE spGetEmployeeLookup()
+CREATE PROCEDURE spGetEmployeeLookup(
+    IN idParam INT
+)
 BEGIN
-SELECT id, firstName, lastName from employees;
+    SELECT id, firstName, lastName
+    from employees
+    WHERE (idParam IS NULL OR id = idParam);
 END$$
 
 DELIMITER ;

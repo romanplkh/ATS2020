@@ -16,7 +16,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     private final String SPROC_INSERT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?);";
     private final String SPROC_UPDATE_EMPLOYEE = "CALL spAddEmployee(?,?,?,?);";
-    private final String SPROC_SELECT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?);";
+    private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployeeLookup(?);";
     private final String SPROC_SELECT_EMPLOYEES = "CALL spGetEmployeeLookup(?);";
     private final String SPROC_DELETE_EMPLOYEE = "CALL spAddEmployee(?,?,?,?);";
 
