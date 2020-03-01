@@ -30,17 +30,21 @@ public class DAL implements IDAL {
 
     /**
      * Execute Non Query performs non query operations on a relation database
-     * @param statement The SQL statement to execute. Support for embedded parameterized sql and stored procedures
+     *
+     * @param statement The SQL statement to execute. Support for embedded parameterized sql and stored
+     * procedures
      * @param params The parameters list
-     * @return A list of return values which are output parameters if they are provided 
-     * or when no output parameters are provided, the number of rows affected are returned
+     * @return A list of return values which are output parameters if they are provided or when no output
+     * parameters are provided, the number of rows affected are returned
      */
     @Override
     public List<Object> executeNonQuery(String statement, List<IParameter> params) {
         List<Object> returnValues = new ArrayList();
 
         try {
+
             propertiesSetUp();
+            
 
             try (Connection conn = DriverManager.getConnection(url, userName, password)) {
                 try (CallableStatement cstmt = conn.prepareCall(statement)) {
@@ -85,9 +89,10 @@ public class DAL implements IDAL {
 
     /**
      * Execute Query operations on a relational database
+     *
      * @param statement
      * @param params
-     * @return 
+     * @return
      */
     @Override
     public CachedRowSet executeFill(String statement, List<IParameter> params) {
@@ -100,7 +105,7 @@ public class DAL implements IDAL {
             try (Connection conn = DriverManager.getConnection(url, userName, password)) {
                 try (PreparedStatement pstmt = conn.prepareStatement(statement)) {
                     loadInputParameters(pstmt, params);
-                    
+
                     //Execute the query and populate the rowSet with the resultset
                     //CachedRowSet is a disconnected technology which we can easily return
                     //The database connection is closed within the try with resources block
@@ -134,7 +139,7 @@ public class DAL implements IDAL {
                 try (PreparedStatement pstmt = conn.prepareStatement(statement)) {
                     //Load the input parameters
                     loadInputParameters(pstmt, params);
-                           
+
                     //Execute the query and obtain the aggregate value returned from the database
                     try (ResultSet rs = (ResultSet) pstmt.executeQuery()) {
                         if (rs.next()) {
@@ -152,13 +157,14 @@ public class DAL implements IDAL {
 
     /**
      * Helper method for loading input parameters only
+     *
      * @param smt The prepared statement being used
      * @param params The list of parameters to load
-     * @throws SQLException 
+     * @throws SQLException
      */
     private void loadInputParameters(PreparedStatement smt, List<IParameter> params) throws SQLException {
         int i = 1;
-        
+
         if (params != null) {
             for (IParameter p : params) {
                 smt.setObject(i, p.getValue());
@@ -168,17 +174,19 @@ public class DAL implements IDAL {
     }
 
     /**
-     * Gets properties from db.properties file key values pairs of db url,
-     * username, password, driver
+     * Gets properties from db.properties file key values pairs of db url, username, password, driver
      *
      * @throws Exception
      */
     private void propertiesSetUp() throws Exception {
+
         Properties props = DALHelper.getProperties();
 
         url = props.getProperty("database.url");
         userName = props.getProperty("database.username");
         password = props.getProperty("database.password");
         
+         DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+
     }
 }
