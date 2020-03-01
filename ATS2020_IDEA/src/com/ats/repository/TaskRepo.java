@@ -14,7 +14,7 @@ import java.util.List;
 
 public class TaskRepo extends BaseRepo implements ITaskRepo {
 
-    private final String SP_ADD_NEW_TASK = "CALL spCreateTask(?,?,?,?,?,?)";
+    private final String SP_ADD_NEW_TASK = "CALL spCreateTask(?,?,?,?,?)";
     private final String SP_GET_TASK_DETAILS = "CALL spGetTasks(?)";
     private final String SP_GET_ALL_TASKS = "CALL spGetTasks(?)";
 
@@ -37,8 +37,8 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
         List<IParameter> params = ParameterFactory.createListInstance();
 
         params.add(ParameterFactory.createInstance(task.getName()));
-        params.add(ParameterFactory.createInstance(task.getDescription()));
         params.add(ParameterFactory.createInstance(task.getDuration()));
+        params.add(ParameterFactory.createInstance(task.getDescription()));
         params.add(ParameterFactory.createInstance(task.getCreatedAt()));
 
         //For OUT task Id

@@ -179,5 +179,6 @@ public class DAL implements IDAL {
         url = props.getProperty("database.url");
         userName = props.getProperty("database.username");
         password = props.getProperty("database.password");
+        
     }
 }

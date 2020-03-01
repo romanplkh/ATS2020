@@ -45,7 +45,7 @@
                     <div class="alert alert-danger" role="alert">
                         <c:set value="${task.getErrors().stream()
                         .filter(t -> t.code == 1).toList()}" var="err"/>
-                            ${err[1].getDescription()}
+                            ${err[2].getDescription()}
                     </div>
                 </c:if>
             </div>
@@ -61,13 +61,7 @@
                         <input type="text" class="form-control"
                                value="${task.name}"
                                name="taskName">
-<%--                        <c:if test="${task.errors != null}">--%>
-<%--                            <div class="invalid-feedback">--%>
-<%--                                <c:set value="${task.errors.stream().filter(t -> t.code == 1)--%>
-<%--                                .toList().get(0)}" var="err"/>--%>
-<%--                                    ${err}--%>
-<%--                            </div>--%>
-<%--                        </c:if>--%>
+
                     </div>
 
                     <div class="form-group">
