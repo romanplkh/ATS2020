@@ -23,6 +23,13 @@ public class Task extends Base implements ITask, Serializable {
     public Task() {
     }
 
+    public Task(int id, String name, String description, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+    }
+
     public Task(int id, String name, String description, int duration,
                 LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;

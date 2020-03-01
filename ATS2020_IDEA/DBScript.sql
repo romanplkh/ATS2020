@@ -64,9 +64,10 @@ END$$
 
 DELIMITER ;
 
--- Get a LIST of TASKS procedure
+-- Get a LIST of TASKS procedure or
+-- one task details if Id is provided
 DELIMITER //
-DROP PROCEDURE IF EXISTS spGetAllTasks;
+DROP PROCEDURE IF EXISTS spGetTasks;
 // DELIMITER ;
 
 DELIMITER //
@@ -105,19 +106,3 @@ END //
 
 DELIMITER ;
 
--- GET TASK details procedure
-DELIMITER //
-DROP PROCEDURE IF EXISTS spGetTaskDetails;
-// DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE spGetTaskDetails(
-	IN taskId int
-)
-BEGIN
-   SELECT id, name, description, duration
-   FROM tasks
-   WHERE id = taskId;
-END //
-
-DELIMITER ;

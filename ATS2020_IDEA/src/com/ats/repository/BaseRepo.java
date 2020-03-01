@@ -3,6 +3,7 @@ package com.ats.repository;
 import javax.sql.rowset.CachedRowSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public abstract class BaseRepo {
@@ -70,9 +71,10 @@ public abstract class BaseRepo {
      * @return
      * @throws SQLException
      */
-    protected Date getDate(String columnName, CachedRowSet rs) throws SQLException{
-        Date nValue = new Date();
-        nValue = rs.getDate(getByColumnLabel(columnName,rs));
-        return nValue;
+    protected LocalDateTime getDate(String columnName, CachedRowSet rs) throws SQLException{
+        //Date nValue = new Date();
+        Date date = rs.getDate(getByColumnLabel(columnName,rs));
+        return new java.sql.Timestamp(
+                date.getTime()).toLocalDateTime();
     }
 }

@@ -25,23 +25,42 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <h3 class="font-weight-bolder mb-3">${task.name}</h3>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <strong>Id:</strong> ${task.id}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Name:</strong> ${task.name}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Description:</strong> ${task.description}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Duration:</strong> ${task.duration} min
-                    </li>
-                </ul>
-            </div>
+
+            <c:choose>
+
+                <c:when test="${error.errors != null}">
+                    <div class="col-12">
+                        <div class="alert alert-dismissible alert-light" role="alert">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <c:forEach items="${error.errors}" var="err">
+                                ${err}
+                            </c:forEach>
+                        </div>
+                    </div>
+
+                </c:when>
+                <c:otherwise>
+
+                    <div class="col-md-6">
+                        <h3 class="font-weight-bolder mb-3">${task.name}</h3>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Id:</strong> ${task.id}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Name:</strong> ${task.name}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Description:</strong> ${task.description}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Duration:</strong> ${task.duration} min
+                            </li>
+                        </ul>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
 
         </div>
 
