@@ -9,13 +9,14 @@ import com.ats.models.TaskFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 public class TaskRepo extends BaseRepo implements ITaskRepo {
 
-    private final String SP_ADD_NEW_TASK = "CALL spCreateTask(?,?,?,?,?,?)";
+    private final String SP_ADD_NEW_TASK = "CALL spCreateTask(?,?,?,?,?)";
     private final String SP_GET_TASK_DETAILS = "CALL spGetTasks(?)";
-    private final String SP_GET_ALL_TASKS = "CALL spGetTasks()";
+    private final String SP_GET_ALL_TASKS = "CALL spGetTasks(?)";
 
 
     private IDAL dataaccess = DALFactory.createInstance();
@@ -28,7 +29,33 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
      */
     @Override
     public int addTask(ITask task) {
-        return 0;
+
+        int newTaskId = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(task.getName()));
+        params.add(ParameterFactory.createInstance(task.getDuration()));
+        params.add(ParameterFactory.createInstance(task.getDescription()));
+        params.add(ParameterFactory.createInstance(task.getCreatedAt()));
+
+        //For OUT task Id
+        params.add(ParameterFactory.createInstance(newTaskId, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = this.dataaccess.executeNonQuery(SP_ADD_NEW_TASK, params);
+
+        try {
+            if (retVal != null) {
+                newTaskId = (int) retVal.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return newTaskId;
     }
 
     /**
@@ -58,9 +85,30 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
      */
     @Override
     public List<ITask> getTasks() {
-        return null;
+        List<ITask> tasks = TaskFactory.createListInstance();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            parms.add(ParameterFactory.createInstance(null, IParameter.Direction.IN, Types.NULL));
+
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_ALL_TASKS, parms);
+
+            tasks = populateListOfTasks(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return tasks;
     }
 
+    /**
+     * Populates task's properties with values returned from database for
+     * specified task
+     *
+     * @param rs CachedRowSet data set returned from database as a result
+     *           of sql statement execution
+     * @return task populated task object or null
+     * @throws SQLException
+     */
     private ITask populateTaskObject(CachedRowSet rs) throws SQLException {
 
         ITask task = null;
@@ -72,11 +120,33 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
             task.setName(rs.getString("name"));
             task.setDescription(rs.getString("description"));
             task.setDuration(super.getInt("duration", rs));
-            task.setCreatedAt(super.getDate("createdAt", rs));
 
         }
 
         return task;
 
+    }
+
+    /**
+     * Returns a list of tasks retrieved from database table
+     * @param rs CachedRowSet data set returned from database as a result
+     *       of sql statement execution
+     * @return list of tasks or null
+     * @throws SQLException
+     */
+    private List<ITask> populateListOfTasks(CachedRowSet rs) throws SQLException {
+        List<ITask> tasksList = TaskFactory.createListInstance();
+        ITask task;
+
+        while (rs.next()) {
+            task = TaskFactory.createInstance();
+
+            task.setId(super.getInt("id", rs));
+            task.setName(rs.getString("name"));
+            task.setDescription(rs.getString("description"));
+            tasksList.add(task);
+        }
+
+        return tasksList;
     }
 }

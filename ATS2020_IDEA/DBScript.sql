@@ -106,3 +106,7 @@ END //
 
 DELIMITER ;
 
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');

@@ -187,7 +187,6 @@ public class DAL implements IDAL {
         password = props.getProperty("database.password");
         
          DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-       
 
     }
 }
