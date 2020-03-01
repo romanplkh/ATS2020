@@ -1,9 +1,6 @@
 package com.ats.controllers;
-
-import com.ats.MockData;
 import com.ats.business.EmployeeServiceFactory;
 import com.ats.business.IEmployeeService;
-import com.ats.controllers.CommonController;
 import com.ats.models.*;
 
 import javax.servlet.ServletException;
