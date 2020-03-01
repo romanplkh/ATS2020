@@ -1,9 +1,14 @@
 package com.ats.controllers;
 
 import com.ats.MockData;
+import com.ats.business.ITaskService;
+import com.ats.business.TaskServiceFactory;
 import com.ats.controllers.CommonController;
 import com.ats.models.ErrorViewModel;
+import com.ats.models.ITask;
 import com.ats.models.Task;
+import com.ats.models.TaskFactory;
+import com.ats.repository.ITaskRepo;
 
 
 import javax.servlet.ServletException;
@@ -34,7 +39,8 @@ public class TaskController extends CommonController {
         String pathInfo = request.getPathInfo();
 
         //Object to hold entity and pass to view
-        Task task = new Task();
+        ITask task = TaskFactory.createInstance();
+        ITaskService service = TaskServiceFactory.createInstance();
 
 
         //List all tasks page
@@ -59,9 +65,7 @@ public class TaskController extends CommonController {
             if (taskId != 0) {
 
                 //get necessary task from DB
-                //------MOCK DATA----------------------------------------------
-               // task = MockData.getTaskList().stream().filter(t -> t.getId() == taskId)
-                   //     .collect(Collectors.toList()).get(0);
+                task = service.getTask(taskId);
 
 
                 if (task == null) {
