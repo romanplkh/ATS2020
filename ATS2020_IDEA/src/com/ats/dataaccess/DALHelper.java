@@ -30,6 +30,7 @@ public abstract class DALHelper {
             ClassLoader cl = DALHelper.class.getClassLoader();
             in = cl.getResourceAsStream("db.properties");
 
+
             if (in != null) {
                 props.load(in);
                 in.close();
