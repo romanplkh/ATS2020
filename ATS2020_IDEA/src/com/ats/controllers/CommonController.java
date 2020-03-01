@@ -51,6 +51,9 @@ public class CommonController extends HttpServlet {
         }
     }
 
+
+
+
     protected String getValue(HttpServletRequest request, String key) {
         return request.getParameter(key);
     }

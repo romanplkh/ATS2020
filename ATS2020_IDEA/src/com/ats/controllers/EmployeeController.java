@@ -1,16 +1,19 @@
 package com.ats.controllers;
 
 import com.ats.MockData;
+import com.ats.business.EmployeeServiceFactory;
+import com.ats.business.IEmployeeService;
 import com.ats.controllers.CommonController;
-import com.ats.models.Employee;
-import com.ats.models.EmployeeDetailsViewModel;
-import com.ats.models.ErrorViewModel;
+import com.ats.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+
+//TODO: FIX PROBLEM WITH DB CONNECTION db.properties
 
 @WebServlet(name = "EmployeeController")
 public class EmployeeController extends CommonController {
@@ -73,94 +76,47 @@ public class EmployeeController extends CommonController {
 
         //GET URL ATTRIBUTES
         String pathInfo = request.getPathInfo();
+        IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
 
-
-        //IF WE DO NOT HAVE ANYTHING IN URL
-        //Show all employees
         if (pathInfo == null) {
-
-
-            //Get data from service
-
-
             //Show all employees
-            request.setAttribute("employees", MockData.getEmployees());
 
-            //Attach employees object to view
-
+            request.setAttribute("employees", employeeService.getEmployees());
             super.setView(request, EMPLOYEES_VIEW);
 
         } else {
 
-
-            Employee emp = new Employee();
+            super.setView(request, EMPLOYEE_MAINT_VIEW);
             String[] pathParts = getUrlParts(pathInfo);
 
-
-            //Check update or details
-
             // employee/:id - get ID
-            int id = getInteger(pathParts[1]);
+            int id = super.getInteger(pathParts[1]);
             String urlContext = getPathContext(pathParts, id);
 
+            IEmployee employee = EmployeeFactory.createInstance();
 
             switch (urlContext) {
-                case "create":
-
-                    //Add employee to DB
-
-
-
-                    request.setAttribute("employee", emp);
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-                    break;
                 case "update":
-                    //find employee
-
-
                     Employee queryEmployee = null;
 
-                    //Try get employee from DB
-//                    if (queryEmployee != null) {
-//
-//                        //Set book to view model;
-//                        emp = queryEmployee;
-//
-//
-//                        //Return view model with a view
-//                        request.setAttribute("employee", emp);
-//
-//                    } else {
-//                        //Set error message to view
-////                        request.setAttribute("error",
-////                                new ErrorViewModel("Book with ID: " + id + " not found!"));
-//
-//                    }
 
-
-                    //REmove it after test
-                    emp.setId(1);
-
-                    request.setAttribute("employee", emp);
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
                     break;
                 case "details":
+                    employee = employeeService.getEmployee(id);
                     EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
-                    //Get employee from db by id
 
-                    //Populate employee model with data
+                    if (employee != null) {
+                        evm.setEmployee(employee);
+                        request.setAttribute("evm", evm);
+                    } else {
+                        request.setAttribute("error", new ErrorViewModel(String.format("Employee ID: %s not found", id)));
+                    }
 
-                    //Employee emp = data from db()
-
-
-                    request.setAttribute("employeeDetailsVM", evm);
                     super.setView(request, EMPLOYEE_DETAILS_VIEW);
                     break;
-
                 default:
-                    request.setAttribute("error", new ErrorViewModel("Employee with this id does not exists"));
-                    super.setView(request, PAGE_404);
-                    break;
+                    //Create
+                    request.setAttribute("employee", employee);
             }
 
         }
@@ -194,7 +150,7 @@ public class EmployeeController extends CommonController {
         return pathInfo.split("/");
     }
 
-    private void populateEmployeeModel(HttpServletRequest request, Employee emp) {
+    private void populateEmployeeModel(HttpServletRequest request, IEmployee emp) {
 
         String firstName = super.getValue(request, "firstName");
         String lastName = super.getValue(request, "lastName");
