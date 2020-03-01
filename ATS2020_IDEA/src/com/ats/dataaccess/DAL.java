@@ -34,6 +34,7 @@ public class DAL implements IDAL {
         try {
 
             dbPropertiesSetUp();
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver ());
 
             try (Connection conn = DriverManager.getConnection(url, username, password)) {
                 try (CallableStatement cstmt = conn.prepareCall(statement)) {
@@ -91,6 +92,8 @@ public class DAL implements IDAL {
         try {
 
             dbPropertiesSetUp();
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver ());
+
             rowSet = RowSetProvider.newFactory().createCachedRowSet();
 
             try (Connection conn = DriverManager.getConnection(url, username, password)) {
@@ -121,6 +124,7 @@ public class DAL implements IDAL {
 
         try {
             dbPropertiesSetUp();
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver ());
 
             try (Connection conn = DriverManager.getConnection(url, username, password)) {
                 try (PreparedStatement pstmt = conn.prepareStatement(statement)) {
