@@ -1,10 +1,10 @@
 package com.ats.controllers;
 
 import com.ats.MockData;
+import com.ats.business.EmployeeServiceFactory;
+import com.ats.business.IEmployeeService;
 import com.ats.controllers.CommonController;
-import com.ats.models.Employee;
-import com.ats.models.EmployeeDetailsViewModel;
-import com.ats.models.ErrorViewModel;
+import com.ats.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,12 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+//TODO: FIX PROBLEM WITH DB CONNECTION db.properties
+
 @WebServlet(name = "EmployeeController")
 public class EmployeeController extends CommonController {
 
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
     private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
+    private static final String PAGE_404 = "/404.jsp";
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,6 +41,7 @@ public class EmployeeController extends CommonController {
                     if (emp.getErrors().size() > 0) {
                         request.setAttribute("modelErrors", emp.getErrors());
                         request.setAttribute("employee", emp);
+//                        request.setAttribute("employees", MockData.getEmployees());
                         super.setView(request, EMPLOYEE_MAINT_VIEW);
                     } else {
                         super.setView(request, EMPLOYEES_VIEW);
@@ -71,77 +76,47 @@ public class EmployeeController extends CommonController {
 
         //GET URL ATTRIBUTES
         String pathInfo = request.getPathInfo();
+        IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
 
-
-        //IF WE DO NOT HAVE ANYTHING IN URL
         if (pathInfo == null) {
-
-
-            //Get data from service
-
-
             //Show all employees
-            request.setAttribute("employees", MockData.getEmployees());
 
-            //Attach employees object to view
-
+            request.setAttribute("employees", employeeService.getEmployees());
             super.setView(request, EMPLOYEES_VIEW);
 
         } else {
 
-
+            super.setView(request, EMPLOYEE_MAINT_VIEW);
             String[] pathParts = getUrlParts(pathInfo);
 
-
-            //Check update or details
-
             // employee/:id - get ID
-            int id = getInteger(pathParts[1]);
-            String mode = "";
+            int id = super.getInteger(pathParts[1]);
+            String urlContext = getPathContext(pathParts, id);
 
-            if (id != 0) {
-                mode = "update";
-            }
+            IEmployee employee = EmployeeFactory.createInstance();
 
-            if (pathParts.length == 3 && pathParts[2].equalsIgnoreCase("details") && id != 0) {
-                mode = "details";
-            }
-
-            if (id == 0) {
-                mode = "create";
-            }
-
-
-            switch (mode) {
-                case "create":
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-                    break;
+            switch (urlContext) {
                 case "update":
-                    //find employee
+                    Employee queryEmployee = null;
 
-                    //Populate employee model with data
 
-                    //Employee emp = data from db()
-
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
                     break;
                 case "details":
+                    employee = employeeService.getEmployee(id);
                     EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
-                    //Get employee from db by id
 
-                    //Populate employee model with data
+                    if (employee != null) {
+                        evm.setEmployee(employee);
+                        request.setAttribute("evm", evm);
+                    } else {
+                        request.setAttribute("error", new ErrorViewModel(String.format("Employee ID: %s not found", id)));
+                    }
 
-                    //Employee emp = data from db()
-
-
-                    request.setAttribute("employeeDetailsVM", evm);
                     super.setView(request, EMPLOYEE_DETAILS_VIEW);
                     break;
-
                 default:
-                    request.setAttribute("error", new ErrorViewModel("Employee with this id does not exists"));
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-                    break;
+                    //Create
+                    request.setAttribute("employee", employee);
             }
 
         }
@@ -151,43 +126,41 @@ public class EmployeeController extends CommonController {
 
     }
 
+    private String getPathContext(String[] pathParts, int id) {
+
+        String mode = "";
+
+        if (id != 0) {
+            mode = "update";
+
+            //employee/:id/details
+            if (pathParts.length == 3 && pathParts[2].equalsIgnoreCase("details")) {
+                mode = "details";
+            }
+
+        } else if (pathParts[1].equalsIgnoreCase("create")) {
+            mode = "create";
+        }
+
+        return mode;
+    }
+
 
     private String[] getUrlParts(String pathInfo) {
         return pathInfo.split("/");
     }
 
-    private void populateEmployeeModel(HttpServletRequest request, Employee emp) {
+    private void populateEmployeeModel(HttpServletRequest request, IEmployee emp) {
 
         String firstName = super.getValue(request, "firstName");
         String lastName = super.getValue(request, "lastName");
         String sin = super.getValue(request, "sin");
         double hRate = super.getDouble(request, "hRate");
 
-
-        if (firstName.trim().isEmpty()) {
-            emp.addError("First Name is required");
-        } else {
-            emp.setFirstName(firstName);
-        }
-
-        if (lastName.trim().isEmpty()) {
-            emp.addError("Last Name is required");
-        } else {
-            emp.setLastName(lastName);
-        }
-
-        String sinPattern = "\\d{3}-\\d{3}-\\d{3}";
-        if (!sin.matches(sinPattern)) {
-            emp.addError("SIN is invalid");
-        } else {
-            emp.setSin(sin);
-        }
-
-        if (hRate == 0 || hRate < 0) {
-            emp.addError("Rate should be a valid number greater than zero");
-        } else {
-            emp.setHourlyRate(hRate);
-        }
+        emp.setFirstName(firstName);
+        emp.setLastName(lastName);
+        emp.setSin(sin);
+        emp.setHourlyRate(hRate);
 
 
     }

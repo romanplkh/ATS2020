@@ -44,7 +44,7 @@
                     </div>
 
                     <c:choose>
-                        <c:when test="${$employee.id == null}">
+                        <c:when test="${employee.id == 0}">
                             <input type="submit" value="Save" class="btn btn-success btn-lg" name="action">
                         </c:when>
                         <c:otherwise>

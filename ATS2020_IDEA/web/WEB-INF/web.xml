@@ -59,10 +59,10 @@
     </servlet-mapping>
 
     <!--    EMPLOYEE DETAILS-->
-    <servlet-mapping>
-        <servlet-name>EmployeeController</servlet-name>
-        <url-pattern>/employee/*/*</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>EmployeeController</servlet-name>-->
+<!--        <url-pattern>/employee/*/*</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 
 </web-app>
