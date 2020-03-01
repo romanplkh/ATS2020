@@ -24,6 +24,8 @@ class DALHelper {
     public static Properties getProperties() throws Exception {
         Properties props = new Properties();
         InputStream in = null;
+        
+         
 
         try {
             //Get the path to my db.properties file
