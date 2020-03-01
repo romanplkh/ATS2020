@@ -81,9 +81,6 @@ public class Task extends Base implements ITask, Serializable {
         if (duration == 0) {
             super.addError(ErrorFactory
                     .createInstance(3, "Duration is required"));
-        } else if (duration % 15 != 0) {
-            super.addError(ErrorFactory
-                    .createInstance(4, "Duration should be a set of 15 minutes"));
         }
         this.duration = duration;
     }

@@ -33,13 +33,21 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <c:if test="${error.errors != null || validationError != null}">
-                    <div class="alert alert-danger" role="alert">
-                        <c:forEach items="${error.errors ? error.errors : validationError}" var="err">
-                            <p>${err}</p>
-                        </c:forEach>
-                    </div>
-                </c:if>
+<%--                <c:if test="${task.getErrors().size() > 0 }">--%>
+<%--                    <div class="alert alert-danger" role="alert">--%>
+<%--                        <c:forEach items="${task.getErrors()}" var="err">--%>
+<%--                           ${err.getDescription()}--%>
+<%--                        </c:forEach>--%>
+<%--                    </div>--%>
+<%--                </c:if>--%>
+
+<%--                <c:if test="${task.getErrors().size() > 0}">--%>
+<%--                    <div class="alert alert-danger" role="alert">--%>
+<%--                        <c:set value="${task.getErrors().stream()--%>
+<%--                        .filter(t -> t.code == 1).toList()}" var="err"/>--%>
+<%--                            ${err[1].getDescription()}--%>
+<%--                    </div>--%>
+<%--                </c:if>--%>
             </div>
 
             <div class="col-md-8 ">
@@ -53,6 +61,7 @@
                         <input type="text" class="form-control"
                                value="${task.name}"
                                name="taskName">
+
                     </div>
 
                     <div class="form-group">
