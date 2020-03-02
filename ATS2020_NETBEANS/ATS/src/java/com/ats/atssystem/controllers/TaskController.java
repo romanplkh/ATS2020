@@ -1,7 +1,16 @@
 package com.ats.atssystem.controllers;
 
+
+import com.ats.atssystem.business.ITaskService;
+import com.ats.atssystem.business.TaskServiceFactory;
+import com.ats.atssystem.controllers.CommonController;
 import com.ats.atssystem.models.ErrorViewModel;
+import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.Task;
+import com.ats.atssystem.models.TaskFactory;
+import com.ats.atssystem.repository.ITaskRepo;
+
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +39,19 @@ public class TaskController extends CommonController {
         String pathInfo = request.getPathInfo();
 
         //Object to hold entity and pass to view
-        Task task = new Task();
+        ITask task = TaskFactory.createInstance();
+        ITaskService service = TaskServiceFactory.createInstance();
 
 
         //List all tasks page
         if (pathInfo == null) {
-            //Get a list of tasks ------MOCK DATA-----need to remove
-           // List<Task> taskList = MockData.getTaskList();
+            //Get a list of tasks
+            List<ITask> taskList = TaskFactory.createListInstance();
+            taskList = service.getAllTasks();
 
-            //Attach to request
-          //  request.setAttribute("taskList", taskList);
+            if (taskList.size() > 0) {
+                request.setAttribute("taskList", taskList);
+            }
 
             //Render view
             super.setView(request, TASKS_VIEW);
@@ -55,10 +67,7 @@ public class TaskController extends CommonController {
             if (taskId != 0) {
 
                 //get necessary task from DB
-                //------MOCK DATA----------------------------------------------
-               // task = MockData.getTaskList().stream().filter(t -> t.getId() == taskId)
-                   //     .collect(Collectors.toList()).get(0);
-
+                task = service.getTask(taskId);
 
                 if (task == null) {
                     request.setAttribute("error", new ErrorViewModel(
@@ -73,11 +82,11 @@ public class TaskController extends CommonController {
                             super.setView(request, TASK_DETAILS_VIEW);
                             break;
 
-                        case "update":
-
-                            request.setAttribute("task", task);
-                            super.setView(request, TASK_MAINT_VIEW);
-                            break;
+//                        case "update":
+//
+//                            request.setAttribute("task", task);
+//                            super.setView(request, TASK_MAINT_VIEW);
+//                            break;
 
                     }
                 }
@@ -100,14 +109,14 @@ public class TaskController extends CommonController {
 
 
         //set view for POST
-        //super.setView(request, TASKS_VIEW);
-        Task task = new Task();
+
+        ITask task = TaskFactory.createInstance();
+        ITaskService service = TaskServiceFactory.createInstance();
 
         //NEED TO FIX URL PATH after save
         try {
 
             String action = super.getValue(request, "action").toLowerCase();
-
 
             int taskId = super.getInteger(request, "taskId");
 
@@ -115,14 +124,16 @@ public class TaskController extends CommonController {
                 case "save":
                     populateTaskProperties(request, task);
 
-                    if (task.getErrors().size() != 0) {
-                         request.setAttribute("validationError", task.getErrors());
-                         request.setAttribute("task", task);
-                         super.setView(request, TASK_MAINT_VIEW);
+                    if (task.getErrors().isEmpty()) {
+                        //create new task in DB
+                        task = service.createTask(task);
+
 
                     } else {
-                        //create new task in DB
 
+                        request.setAttribute("validationError", task.getErrors());
+                        request.setAttribute("task", task);
+                        super.setView(request, TASK_MAINT_VIEW);
 
                     }
 
@@ -133,8 +144,6 @@ public class TaskController extends CommonController {
                     break;
 
             }
-
-
 
 
         } catch (Exception e) {
@@ -158,28 +167,14 @@ public class TaskController extends CommonController {
      * @param request POST request object
      * @param task    task object to populate
      */
-    private void populateTaskProperties(HttpServletRequest request, Task task) {
+    private void populateTaskProperties(HttpServletRequest request, ITask task) {
         String name = super.getValue(request, "taskName");
         String description = super.getValue(request, "taskDescription");
         int duration = super.getInteger(request, "taskDuration");
 
-//        if (name.trim().isEmpty()) {
-//            task.addError("Name is required");
-//        } else {
-//            task.setName(name);
-//        }
-//
-//        if (description.trim().isEmpty()) {
-//            task.addError("Description is required");
-//        } else {
-//            task.setDescription(description);
-//        }
-//        if (duration <= 0) {
-//            task.addError("Duration required and must be a positive number");
-//        } else {
-//            task.setDuration(duration);
-//        }
-
+        task.setName(name);
+        task.setDescription(description);
+        task.setDuration(duration);
         task.setCreatedAt(LocalDateTime.now());
 
     }

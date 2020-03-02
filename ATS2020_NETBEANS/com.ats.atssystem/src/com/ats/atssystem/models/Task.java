@@ -1,7 +1,6 @@
 package com.ats.atssystem.models;
 
 
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -15,10 +14,18 @@ public class Task extends Base implements ITask, Serializable {
     private String description;
     private int duration;
     private LocalDateTime createdAt;
+    
     private LocalDateTime updatedAt;
 
 
     public Task() {
+    }
+
+    public Task(int id, String name, String description, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
     }
 
     public Task(int id, String name, String description, int duration,
@@ -72,9 +79,6 @@ public class Task extends Base implements ITask, Serializable {
         if (duration == 0) {
             super.addError(ErrorFactory
                     .createInstance(3, "Duration is required"));
-        } else if (duration % 15 != 0) {
-            super.addError(ErrorFactory
-                    .createInstance(4, "Duration should be a set of 15 minutes"));
         }
         this.duration = duration;
     }
