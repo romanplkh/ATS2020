@@ -63,7 +63,7 @@ public class EmployeeController extends CommonController {
                             EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
 
                             //Get Team From DB based on Employee Id
-//                            ITeam team = TeamFactory.createInstance();
+                            ITeam team = TeamFactory.createInstance();
 //                            evm.setTeam(team);
                             if (team != null) {
                                 

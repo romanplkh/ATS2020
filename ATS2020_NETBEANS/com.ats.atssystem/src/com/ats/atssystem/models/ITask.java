@@ -1,7 +1,5 @@
 package com.ats.atssystem.models;
 
-
-
 /**
  * @author Olena Stepanova
  */
