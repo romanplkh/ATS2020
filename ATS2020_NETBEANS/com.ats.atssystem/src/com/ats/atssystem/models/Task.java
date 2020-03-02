@@ -1,35 +1,41 @@
 package com.ats.atssystem.models;
 
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
 
 /**
  * @author Olena Stepanova
  */
 public class Task extends Base implements ITask, Serializable {
+
     private int id;
     private String name;
     private String description;
     private int duration;
     private LocalDateTime createdAt;
-    
-    private LocalDateTime updatedAt;
 
+    private LocalDateTime updatedAt;
 
     public Task() {
     }
+    
+        public Task(int id, String name, String description, int duration) {
 
-    public Task(int id, String name, String description, int duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.duration = duration;
+        setName(name);
+        setDescription(description);
+        setDuration(duration);
+    }
+
+    public Task(String name, String description, int duration, LocalDateTime createdAt) {
+
+        setName(name);
+        setDescription(description);
+        setDuration(duration);
+        this.createdAt = createdAt;
     }
 
     public Task(int id, String name, String description, int duration,
-                LocalDateTime createdAt, LocalDateTime updatedAt) {
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         setName(name);
         setDescription(description);
@@ -37,7 +43,6 @@ public class Task extends Base implements ITask, Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
 
     public int getId() {
         return id;
@@ -52,11 +57,12 @@ public class Task extends Base implements ITask, Serializable {
     }
 
     public void setName(String name) {
-        if (name == null) {
+        if (name.trim().isEmpty()) {
             super.addError(ErrorFactory
                     .createInstance(1, "Name is required"));
+        } else {
+            this.name = name;
         }
-        this.name = name;
     }
 
     public String getDescription() {
@@ -64,11 +70,12 @@ public class Task extends Base implements ITask, Serializable {
     }
 
     public void setDescription(String description) {
-        if (description == null) {
+        if (description.trim().isEmpty()) {
             super.addError(ErrorFactory
                     .createInstance(2, "Description is required"));
+        } else {
+            this.description = description;
         }
-        this.description = description;
     }
 
     public int getDuration() {
@@ -79,8 +86,9 @@ public class Task extends Base implements ITask, Serializable {
         if (duration == 0) {
             super.addError(ErrorFactory
                     .createInstance(3, "Duration is required"));
+        } else {
+            this.duration = duration;
         }
-        this.duration = duration;
     }
 
     public LocalDateTime getCreatedAt() {

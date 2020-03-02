@@ -1,6 +1,5 @@
 package com.ats.atssystem.controllers;
 
-
 import com.ats.atssystem.business.ITaskService;
 import com.ats.atssystem.business.TaskServiceFactory;
 import com.ats.atssystem.controllers.CommonController;
@@ -9,7 +8,6 @@ import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.Task;
 import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.repository.ITaskRepo;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 /**
  * @author Olena Stepanova
  */
-
 @WebServlet(name = "TaskController", urlPatterns = {"/task", "/tasks"})
 public class TaskController extends CommonController {
 
@@ -42,7 +39,6 @@ public class TaskController extends CommonController {
         ITask task = TaskFactory.createInstance();
         ITaskService service = TaskServiceFactory.createInstance();
 
-
         //List all tasks page
         if (pathInfo == null) {
             //Get a list of tasks
@@ -55,7 +51,6 @@ public class TaskController extends CommonController {
 
             //Render view
             super.setView(request, TASKS_VIEW);
-
 
         } else {
             String[] pathParts = pathInfo.split("/");
@@ -82,11 +77,11 @@ public class TaskController extends CommonController {
                             super.setView(request, TASK_DETAILS_VIEW);
                             break;
 
-//                        case "update":
-//
-//                            request.setAttribute("task", task);
-//                            super.setView(request, TASK_MAINT_VIEW);
-//                            break;
+                        case "update":
+
+                            request.setAttribute("task", task);
+                            super.setView(request, TASK_MAINT_VIEW);
+                            break;
 
                     }
                 }
@@ -97,7 +92,6 @@ public class TaskController extends CommonController {
                 super.setView(request, TASK_MAINT_VIEW);
             }
 
-
         }
 
         super.getView().forward(request, response);
@@ -107,13 +101,10 @@ public class TaskController extends CommonController {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-
         //set view for POST
-
         ITask task = TaskFactory.createInstance();
         ITaskService service = TaskServiceFactory.createInstance();
 
-        //NEED TO FIX URL PATH after save
         try {
 
             String action = super.getValue(request, "action").toLowerCase();
@@ -124,13 +115,11 @@ public class TaskController extends CommonController {
                 case "save":
                     populateTaskProperties(request, task);
 
-                    if (task.getErrors().isEmpty()) {
+                    if (service.isValid(task)) {
                         //create new task in DB
                         task = service.createTask(task);
 
-
                     } else {
-
                         request.setAttribute("validationError", task.getErrors());
                         request.setAttribute("task", task);
                         super.setView(request, TASK_MAINT_VIEW);
@@ -144,7 +133,6 @@ public class TaskController extends CommonController {
                     break;
 
             }
-
 
         } catch (Exception e) {
             super.setView(request, TASK_MAINT_VIEW);
@@ -165,19 +153,18 @@ public class TaskController extends CommonController {
      * Populates task object with data from the POST request
      *
      * @param request POST request object
-     * @param task    task object to populate
+     * @param task task object to populate
      */
     private void populateTaskProperties(HttpServletRequest request, ITask task) {
         String name = super.getValue(request, "taskName");
         String description = super.getValue(request, "taskDescription");
         int duration = super.getInteger(request, "taskDuration");
 
-        task.setName(name);
-        task.setDescription(description);
-        task.setDuration(duration);
-        task.setCreatedAt(LocalDateTime.now());
+       task.setName(name);
+       task.setDescription(description);
+       task.setDuration(duration);
+       task.setCreatedAt(LocalDateTime.now());
 
     }
-
 
 }
