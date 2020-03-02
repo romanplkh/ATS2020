@@ -22,13 +22,11 @@ public class TaskService implements ITaskService {
     @Override
     public ITask createTask(ITask task) {
 
-
         if (isValid(task)) {
             int id = repo.addTask(task);
-            task.setId(id);
         } else {
             task.addError(ErrorFactory
-                    .createInstance(6, "Please correct errors specified before save"));
+                    .createInstance(6, "Please correct errors"));
         }
 
         return task;
@@ -57,22 +55,21 @@ public class TaskService implements ITaskService {
     public boolean isValid(ITask task) {
         checkDuration(task);
 
-        return task.getErrors().size() == 0;
+        return task.getErrors().isEmpty();
     }
 
     //Business validation
-
     /**
      * Validates task duration for min time and set of 15min
-     * @param task task object to validate business rules
-     *             for duration field
+     *
+     * @param task task object to validate business rules for duration field
      */
-    private void checkDuration(ITask task){
+    private void checkDuration(ITask task) {
         if (task.getDuration() % 15 != 0) {
             task.addError(ErrorFactory
                     .createInstance(4, "Duration should be a set of 15 minutes"));
         }
-        if(task.getDuration() < 30){
+        if (task.getDuration() < 30) {
             task.addError(ErrorFactory
                     .createInstance(5, "Duration should be minimum 30 minutes long"));
         }

@@ -127,7 +127,12 @@ USE `atsnovember`$$
 CREATE PROCEDURE `getEmployeeDetails` (IN id_param INT)
 BEGIN
 
-SELECT * FROM employees LEFT JOIN teammembers on employees.id = teammembers.EmployeeId LEFT JOIN teams on teams.id = teammembers.TeamId WHERE employees.id = id_param;
+    SELECT * FROM employees
+    LEFT JOIN teammembers
+    on employees.id = teammembers.EmployeeId
+    LEFT JOIN teams
+    on teams.id = teammembers.TeamId
+    WHERE employees.id = id_param;
 
 END$$
 DELIMITER ;
@@ -161,7 +166,6 @@ CREATE PROCEDURE spCreateTask(
     IN taskDuration int,
     IN descr nvarchar(255),
     IN created datetime,
-    IN updated datetime,
     OUT id_out INT
 )
 BEGIN
@@ -175,10 +179,13 @@ END //
 DELIMITER ;
 
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
+VALUES ('Network Design', '60', 'Design network infrastructure', '2020-03-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
-
+VALUES ('Router Configuration', '120', 'Configure routers', '2020-03-01');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Network Security', '240', 'Network Security', '2020-03-03');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', '2020-03-02');
 
 
 --TEAMS
