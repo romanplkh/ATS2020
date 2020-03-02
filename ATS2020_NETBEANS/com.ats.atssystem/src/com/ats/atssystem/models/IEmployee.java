@@ -4,6 +4,7 @@ package com.ats.atssystem.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public interface IEmployee extends IBase {
 
@@ -31,17 +32,17 @@ public interface IEmployee extends IBase {
 
     void setIsDeleted(boolean isDeleted);
 
-    LocalDate getCreatedAt();
+    Date getCreatedAt();
 
-    void setCreatedAt(LocalDate createdAt);
+    void setCreatedAt(Date createdAt);
 
-    LocalDate getUpdatedAt();
+    Date getUpdatedAt();
 
-    void setUpdatedAt(LocalDate updatedAt);
+    void setUpdatedAt(Date updatedAt);
 
-    LocalDate getDeletedAt();
+    Date getDeletedAt();
 
-    void setDeletedAt(LocalDate deletedAt);
+    void setDeletedAt(Date deletedAt);
 
 
 }

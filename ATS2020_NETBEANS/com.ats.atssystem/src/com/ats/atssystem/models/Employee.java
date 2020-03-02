@@ -5,18 +5,15 @@ package com.ats.atssystem.models;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author Roman Pelikh
  */
-
-
 public class Employee extends Base implements IEmployee {
 
     private int id;
@@ -26,21 +23,20 @@ public class Employee extends Base implements IEmployee {
     private double hourlyRate;
     private boolean isDeleted;
 
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
-    private LocalDate deletedAt;
-
+    private Date createdAt;
+    private Date updatedAt;
+    private Date deletedAt;
 
     public Employee() {
     }
 
     public Employee(String firstName, String lastName, String sin, double hourlyRate) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.sin = sin;
-        this.hourlyRate = hourlyRate;
-    }
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setSin(sin);
+        this.setHourlyRate(hourlyRate);
 
+    }
 
     @Override
     public int getId() {
@@ -111,7 +107,6 @@ public class Employee extends Base implements IEmployee {
             this.hourlyRate = hourlyRate;
         }
 
-
     }
 
     @Override
@@ -125,34 +120,33 @@ public class Employee extends Base implements IEmployee {
     }
 
     @Override
-    public LocalDate getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
     @Override
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     @Override
-    public LocalDate getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
     @Override
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @Override
-    public LocalDate getDeletedAt() {
+    public Date getDeletedAt() {
         return deletedAt;
     }
 
     @Override
-    public void setDeletedAt(LocalDate deletedAt) {
+    public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
     }
-
 
 }
