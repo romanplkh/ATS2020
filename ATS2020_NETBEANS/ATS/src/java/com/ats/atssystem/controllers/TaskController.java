@@ -119,11 +119,14 @@ public class TaskController extends CommonController {
                         //create new task in DB
                         task = service.createTask(task);
 
+                        if (task.getId() == 0) {
+                            request.setAttribute("task", task);
+                            super.setView(request, TASK_MAINT_VIEW);
+                        }
+
                     } else {
-                        request.setAttribute("validationError", task.getErrors());
                         request.setAttribute("task", task);
                         super.setView(request, TASK_MAINT_VIEW);
-
                     }
 
                     break;
@@ -160,10 +163,10 @@ public class TaskController extends CommonController {
         String description = super.getValue(request, "taskDescription");
         int duration = super.getInteger(request, "taskDuration");
 
-       task.setName(name);
-       task.setDescription(description);
-       task.setDuration(duration);
-       task.setCreatedAt(LocalDateTime.now());
+        task.setName(name);
+        task.setDescription(description);
+        task.setDuration(duration);
+        task.setCreatedAt(LocalDateTime.now());
 
     }
 

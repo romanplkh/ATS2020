@@ -43,10 +43,10 @@
                             </div>
                         </c:if>
 
-                        <c:if test="${validationError != null}">
+                        <c:if test="${task.getErrors().size() > 0}">
                             <div class="alert alert-danger" role="alert">
                                 <ul class="list-unstyled mb-0">
-                                    <c:forEach items="${validationError}" var="err">
+                                    <c:forEach items="${task.getErrors()}" var="err">
                                         <li>${err.description}</li>
                                         </c:forEach>
                                 </ul>
