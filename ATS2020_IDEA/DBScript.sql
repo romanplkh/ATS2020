@@ -27,6 +27,61 @@ CREATE TABLE IF NOT EXISTS `employees` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+CREATE TABLE IF NOT EXISTS teams (
+	id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Name nvarchar(255) NOT NULL,
+    isOnCall bit DEFAULT false NOT NULL,
+    isDeleted bit DEFAULT false NOT NULL,
+    createdAt datetime NOT NULL,
+    updatedAt datetime DEFAULT NULL,
+    deletedAt datetime DEFAULT NULL
+)ENGINE=InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `atsnovember`.`teammembers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `atsnovember`.`teammembers` (
+  `EmployeeId` INT(11) NOT NULL,
+  `TeamId` INT(11) NOT NULL,
+  PRIMARY KEY (`EmployeeId`, `TeamId`),
+  CONSTRAINT `fk_employees_has_teams_employees`
+    FOREIGN KEY (`EmployeeId`)
+    REFERENCES `atsnovember`.`employees` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_employees_has_teams`
+    FOREIGN KEY (`TeamId`)
+    REFERENCES `atsnovember`.`teams` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+ALTER TABLE `atsnovember`.`teammembers` 
+ADD CONSTRAINT `EmployeeId`
+  FOREIGN KEY (`EmployeeId` , `TeamId`)
+  REFERENCES `atsnovember`.`employees` (`id` , `id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION,
+ADD CONSTRAINT `TeamId`
+  FOREIGN KEY (`EmployeeId` , `TeamId`)
+  REFERENCES `atsnovember`.`teams` (`id` , `id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+
+
+-- ADD EMPLOYEE
+
 DELIMITER //
 DROP procedure IF EXISTS spAddEmployee;
 // DELIMITER ;
@@ -51,17 +106,30 @@ DELIMITER //
 DROP procedure IF EXISTS spGetEmployeeLookup;
 // DELIMITER ;
 
+
+-- GET EMPLOYEE
+
 DELIMITER $$
-USE `atsnovember`$$
-CREATE PROCEDURE spGetEmployeeLookup(
-    IN idParam INT
-)
+CREATE PROCEDURE `spGetEmployee`(IN idParam INT )
 BEGIN
-    SELECT id, firstName, lastName
-    from employees
-    WHERE (idParam IS NULL OR id = idParam);
+SELECT * from employees
+WHERE (idParam IS NULL OR id = idParam);
 END$$
 
+DELIMITER ;
+
+DELIMITER //
+DROP procedure IF EXISTS `getEmployeeDetails`;
+// DELIMITER ;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `getEmployeeDetails` (IN id_param INT)
+BEGIN
+
+SELECT * FROM employees LEFT JOIN teammembers on employees.id = teammembers.EmployeeId LEFT JOIN teams on teams.id = teammembers.TeamId WHERE employees.id = id_param;
+
+END$$
 DELIMITER ;
 
 -- Get a LIST of TASKS procedure or
@@ -110,3 +178,9 @@ INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt
 VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
 VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
+
+
+
+--TEAMS
+
+
