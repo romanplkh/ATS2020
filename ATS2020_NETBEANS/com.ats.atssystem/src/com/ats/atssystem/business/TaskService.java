@@ -24,9 +24,13 @@ public class TaskService implements ITaskService {
 
         if (isValid(task)) {
             int id = repo.addTask(task);
-        } else {
-            task.addError(ErrorFactory
-                    .createInstance(6, "Please correct errors"));
+            if (id != 0) {
+                task.setId(id);
+            } else {
+                task.addError(ErrorFactory
+                        .createInstance(6, "Something went wrong. Task wasn't saved. "
+                                + "Please try again later"));
+            }
         }
 
         return task;
