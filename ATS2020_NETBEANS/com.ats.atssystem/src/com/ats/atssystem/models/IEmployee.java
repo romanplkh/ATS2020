@@ -43,6 +43,8 @@ public interface IEmployee extends IBase {
     Date getDeletedAt();
 
     void setDeletedAt(Date deletedAt);
+    
+    
 
 
 }

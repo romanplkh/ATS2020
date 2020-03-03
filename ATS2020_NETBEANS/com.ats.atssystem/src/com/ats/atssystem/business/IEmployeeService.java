@@ -1,8 +1,7 @@
 package com.ats.atssystem.business;
 
-
-
 import com.ats.atssystem.models.IEmployee;
+import com.ats.atssystem.models.IEmployeeDTO;
 import java.util.List;
 
 public interface IEmployeeService {
@@ -17,8 +16,8 @@ public interface IEmployeeService {
 
     IEmployee getEmployee(int id);
 
+    IEmployeeDTO getEmployeeDetails(int id);
+
     List<IEmployee> getEmployees();
-
-
 
 }
