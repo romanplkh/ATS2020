@@ -18,7 +18,6 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
     private final String SP_GET_TASK_DETAILS = "CALL spGetTasks(?)";
     private final String SP_GET_ALL_TASKS = "CALL spGetTasks(?)";
 
-
     private IDAL dataaccess = DALFactory.createInstance();
 
     public TaskRepo() {
@@ -104,8 +103,8 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
      * Populates task's properties with values returned from database for
      * specified task
      *
-     * @param rs CachedRowSet data set returned from database as a result
-     *           of sql statement execution
+     * @param rs CachedRowSet data set returned from database as a result of sql
+     * statement execution
      * @return task populated task object or null
      * @throws SQLException
      */
@@ -120,6 +119,11 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
             task.setName(rs.getString("name"));
             task.setDescription(rs.getString("description"));
             task.setDuration(super.getInt("duration", rs));
+            task.setCreatedAt(super.getLocalDate("createdAt", rs));
+            
+            if (rs.getDate("updatedAt") != null) {
+                task.setUpdatedAt(super.getLocalDate("updatedAt", rs));
+            }
 
         }
 
@@ -129,8 +133,9 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
 
     /**
      * Returns a list of tasks retrieved from database table
-     * @param rs CachedRowSet data set returned from database as a result
-     *       of sql statement execution
+     *
+     * @param rs CachedRowSet data set returned from database as a result of sql
+     * statement execution
      * @return list of tasks or null
      * @throws SQLException
      */
