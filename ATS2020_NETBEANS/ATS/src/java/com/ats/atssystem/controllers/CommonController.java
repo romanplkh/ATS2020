@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 public class CommonController extends HttpServlet {
-    private RequestDispatcher view;
 
+    private RequestDispatcher view;
 
     public RequestDispatcher getView() {
         return view;
@@ -51,8 +51,15 @@ public class CommonController extends HttpServlet {
         }
     }
 
-
-
+    /**
+     * Splits parts of URL
+     *
+     * @param pathInfo String URL
+     * @return String[] of URL parts
+     */
+    protected String[] getUrlParts(String pathInfo) {
+        return pathInfo.split("/");
+    }
 
     protected String getValue(HttpServletRequest request, String key) {
         return request.getParameter(key);

@@ -55,4 +55,19 @@
         <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employee/*</url-pattern>
     </servlet-mapping>
+    
+    <!--    TEAM SERVLET-->
+    <servlet>
+        <servlet-name>TeamController</servlet-name>
+        <servlet-class>com.ats.atssystem.controllers.TeamController</servlet-class>
+    </servlet>
+    
+    
+    <!--TEAM MAINTENANCE-->
+    <servlet-mapping>
+        <servlet-name>TeamController</servlet-name>
+        <url-pattern>/team/*</url-pattern>
+    </servlet-mapping>
+    
+    
 </web-app>

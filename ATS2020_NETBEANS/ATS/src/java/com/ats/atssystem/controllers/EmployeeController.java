@@ -43,7 +43,7 @@ public class EmployeeController extends CommonController {
 
             IEmployee employee = EmployeeFactory.createInstance();
 
-            String[] pathParts = getUrlParts(pathInfo);
+            String[] pathParts = super.getUrlParts(pathInfo);
 
             // employee/:id - get ID
             int id = super.getInteger(pathParts[1]);
@@ -62,30 +62,11 @@ public class EmployeeController extends CommonController {
                             super.setView(request, EMPLOYEE_MAINT_VIEW);
                             break;
                         case "details":
-<<<<<<< HEAD
                             IEmployeeDTO employeeDetails = EmployeeDTOFactory.createInstance();
 
                             employeeDetails = employeeService.getEmployeeDetails(id);
 
                             request.setAttribute("empDetails", employeeDetails);
-=======
-                            EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
-
-                            //Get Team From DB based on Employee Id
-                            ITeam team = TeamFactory.createInstance();
-//                            evm.setTeam(team);
-                            if (team != null) {
-                                
-                                evm.setTeam(team);
-                                
-                            } else {
-                                evm.setTeam(null);
-                            }
-                            ;
-                            
-                            evm.setEmployee(employee);
-                            request.setAttribute("evm", evm);
->>>>>>> dev
                             super.setView(request, EMPLOYEE_DETAILS_VIEW);
                             break;
                     }
@@ -159,16 +140,6 @@ public class EmployeeController extends CommonController {
      */
     private static String extractNameFromJSP() {
         return EMPLOYEES_VIEW.substring(0, EMPLOYEES_VIEW.indexOf("."));
-    }
-
-    /**
-     * Splits parts of URL
-     *
-     * @param pathInfo String URL
-     * @return String[] of URL parts
-     */
-    private String[] getUrlParts(String pathInfo) {
-        return pathInfo.split("/");
     }
 
     /**
