@@ -119,20 +119,15 @@ END$$
 DELIMITER ;
 
 DELIMITER //
-DROP procedure IF EXISTS `getEmployeeDetails`;
+DROP procedure IF EXISTS `spGetEmployeeDetails`;
 // DELIMITER ;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE PROCEDURE `getEmployeeDetails` (IN id_param INT)
+CREATE PROCEDURE `spGetEmployeeDetails` (IN id_param INT)
 BEGIN
 
-    SELECT * FROM employees
-    LEFT JOIN teammembers
-    on employees.id = teammembers.EmployeeId
-    LEFT JOIN teams
-    on teams.id = teammembers.TeamId
-    WHERE employees.id = id_param;
+SELECT * FROM employees LEFT JOIN teammembers on employees.id = teammembers.EmployeeId LEFT JOIN teams on teams.id = teammembers.TeamId WHERE employees.id = id_param;
 
 END$$
 DELIMITER ;
@@ -148,15 +143,9 @@ CREATE PROCEDURE spGetTasks(
     IN idParam INT
 )
 BEGIN
-	IF idParam IS NULL THEN
-		SELECT id, name, description  FROM tasks
-		ORDER BY name;
-    
-    ELSE 
-		SELECT * from tasks
-        WHERE id = idParam
-        order by name;
-    END IF;
+    SELECT *  FROM tasks
+    WHERE (idParam IS NULL OR id = idParam)
+    ORDER BY name;
 END //
 
 DELIMITER ;
@@ -172,6 +161,7 @@ CREATE PROCEDURE spCreateTask(
     IN taskDuration int,
     IN descr nvarchar(255),
     IN created datetime,
+    IN updated datetime,
     OUT id_out INT
 )
 BEGIN
@@ -185,13 +175,9 @@ END //
 DELIMITER ;
 
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Design', '60', 'Design network infrastructure', now());
+VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Router Configuration', '120', 'Configure routers', now());
-INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Security', '240', 'Network Security', now());
-INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
+VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
 
 
 -- TEAMS
@@ -220,11 +206,25 @@ INSERT INTO teams (Name, isOnCall, isDeleted, createdAt, updatedAt, deletedAt)
 -- 2. Insert team members in TeamMembers table
 INSERT INTO teammembers (EmployeeId,
                          TeamId)
-VALUES(id_out, member1Id),
-      (id_out, member2Id); 
+VALUES(member1Id, id_out),
+      (member2Id, id_out); 
       
 -- 3. commit changes    
 COMMIT;
 
 END;
 
+
+-- VALIDATE AVAILABILITY EMPLOYEES TO BE ADDED TO TEAM
+DELIMITER //
+DROP PROCEDURE IF EXISTS spCheckMembersSelected;
+// DELIMITER ;
+
+CREATE PROCEDURE `spCheckMembersSelected`(IN id_member1 INT, IN id_member2 INT)
+BEGIN
+SELECT teams.id, Name,  CONCAT(firstName, " ", lastName) AS FullName, EmployeeId, TeamId 
+FROM teams INNER JOIN teammembers 
+ON TeamId = id INNER JOIN employees 
+ON employees.id = teammembers.EmployeeId
+WHERE teammembers.EmployeeId IN (id_member1, id_member2) AND teams.isDeleted = false;
+END

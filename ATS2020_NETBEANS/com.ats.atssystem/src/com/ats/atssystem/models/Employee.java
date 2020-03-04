@@ -26,6 +26,7 @@ public class Employee extends Base implements IEmployee {
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
+    private String fullName;
 
     public Employee() {
     }
@@ -147,6 +148,10 @@ public class Employee extends Base implements IEmployee {
     @Override
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 
 }

@@ -5,10 +5,18 @@
  */
 package com.ats.atssystem.controllers;
 
+import com.ats.atssystem.business.EmployeeService;
+import com.ats.atssystem.business.EmployeeServiceFactory;
+import com.ats.atssystem.business.IEmployeeService;
 import com.ats.atssystem.business.ITeamService;
 import com.ats.atssystem.business.TeamServiceFactory;
+import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.ErrorViewModel;
+import com.ats.atssystem.models.IEmployee;
+import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +35,22 @@ public class TeamController extends CommonController {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo != null) {
+
+            IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
+
+            List<IEmployee> employees = employeeService.getEmployees();
+
+            ITeam team = TeamFactory.createInstance();
+
             String[] pathParts = super.getUrlParts(pathInfo);
 
             int id = super.getInteger(pathParts[1]);
 
             //Create
             if (id == 0) {
+
+                request.setAttribute("employees", employees);
+                request.setAttribute("team", team);
                 super.setView(request, TEAM_MAINT_VIEW);
 
                 //
@@ -44,38 +62,58 @@ public class TeamController extends CommonController {
             //show all teams
         }
 
+        super.getView().forward(request, response);
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        ITeamService teamService = TeamServiceFactory.createInstance();
+        ITeam team = TeamFactory.createInstance();
+        boolean busRulesAreValid = false;
+
         try {
             //Get action of button
             String action = super.getValue(request, "action").toLowerCase();
 
-            ITeamService teamService = TeamServiceFactory.createInstance();
-
             switch (action) {
-                case "create":
+                case "save":
 
-                    //1. Check that 2 employees are selected
-                    if (!employeesSelected(request)) {
-                        request.setAttribute("error", new ErrorViewModel("You must select both employees"));
+                    team = mapPropertiesToTeam(request);
+                    //Populate dropdowns in case of failure validation
+                    List<IEmployee> employees = EmployeeServiceFactory.createInstance().getEmployees();
+                    request.setAttribute("employees", employees);
+                    if (!teamService.isValid(team)) {
+
+                        request.setAttribute("modelErrors", team.getErrors());
+                        request.setAttribute("team", team);
+
+                        super.setView(request, TEAM_MAINT_VIEW);
+                    } else {
+
+                        //Try to insert, but valdate with bussiness rules
+                        ITeam teamValidated = teamService.validateMembersInTeam(
+                                team.getTeamMembers().get(0).getId(), team.getTeamMembers().get(1).getId()
+                        );
+
+                        if (teamValidated.getErrors().size() > 0) {
+                            request.setAttribute("error", teamValidated.getErrors());
+                            super.setView(request, TEAM_MAINT_VIEW);
+
+                        } else {
+
+                            busRulesAreValid = true;
+                            teamService.createTeam(team);
+                            //TODO CHANGE WITH NEXT ITERATION CASES
+                            super.setView(request, "/employees.jsp");
+
+                        }
+
                     }
-                    
-                     //2. Check that they are different
-                    if(!employeesAreDifferent(request)){
-                        request.setAttribute("error", new ErrorViewModel("You must select both employees"));
-                    }
-                   
 
                     //3. Business rule that they do not exist in other teams
-                    
-                    
-                    
                     //4. Create team
-                    
-                    
                     break;
                 case "update":
                     break;
@@ -88,32 +126,36 @@ public class TeamController extends CommonController {
             request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
         }
 
-        response.sendRedirect(request.getContextPath() + "/employees");
+        if (!teamService.isValid(team) || !busRulesAreValid) {
+            super.getView().forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/team");
+        }
 
     }
 
-    /**
-     * Checks if both employees are selected
-     *
-     * @param request HttpServletRequest
-     * @return boolean of a condition
-     */
-    private boolean employeesSelected(HttpServletRequest request) {
+    private ITeam mapPropertiesToTeam(HttpServletRequest request) {
 
-        int employeeId1 = super.getInteger(request, "emp1");
-        int employeeId2 = super.getInteger(request, "emp2");
+        List<IEmployee> members = EmployeeFactory.createListInstance();
 
-        return employeeId1 != 0 && employeeId2 != 0;
+        String teamName = super.getValue(request, "teamName");
+        int member_1 = super.getInteger(request, "member1");
+        int member_2 = super.getInteger(request, "member2");
 
-    }
+        ITeam team = TeamFactory.createInstance();
 
-    private boolean employeesAreDifferent(HttpServletRequest request) {
+        IEmployee emp1 = EmployeeFactory.createInstance();
+        emp1.setId(member_1);
+        IEmployee emp2 = EmployeeFactory.createInstance();
+        emp2.setId(member_2);
 
-        int employeeId1 = super.getInteger(request, "emp1");
-        int employeeId2 = super.getInteger(request, "emp2");
+        members.add(emp1);
+        members.add(emp2);
 
-        return employeeId1 != employeeId2;
+        team.setName(teamName);
+        team.setTeamMembers(members);
 
+        return team;
     }
 
 }

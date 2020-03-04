@@ -6,6 +6,7 @@
 package com.ats.atssystem.business;
 
 import com.ats.atssystem.models.ITeam;
+import java.util.List;
 
 /**
  *
@@ -20,5 +21,9 @@ public interface ITeamService {
      * @return
      */
     ITeam createTeam(ITeam team);
+
+    boolean isValid(ITeam team);
+
+    ITeam validateMembersInTeam(int idMember_1, int idMember_2);
 
 }

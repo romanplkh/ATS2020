@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : team
     Created on : Mar 4, 2020, 10:38:23 AM
     Author     : Olena Stepanova
@@ -28,15 +28,23 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8">
 
-                        <c:if test="${error.errors != null}">
+                        <c:if test="${modelErrors != null}">
                             <div class="alert alert-danger" role="alert">
-                                <c:forEach items="${error.errors}" var="err">
-                                    ${err.description}
+                                <c:forEach items="${modelErrors}" var="err">
+                                    <p class="m-0">${err.description}</p>
                                 </c:forEach>
                             </div>
                         </c:if>
 
-                       <!--validation errors here-->
+                        <c:if test="${error != null}">
+                            <div class="alert alert-danger" role="alert">
+                                <c:forEach items="${error}" var="err">
+                                    <p class="m-0">${err.description}</p>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+
+                        <!--validation errors here-->
 
                     </div>
 
@@ -56,30 +64,31 @@
                                 <label>Team member 1</label>
                                 <select class="form-control" name="member1">
                                     <option value="0">Select an employee</option>
-                                    <c:forEach items="${vm.listEmployees1}" var="employee">
-                                        <option value="${employee.id}">${employee}</option>
+                                    <c:forEach items="${employees}" var="employee">
+                                        <option value="${employee.id}">${employee.fullName}</option>
                                     </c:forEach>
                                 </select>
-                            </div>    
+                            </div>
 
                             <div class="form-group">
                                 <label>Team member 2</label>
                                 <select class="form-control" name="member2">
                                     <option value="0">Select an employee</option>
-                                    <c:forEach items="${vm.listEmployees2}" var="employee">
-                                        <option value="${employee.id}">${employee}</option>
+                                    <c:forEach items="${employees}" var="employee">
+                                        <option value="${employee.id}">${employee.fullName}</option>
                                     </c:forEach>
                                 </select>
-                            </div>    
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
-                                       value="${team.isOnCall}" name="isOnCall">
-                                <label class="form-check-label" 
-                                       for="defaultCheck1">
-                                    Is on Call
-                                </label>
                             </div>
+
+
+                            <!--                            <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                   value="${team.isOnCall}" name="isOnCall">
+                                                            <label class="form-check-label"
+                                                                   for="defaultCheck1">
+                                                                Is on Call
+                                                            </label>
+                                                        </div>-->
 
                             <button class="btn btn-success btn-lg mt-3" value="save"
                                     name="action">Save</button>

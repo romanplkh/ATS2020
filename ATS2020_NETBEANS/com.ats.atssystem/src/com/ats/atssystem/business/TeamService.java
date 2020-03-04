@@ -6,6 +6,10 @@
 package com.ats.atssystem.business;
 
 import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.TeamFactory;
+import com.ats.atssystem.repository.ITeamRepo;
+import com.ats.atssystem.repository.TeamRepoFactory;
+import java.util.List;
 
 /**
  *
@@ -13,9 +17,31 @@ import com.ats.atssystem.models.ITeam;
  */
 public class TeamService implements ITeamService {
 
+    //Repo depenancy
+    private ITeamRepo repo;
+
     @Override
     public ITeam createTeam(ITeam team) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        repo = TeamRepoFactory.createInstance();
+        team.setId(repo.addTeam(team));
+        return team;
+
+    }
+
+    @Override
+    public boolean isValid(ITeam team) {
+        return team.getErrors().isEmpty();
+    }
+
+    public ITeam validateMembersInTeam(int idMember_1, int idMember_2) {
+        repo = TeamRepoFactory.createInstance();
+        ITeam team = TeamFactory.createInstance();
+
+        team = repo.getMembersOnTeamToValidate(idMember_1, idMember_2);
+
+        return team;
+
     }
 
 }
