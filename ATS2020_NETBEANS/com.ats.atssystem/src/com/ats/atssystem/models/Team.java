@@ -44,7 +44,12 @@ public class Team extends Base implements Serializable, ITeam {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+        if (name.isEmpty()) {
+            super.addError(ErrorFactory.createInstance(3, "Team name is required"));
+        } else {
+            this.name = name;
+        }
+
     }
 
     @Override
@@ -104,8 +109,23 @@ public class Team extends Base implements Serializable, ITeam {
 
     @Override
     public void setTeamMembers(List<IEmployee> teamMembers) {
-        this.teamMembers = teamMembers;
+
+        int memberId_1 = teamMembers.get(0).getId();
+        int memberId_2 = teamMembers.get(1).getId();
+
+        if (memberId_1 == 0 || memberId_2 == 0) {
+            super.addError(ErrorFactory.createInstance(3, "Team should contain 2 members"));
+
+        } else {
+
+            if (memberId_1 == memberId_2) {
+                super.addError(ErrorFactory.createInstance(3, "Team members should be different"));
+            } else {
+                this.teamMembers = teamMembers;
+            }
+
+        }
+
     }
 
-    
 }

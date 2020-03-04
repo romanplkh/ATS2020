@@ -43,7 +43,7 @@ public class EmployeeController extends CommonController {
 
             IEmployee employee = EmployeeFactory.createInstance();
 
-            String[] pathParts = getUrlParts(pathInfo);
+            String[] pathParts = super.getUrlParts(pathInfo);
 
             // employee/:id - get ID
             int id = super.getInteger(pathParts[1]);
@@ -140,16 +140,6 @@ public class EmployeeController extends CommonController {
      */
     private static String extractNameFromJSP() {
         return EMPLOYEES_VIEW.substring(0, EMPLOYEES_VIEW.indexOf("."));
-    }
-
-    /**
-     * Splits parts of URL
-     *
-     * @param pathInfo String URL
-     * @return String[] of URL parts
-     */
-    private String[] getUrlParts(String pathInfo) {
-        return pathInfo.split("/");
     }
 
     /**
