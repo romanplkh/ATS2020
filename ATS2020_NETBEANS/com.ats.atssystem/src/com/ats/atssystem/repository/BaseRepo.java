@@ -1,13 +1,15 @@
 package com.ats.atssystem.repository;
 
-
-
 import javax.sql.rowset.CachedRowSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public abstract class BaseRepo {
+
     /**
      * Helps get a column alias
      *
@@ -48,7 +50,7 @@ public abstract class BaseRepo {
      */
     protected int getInt(String columnName, CachedRowSet rs) throws SQLException {
         int nValue = 0;
-        nValue = rs.getInt(getByColumnLabel(columnName,rs));
+        nValue = rs.getInt(getByColumnLabel(columnName, rs));
         return nValue;
     }
 
@@ -61,7 +63,7 @@ public abstract class BaseRepo {
      */
     protected double getDouble(String columnName, CachedRowSet rs) throws SQLException {
         double nValue = 0.0;
-        nValue = rs.getDouble(getByColumnLabel(columnName,rs));
+        nValue = rs.getDouble(getByColumnLabel(columnName, rs));
         return nValue;
     }
 
@@ -72,9 +74,23 @@ public abstract class BaseRepo {
      * @return
      * @throws SQLException
      */
-    protected Date getDate(String columnName, CachedRowSet rs) throws SQLException{
+    protected Date getDate(String columnName, CachedRowSet rs) throws SQLException {
         Date nValue = new Date();
-        nValue = rs.getDate(getByColumnLabel(columnName,rs));
+        nValue = rs.getDate(getByColumnLabel(columnName, rs));
         return nValue;
+    }
+
+    /**
+     * Returns LocalDateTime from db column
+     *
+     * @param columnName
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
+    protected LocalDateTime getLocalDate(String columnName, CachedRowSet rs) throws SQLException {
+
+        return rs.getTimestamp(getByColumnLabel(columnName, rs)).toLocalDateTime();
+
     }
 }

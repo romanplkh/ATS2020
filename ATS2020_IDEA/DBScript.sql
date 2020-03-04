@@ -127,7 +127,12 @@ USE `atsnovember`$$
 CREATE PROCEDURE `getEmployeeDetails` (IN id_param INT)
 BEGIN
 
-SELECT * FROM employees LEFT JOIN teammembers on employees.id = teammembers.EmployeeId LEFT JOIN teams on teams.id = teammembers.TeamId WHERE employees.id = id_param;
+    SELECT * FROM employees
+    LEFT JOIN teammembers
+    on employees.id = teammembers.EmployeeId
+    LEFT JOIN teams
+    on teams.id = teammembers.TeamId
+    WHERE employees.id = id_param;
 
 END$$
 DELIMITER ;
@@ -143,9 +148,15 @@ CREATE PROCEDURE spGetTasks(
     IN idParam INT
 )
 BEGIN
-    SELECT *  FROM tasks
-    WHERE (idParam IS NULL OR id = idParam)
-    ORDER BY name;
+	IF idParam IS NULL THEN
+		SELECT id, name, description  FROM tasks
+		ORDER BY name;
+    
+    ELSE 
+		SELECT * from tasks
+        WHERE id = idParam
+        order by name;
+    END IF;
 END //
 
 DELIMITER ;
@@ -161,7 +172,6 @@ CREATE PROCEDURE spCreateTask(
     IN taskDuration int,
     IN descr nvarchar(255),
     IN created datetime,
-    IN updated datetime,
     OUT id_out INT
 )
 BEGIN
@@ -175,12 +185,15 @@ END //
 DELIMITER ;
 
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
+VALUES ('Network Design', '60', 'Design network infrastructure', now());
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
+VALUES ('Router Configuration', '120', 'Configure routers', now());
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Network Security', '240', 'Network Security', now());
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
 
 
-
---TEAMS
+-- TEAMS
 
 
