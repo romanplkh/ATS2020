@@ -103,7 +103,7 @@ END$$
 DELIMITER ;
 
 DELIMITER //
-DROP procedure IF EXISTS spGetEmployeeLookup;
+DROP procedure IF EXISTS spGetEmployee;
 // DELIMITER ;
 
 
@@ -113,7 +113,7 @@ DELIMITER $$
 CREATE PROCEDURE `spGetEmployee`(IN idParam INT )
 BEGIN
 SELECT * from employees
-WHERE (idParam IS NULL OR id = idParam);
+WHERE ((idParam IS NULL AND employees.isDeleted <> true) OR id = idParam);
 END$$
 
 DELIMITER ;

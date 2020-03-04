@@ -96,6 +96,4 @@ public class Team extends Base implements Serializable, ITeam {
         this.deletedAt = deletedAt;
     }
 
-
-
 }

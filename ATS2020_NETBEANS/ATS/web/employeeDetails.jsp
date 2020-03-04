@@ -18,7 +18,7 @@
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
 
         <main>
-            <c:set var="emp" value="${evm.employee}"/>
+            <c:set var="emp" value="${empDetails}"/>
             <div class="container my-5">
                 <h1 class="display-4 text-center mb-5">Employee Information</h1>
 
@@ -37,28 +37,28 @@
                                 <h3 class="card-title">Personal Information</h3>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            First Name: </span>&nbsp; ${emp.firstName}
+                                            First Name: </span>&nbsp; ${emp.employee.firstName}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Last Name: </span>&nbsp; ${emp.lastName}
+                                            Last Name: </span>&nbsp; ${emp.employee.lastName}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            SIN: </span>&nbsp; ${emp.sin}
+                                            SIN: </span>&nbsp; ${emp.employee.sin}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Hourly Rate: </span> <fmt:formatNumber value="${emp.hourlyRate}" type="currency" currencySymbol="$"/>
+                                            Hourly Rate: </span> <fmt:formatNumber value="${emp.employee.hourlyRate}" type="currency" currencySymbol="$"/>
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Deleted:</span>&nbsp; ${emp.isDeleted ? "Yes":"No"}
+                                            Deleted:</span>&nbsp; ${emp.employee.isDeleted ? "Yes":"No"}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Created At:</span>&nbsp; ${emp.createdAt}
+                                            Created At:</span>&nbsp; ${emp.employee.createdAt}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Updated At:</span>&nbsp;${emp.updatedAt ? emp.updatedAt : "Not applicable" }
+                                            Updated At:</span>&nbsp;${emp.employee.updatedAt ? emp.employee.updatedAt : "Not applicable" }
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Deleted At:</span>&nbsp; ${emp.deletedAt ? emp.deletedAt : "Not applicable" }
+                                            Deleted At:</span>&nbsp; ${emp.employee.deletedAt ? emp.employee.deletedAt : "Not applicable" }
                                     </li>
                                 </ul>
                             </div>
@@ -68,7 +68,7 @@
                         <div class="card" style="width: 100%">
                             <div class="card-body">
                                 <h3 class="card-title">Current Team</h3>
-                                <h1 class="card-subtitle mb-2 text-success display-4">November</h1>
+                                <h1 class="card-subtitle mb-2 text-success display-4">${emp.team.name != null ? emp.team.name : "No Team"}</h1>
                             </div>
                         </div>
 
