@@ -66,16 +66,6 @@ public class EmployeeController extends CommonController {
 
                             employeeDetails = employeeService.getEmployeeDetails(id);
 
-                            //Get Team From DB based on Employee Id
-//                            ITeam team = TeamFactory.createInstance();
-//                            evm.setTeam(team);
-//                            if (team != null) {
-//                                
-//                                evm.setTeam(team);
-//                                
-//                            } else {
-//                                evm.setTeam(null);
-//                            };
                             request.setAttribute("empDetails", employeeDetails);
                             super.setView(request, EMPLOYEE_DETAILS_VIEW);
                             break;
@@ -143,14 +133,31 @@ public class EmployeeController extends CommonController {
 
     }
 
+    /**
+     * Extracts name from jsp file without extension
+     *
+     * @return name of a file without extention
+     */
     private static String extractNameFromJSP() {
         return EMPLOYEES_VIEW.substring(0, EMPLOYEES_VIEW.indexOf("."));
     }
 
+    /**
+     * Splits parts of URL
+     *
+     * @param pathInfo String URL
+     * @return String[] of URL parts
+     */
     private String[] getUrlParts(String pathInfo) {
         return pathInfo.split("/");
     }
 
+    /**
+     * Gets values from form and creates instance of employee based on input values
+     *
+     * @param request HttpServletRequest
+     * @return instance of employee with populated values
+     */
     private IEmployee populateEmployeeModel(HttpServletRequest request) {
 
         String firstName = super.getValue(request, "firstName");

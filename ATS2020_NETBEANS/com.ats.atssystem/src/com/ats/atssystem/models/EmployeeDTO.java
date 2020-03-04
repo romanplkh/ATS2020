@@ -2,6 +2,10 @@ package com.ats.atssystem.models;
 
 import java.io.Serializable;
 
+/**
+ *
+ * @author Roman Pelikh
+ */
 public class EmployeeDTO implements IEmployeeDTO, Serializable {
 
     private IEmployee employee = EmployeeFactory.createInstance();

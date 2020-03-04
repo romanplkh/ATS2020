@@ -11,7 +11,10 @@ import java.util.Date;
  *
  * @author Roman Pelikh
  */
-public interface ITeam extends IBase{
+/**
+ * ITeam interface. Defines properties of the Team
+ */
+public interface ITeam extends IBase {
 
     int getId();
 

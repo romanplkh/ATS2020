@@ -1,11 +1,15 @@
 package com.ats.atssystem.models;
 
-
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * @author Roman Pelikh
+ */
+/**
+ * IEmployee interface. Defines properties of the Employee
+ */
 public interface IEmployee extends IBase {
 
     int getId();
@@ -43,8 +47,5 @@ public interface IEmployee extends IBase {
     Date getDeletedAt();
 
     void setDeletedAt(Date deletedAt);
-    
-    
-
 
 }

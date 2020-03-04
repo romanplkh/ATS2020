@@ -14,6 +14,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
+/**
+ * @author Roman Pelikh
+ */
 public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     private final String SPROC_INSERT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?,?);";
@@ -21,12 +24,16 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
     private final String SPROC_GET_EMPLOYEE_DETAILS = "CALL spGetEmployeeDetails(?);";
 
+    //Dependancy of Dataaccess layer
     private IDAL dataAccess;
 
     public EmployeeRepo() {
         dataAccess = DALFactory.createInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int addEmployee(IEmployee employee) {
         int returnedId = 0;
@@ -43,7 +50,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
-
         returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
 
         try {
@@ -58,29 +64,28 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         return returnedId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int updateEmployee(IEmployee employee) {
 
         int rowsAffected = 0;
-//        List<Object> returnedValues;
-//        List<IParameter> params = ParameterFactory.createListInstance();
-//
-//        params.add(ParameterFactory.createInstance(employee.getId()));
-//        params.add(ParameterFactory.createInstance(employee.getFirstName()));
-//        params.add(ParameterFactory.createInstance(employee.getLastName()));
-//        params.add(ParameterFactory.createInstance(employee.getSin()));
-//        params.add(ParameterFactory.createInstance(employee.getHourlyRate()));
-//        params.add(ParameterFactory.createInstance(employee.getUpdatedAt()));
-//
-//
+
         return rowsAffected;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int deleteEmployee(IEmployee employee) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IEmployee> retrieveEmployees() {
 
@@ -99,6 +104,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         return employees;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IEmployee retrieveEmployee(int id) {
         IEmployee employee = EmployeeFactory.createInstance();
@@ -119,6 +127,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         return employee;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IEmployeeDTO retrieveEmployeeDetails(int id) {
 
@@ -141,6 +152,13 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     }
 
+    /**
+     * Fills object of IEmployeeDTO with values
+     *
+     * @param rs CachedRowSet with values from database
+     * @return employee information with all details
+     * @throws SQLException
+     */
     private IEmployeeDTO populateEmployeeDTO(CachedRowSet rs) throws SQLException {
 
         IEmployeeDTO employeeDetails = null;
@@ -163,8 +181,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
 
             team.setName(rs.getString("Name"));
-            
-            
 
             employeeDetails.setEmployee(employee);
             employeeDetails.setTeam(team);
@@ -177,7 +193,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     /**
      * Maps properties of an employee stored in Database to the model IEmployee
      *
-     * @param rs
+     * @param rs CachedRowSet with values from database
      * @return employee model with populated properties or null
      * @throws SQLException
      */
@@ -201,6 +217,13 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     }
 
+    /**
+     * Allows to map data from CachedRowSet to List of objects (employees)
+     *
+     * @param rs CachedRowSet with values from database
+     * @return list of employees
+     * @throws SQLException
+     */
     private List<IEmployee> toListOfEmployees(CachedRowSet rs) throws SQLException {
         List<IEmployee> employees = EmployeeFactory.createListInstance();
 

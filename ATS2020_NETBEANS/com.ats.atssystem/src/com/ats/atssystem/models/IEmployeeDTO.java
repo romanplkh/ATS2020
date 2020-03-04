@@ -9,6 +9,9 @@ package com.ats.atssystem.models;
  *
  * @author Roman Pelikh
  */
+/**
+ * IEmployeeDTO interface. Defines all properties for details related to an employee
+ */
 public interface IEmployeeDTO {
 
     IEmployee getEmployee();
