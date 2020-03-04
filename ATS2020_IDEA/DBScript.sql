@@ -195,5 +195,36 @@ VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and re
 
 
 -- TEAMS
+DELIMITER //
+DROP PROCEDURE IF EXISTS spCreateTeam;
+// DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE spCreateTeam(
+	IN teamName varchar(255),
+    IN onCall bit,
+    IN created datetime,
+    IN member1Id INT,
+    IN member2Id INT,
+    OUT id_out INT
+)
+BEGIN
+START TRANSACTION;
+ 
+-- 1. insert a new team
+INSERT INTO teams (Name, isOnCall, isDeleted, createdAt, updatedAt, deletedAt)
+	   VALUES(teamName, onCall, b'0', created, null, null);
+       
+       SET id_out = LAST_INSERT_ID();
+        
+-- 2. Insert team members in TeamMembers table
+INSERT INTO teammembers (EmployeeId,
+                         TeamId)
+VALUES(id_out, member1Id),
+      (id_out, member2Id); 
+      
+-- 3. commit changes    
+COMMIT;
+
+END;
 
