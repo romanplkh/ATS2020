@@ -62,30 +62,11 @@ public class EmployeeController extends CommonController {
                             super.setView(request, EMPLOYEE_MAINT_VIEW);
                             break;
                         case "details":
-<<<<<<< HEAD
                             IEmployeeDTO employeeDetails = EmployeeDTOFactory.createInstance();
 
                             employeeDetails = employeeService.getEmployeeDetails(id);
 
                             request.setAttribute("empDetails", employeeDetails);
-=======
-                            EmployeeDetailsViewModel evm = new EmployeeDetailsViewModel();
-
-                            //Get Team From DB based on Employee Id
-                            ITeam team = TeamFactory.createInstance();
-//                            evm.setTeam(team);
-                            if (team != null) {
-                                
-                                evm.setTeam(team);
-                                
-                            } else {
-                                evm.setTeam(null);
-                            }
-                            ;
-                            
-                            evm.setEmployee(employee);
-                            request.setAttribute("evm", evm);
->>>>>>> dev
                             super.setView(request, EMPLOYEE_DETAILS_VIEW);
                             break;
                     }

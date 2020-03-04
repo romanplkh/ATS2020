@@ -6,8 +6,8 @@
 package com.ats.atssystem.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -17,6 +17,7 @@ public class Team extends Base implements Serializable, ITeam {
 
     private int id;
     private String name;
+    private List<IEmployee> teamMembers = EmployeeFactory.createListInstance();
     private boolean isOnCall;
     private boolean isDeleted;
     private Date createdAt;
@@ -96,4 +97,15 @@ public class Team extends Base implements Serializable, ITeam {
         this.deletedAt = deletedAt;
     }
 
+    @Override
+    public List<IEmployee> getTeamMembers() {
+        return teamMembers;
+    }
+
+    @Override
+    public void setTeamMembers(List<IEmployee> teamMembers) {
+        this.teamMembers = teamMembers;
+    }
+
+    
 }
