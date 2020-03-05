@@ -127,7 +127,10 @@ USE `atsnovember`$$
 CREATE PROCEDURE `spGetEmployeeDetails` (IN id_param INT)
 BEGIN
 
-SELECT * FROM employees LEFT JOIN teammembers on employees.id = teammembers.EmployeeId LEFT JOIN teams on teams.id = teammembers.TeamId WHERE employees.id = id_param;
+SELECT * FROM employees 
+LEFT JOIN teammembers on employees.id = teammembers.EmployeeId 
+LEFT JOIN teams on teams.id = teammembers.TeamId 
+WHERE employees.id = id_param;
 
 END$$
 DELIMITER ;
@@ -143,9 +146,15 @@ CREATE PROCEDURE spGetTasks(
     IN idParam INT
 )
 BEGIN
-    SELECT *  FROM tasks
-    WHERE (idParam IS NULL OR id = idParam)
-    ORDER BY name;
+	IF idParam IS NULL THEN
+		SELECT id, name, description  FROM tasks
+		ORDER BY name;
+    
+    ELSE 
+		SELECT * from tasks
+        WHERE id = idParam
+        order by name;
+    END IF;
 END //
 
 DELIMITER ;
@@ -178,6 +187,10 @@ INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt
 VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
 VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Network Security', '240', 'Network Security', now());
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
+VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
 
 
 -- TEAMS
@@ -219,12 +232,18 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS spCheckMembersSelected;
 // DELIMITER ;
 
+DELIMITER //
 CREATE PROCEDURE `spCheckMembersSelected`(IN id_member1 INT, IN id_member2 INT)
 BEGIN
 SELECT teams.id, Name,  CONCAT(firstName, " ", lastName) AS FullName, EmployeeId, TeamId 
 FROM teams INNER JOIN teammembers 
 ON TeamId = id INNER JOIN employees 
 ON employees.id = teammembers.EmployeeId
-WHERE teammembers.EmployeeId IN (id_member1, id_member2) AND teams.isDeleted = false
-END //
+WHERE teammembers.EmployeeId IN (id_member1, id_member2) AND teams.isDeleted = false;
+END 
+//
 DELIMITER ;
+
+
+
+
