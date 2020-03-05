@@ -26,7 +26,7 @@ import javax.sql.rowset.CachedRowSet;
  */
 public class TeamRepo extends BaseRepo implements ITeamRepo {
 
-    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?,?,?,?);";
+    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
 
     private IDAL dataaccess = DALFactory.createInstance();
@@ -43,10 +43,9 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         List<IParameter> params = ParameterFactory.createListInstance();
 
         params.add(ParameterFactory.createInstance(team.getName()));
-        params.add(ParameterFactory.createInstance(team.getIsOnCall()));
         params.add(ParameterFactory.createInstance(team.getCreatedAt()));
-        params.add(ParameterFactory.createInstance(team.getTeamMembers().get(0)));
-        params.add(ParameterFactory.createInstance(team.getTeamMembers().get(1)));
+        params.add(ParameterFactory.createInstance(team.getTeamMembers().get(0).getId()));
+        params.add(ParameterFactory.createInstance(team.getTeamMembers().get(1).getId()));
 
         //For OUT team Id
         params.add(ParameterFactory.createInstance(newTeamId, IParameter.Direction.OUT, Types.INTEGER));
