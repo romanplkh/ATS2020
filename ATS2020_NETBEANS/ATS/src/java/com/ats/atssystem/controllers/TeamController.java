@@ -16,6 +16,7 @@ import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -154,6 +155,7 @@ public class TeamController extends CommonController {
 
         team.setName(teamName);
         team.setTeamMembers(members);
+        team.setCreatedAt(new Date());
 
         return team;
     }
