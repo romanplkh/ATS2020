@@ -188,7 +188,6 @@ DROP PROCEDURE IF EXISTS spCreateTeam;
 DELIMITER //
 CREATE PROCEDURE spCreateTeam(
 	IN teamName varchar(255),
-    IN onCall bit,
     IN created datetime,
     IN member1Id INT,
     IN member2Id INT,
@@ -199,7 +198,7 @@ START TRANSACTION;
  
 -- 1. insert a new team
 INSERT INTO teams (Name, isOnCall, isDeleted, createdAt, updatedAt, deletedAt)
-	   VALUES(teamName, onCall, b'0', created, null, null);
+	   VALUES(teamName, b'0', b'0', created, null, null);
        
        SET id_out = LAST_INSERT_ID();
         
@@ -212,8 +211,8 @@ VALUES(member1Id, id_out),
 -- 3. commit changes    
 COMMIT;
 
-END;
-
+END //
+DELIMITER ;
 
 -- VALIDATE AVAILABILITY EMPLOYEES TO BE ADDED TO TEAM
 DELIMITER //
@@ -226,5 +225,6 @@ SELECT teams.id, Name,  CONCAT(firstName, " ", lastName) AS FullName, EmployeeId
 FROM teams INNER JOIN teammembers 
 ON TeamId = id INNER JOIN employees 
 ON employees.id = teammembers.EmployeeId
-WHERE teammembers.EmployeeId IN (id_member1, id_member2) AND teams.isDeleted = false;
-END
+WHERE teammembers.EmployeeId IN (id_member1, id_member2) AND teams.isDeleted = false
+END //
+DELIMITER ;

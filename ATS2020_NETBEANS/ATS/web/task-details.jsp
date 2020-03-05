@@ -48,12 +48,6 @@
                                 <h3 class="font-weight-bolder mb-3">${task.name}</h3>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
-                                        <strong>Id:</strong> ${task.id}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <strong>Name:</strong> ${task.name}
-                                    </li>
-                                    <li class="list-group-item">
                                         <strong>Description:</strong> ${task.description}
                                     </li>
                                     <li class="list-group-item">

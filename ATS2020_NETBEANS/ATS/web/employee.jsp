@@ -12,6 +12,9 @@
             <div class="container my-5">
                 <div class="row justify-content-center">
                     <div class="col-md-8">
+
+                        <h1 class="display-4 text-center">${employee.id == 0 ? "Add Employee" : "Update Employee"}</h1>
+
                         <c:if test="${modelErrors != null}">
                             <div class="alert alert-danger" role="alert">
                                 <c:forEach items="${modelErrors}" var="err">
@@ -29,7 +32,7 @@
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
-                                <h1 class="display-4 text-center">${employee.id == 0 ? "Add Employee" : "Update Employee"}</h1>
+
 
                                 <form method="post">
                                     <div class="form-group">
