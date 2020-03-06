@@ -94,12 +94,13 @@ public class TeamController extends CommonController {
                     } else {
 
                         //Try to insert, but valdate with bussiness rules
-                        ITeam teamValidated = teamService.validateMembersInTeam(
+                        ITeam teamToValidate = teamService.validateMembersInTeam(
                                 team.getTeamMembers().get(0).getId(), team.getTeamMembers().get(1).getId()
                         );
 
-                        if (teamValidated.getErrors().size() > 0) {
-                            request.setAttribute("error", teamValidated.getErrors());
+                        if (teamToValidate.getErrors().size() > 0) {
+                            request.setAttribute("error", teamToValidate.getErrors());
+                            request.setAttribute("team", team);
                             super.setView(request, TEAM_MAINT_VIEW);
 
                         } else {

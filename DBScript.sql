@@ -60,22 +60,22 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- SET SQL_MODE=@OLD_SQL_MODE;
+-- SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+-- SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
-ALTER TABLE `atsnovember`.`teammembers` 
-ADD CONSTRAINT `EmployeeId`
-  FOREIGN KEY (`EmployeeId` , `TeamId`)
-  REFERENCES `atsnovember`.`employees` (`id` , `id`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION,
-ADD CONSTRAINT `TeamId`
-  FOREIGN KEY (`EmployeeId` , `TeamId`)
-  REFERENCES `atsnovember`.`teams` (`id` , `id`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+-- ALTER TABLE `atsnovember`.`teammembers` 
+-- ADD CONSTRAINT `EmployeeId`
+--   FOREIGN KEY (`EmployeeId` , `TeamId`)
+--   REFERENCES `atsnovember`.`employees` (`id` , `id`)
+--   ON DELETE NO ACTION
+--   ON UPDATE NO ACTION,
+-- ADD CONSTRAINT `TeamId`
+--   FOREIGN KEY (`EmployeeId` , `TeamId`)
+--   REFERENCES `atsnovember`.`teams` (`id` , `id`)
+--   ON DELETE NO ACTION
+--   ON UPDATE NO ACTION;
 
 
 
@@ -102,21 +102,22 @@ BEGIN
 END$$
 DELIMITER ;
 
+
+-- GET EMPLOYEE
+
 DELIMITER //
 DROP procedure IF EXISTS spGetEmployee;
 // DELIMITER ;
-
-
--- GET EMPLOYEE
 
 DELIMITER $$
 CREATE PROCEDURE `spGetEmployee`(IN idParam INT )
 BEGIN
 SELECT * from employees
-WHERE ((idParam IS NULL AND employees.isDeleted <> true) OR id = idParam);
+WHERE ((idParam IS NULL AND employees.isDeleted <> true) OR id = idParam)
+ORDER BY lastName;
 END$$
 
-DELIMITER ;
+
 
 DELIMITER //
 DROP procedure IF EXISTS `spGetEmployeeDetails`;
@@ -133,7 +134,16 @@ LEFT JOIN teams on teams.id = teammembers.TeamId
 WHERE employees.id = id_param;
 
 END$$
-DELIMITER ;
+
+
+
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+
 
 -- Get a LIST of TASKS procedure or
 -- one task details if Id is provided
@@ -170,7 +180,6 @@ CREATE PROCEDURE spCreateTask(
     IN taskDuration int,
     IN descr nvarchar(255),
     IN created datetime,
-    IN updated datetime,
     OUT id_out INT
 )
 BEGIN

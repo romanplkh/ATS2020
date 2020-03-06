@@ -55,10 +55,10 @@
                                             Created At:</span>&nbsp; ${emp.employee.createdAt}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Updated At:</span>&nbsp;${emp.employee.updatedAt ? emp.employee.updatedAt : "Not applicable" }
+                                            Updated At:</span>&nbsp;${emp.employee.updatedAt != null ? emp.employee.updatedAt : "Not applicable" }
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Deleted At:</span>&nbsp; ${emp.employee.deletedAt ? emp.employee.deletedAt : "Not applicable" }
+                                            Deleted At:</span>&nbsp; ${emp.employee.deletedAt != null ? emp.employee.deletedAt : "Not applicable" }
                                     </li>
                                 </ul>
                             </div>
