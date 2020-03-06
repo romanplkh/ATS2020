@@ -33,8 +33,6 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Create Team</a>
-                        <a class="dropdown-item" href="#"></a>
-                        <a class="dropdown-item" href="#"></a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
