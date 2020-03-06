@@ -1,0 +1,64 @@
+<%@ page pageEncoding="UTF-8" %>
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#"><strong>Advanced Technology Solutions</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/dashboard">Dashboard
+                        <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Employees
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employee/create">Create
+                            Employee</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employees">List of Employees</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Teams
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Create Team</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Tasks
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Create New Task</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/tasks">List of Tasks</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Jobs
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#"></a>
+                        <a class="dropdown-item" href="#"></a>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>

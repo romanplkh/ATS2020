@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ATS2020_IDEA:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/ATS2020_IDEA_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="ATS2020_IDEA/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ATS2020_IDEA" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="D:/NBCC_Fall2019/Java/external/lib/mysql-connertor-java-8.0.12/mysql-connector-java-8.0.12.jar" />
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="javax.servlet:jstl:1.2" />
+          <element id="file-copy" path="$PROJECT_DIR$/../com.ats.models/dist/com.ats.models.jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
