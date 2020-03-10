@@ -253,6 +253,70 @@ END
 //
 DELIMITER ;
 
+CREATE TABLE IF NOT EXISTS `atsnovember`.`jobs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(255) NOT NULL,
+  `clientName` VARCHAR(100) NOT NULL,
+  `start` DATETIME NOT NULL,
+  `end` DATETIME NOT NULL,
+  `teamId` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id` (`id` ASC),
+  INDEX `teamId_idx` (`teamId` ASC),
+  CONSTRAINT `teamId`
+    FOREIGN KEY (`teamId`)
+    REFERENCES `atsnovember`.`teams` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
 
+CREATE TABLE IF NOT EXISTS `atsnovember`.`jobstasks` (
+  `taskId` INT NOT NULL,
+  `jobId` INT NOT NULL,
+  `operatingCost` DECIMAL(13,2) NOT NULL,
+  `operatingRevenue` DECIMAL(13,2) NOT NULL,
+  PRIMARY KEY (`taskId`, `jobId`),
+  INDEX `jobId_idx` (`jobId` ASC),
+  CONSTRAINT `taskId`
+    FOREIGN KEY (`taskId`)
+    REFERENCES `atsnovember`.`tasks` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `jobId`
+    FOREIGN KEY (`jobId`)
+    REFERENCES `atsnovember`.`jobs` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS spDeleteTask;
+// DELIMITER ;
+
+-- RETURNES 0 - deleted, -1 - an employee has a skill, -2 - the job has this task assigned
+
+DELIMITER //
+CREATE PROCEDURE spDeleteTask ( 
+	IN taskId_param int,
+	OUT code int)
+BEGIN
+	IF (SELECT COUNT(*) 
+ 		FROM employeetasks 
+        WHERE taskId = taskId_param > 0)		
+		THEN SET code = -1;
+    
+	ELSEIF (SELECT COUNT(*) 
+			FROM jobstasks
+            WHERE taskId = taskId_param > 0)
+		THEN SET code = -2;
+    
+    ELSE
+		DELETE FROM tasks
+		WHERE id = taskId_param;
+		SET code = 0;
+    END IF;
+    
+END 
+//
+DELIMITER ;
 
 
