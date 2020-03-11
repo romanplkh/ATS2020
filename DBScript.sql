@@ -340,3 +340,62 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+-- JOB DETAILS
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS spGetJobDetails;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spGetJobDetails(
+	IN jobId_param INT
+)
+BEGIN
+
+	SELECT jobs.id, jobs.description, clientName, 
+		   start, end, teams.Name AS team, tasks.name AS task
+	FROM jobs
+    INNER JOIN teams
+    ON jobs.teamId = teams.id
+    INNER JOIN jobstasks
+    ON jobs.id = jobstasks.jobId
+    INNER JOIN tasks
+    ON jobstasks.taskId = tasks.id
+    WHERE jobs.id = jobId_param;
+END //
+
+DELIMITER ;
+
+-- NOT WORKING
+DELIMITER //
+DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spAddTaskToEmployee(
+	IN employeeId_param INT,
+	IN taskArray VARCHAR(255)
+)
+BEGIN
+
+	START TRANSACTION;
+		BEGIN 
+			SET @sql = CONCAT('insert into employeetasks(employeeId, taskId) 
+             VALUES(employeeId_param, ',taskArray, ')');
+                
+			PREPARE stmt FROM @sql; 
+			EXECUTE stmt; 
+			DEALLOCATE PREPARE stmt; 
+		END;
+    COMMIT;
+END //
+
+DELIMITER ;
+
+-- SET @taskArray = '2,3';
+-- CALL atsnovember.spAddTaskToEmployee(1, @taskArray);
+
+
+
+
+

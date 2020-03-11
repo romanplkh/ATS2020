@@ -10,9 +10,27 @@ package com.ats.atssystem.models;
  * @author Olena Stepanova
  */
 public class JobDetailsViewModel {
-    private Team team;
-    private Job job;
+    private ITeam team;
+    private IJob job;
+    
+    
     
     //add private List<Tasks> to display all tasks
     //List<Team> to display all teams
+
+    public ITeam getTeam() {
+        return team;
+    }
+
+    public void setTeam(ITeam team) {
+        this.team = team;
+    }
+
+    public IJob getJob() {
+        return job;
+    }
+
+    public void setJob(IJob job) {
+        this.job = job;
+    }
 }
