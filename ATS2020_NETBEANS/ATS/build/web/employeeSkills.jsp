@@ -1,6 +1,6 @@
 <%--
-    Document   : job
-    Created on : 10-Mar-2020, 7:51:03 PM
+    Document   : employeeSkills
+    Created on : 10-Mar-2020, 10:04:12 PM
     Author     : Roman Pelikh
 --%>
 
@@ -10,8 +10,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Employee Skills</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
-        <title>Create Job</title>
     </head>
     <body>
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
@@ -30,24 +30,29 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <h1 class="text-center">Create Job</h1>
+                        <h1 class="text-center">Add Skill</h1>
                         <form method="post">
                             <div class="row mt-5">
                                 <div class="col-md-6">
-                                    <h3 class="text-center">Job Details</h1>
+                                    <h3 class="text-center">Skills Management</h1>
                                         <div class="form-group">
-                                            <label>Client</label>
-                                            <input type="text" class="form-control" name="client" value="${jvm.client}">
+                                            <label>Employees</label>
+                                            <select class="form-control" name="employee">
+                                                <option>Employee 1</option>
+                                                <c:forEach items="${jvm.employees}" var="emp">
+                                                    <option value="${emp.id}">${emp.fullName}</option>
+                                                </c:forEach>
+                                            </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Task</label>
+                                            <label>Skills</label>
                                             <div class="row ">
                                                 <div class="col-md-9 py-1">
                                                     <select class="form-control" name="task" id="listTasks">
-                                                        <option value="1">Task 1</option>
-                                                        <option value="2">Task 2</option>
-                                                        <option value="3">Task 3</option>
-                                                        <option value="4">Task 4</option>
+                                                        <option value="1">Skill 1</option>
+                                                        <option value="2">Skill 2</option>
+                                                        <option value="3">Skill 3</option>
+                                                        <option value="4">Skill 4</option>
                                                         <c:forEach items="${jvm.tasks}" var="task">
                                                             <option value="${task.id}">${task.name}</option>
                                                         </c:forEach>
@@ -58,35 +63,8 @@
                                         </div>
 
 
-                                        <div class="form-group">
-                                            <label>Team</label>
-                                            <select class="form-control" name="team">
-                                                <option>Team 1</option>
-                                                <c:forEach items="${jvm.teams}" var="team">
-                                                    <option value="${team.id}">${team.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label>Job Start Date</label>
-                                            <input type="datetime-local"  class="form-control" name="startDate" value="${jvm.startDate}">
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label>Description</label>
-                                            <textarea class="form-control" name="description" rows="3" style="resize: none">${jvm.description}
-                                            </textarea>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Emergency
-                                                </label>
-                                            </div>
-                                        </div>
 
                                         <c:choose>
                                             <c:when test="${0 == 0}">
@@ -100,17 +78,11 @@
                                         <a href="${pageContext.request.contextPath}/employees" class="btn btn-secondary btn-lg">Cancel</a>
                                 </div>
                                 <div class="col-md-6">
-                                    <h3 class="text-center">Required Tasks</h1>
+                                    <h3 class="text-center">Added Skills</h1>
                                         <label></label>
-                                        <p id="taskListPlaceHolder">No tasks added</p>
+                                        <p id="taskListPlaceHolder">No skills added</p>
                                         <ul id="requiredTasks" class="list-group px-4">
-
                                         </ul>
-
-
-
-
-
                                 </div>
                             </div>
                         </form>
@@ -173,7 +145,7 @@
 
                     span.addEventListener("click", () => {
                         span.parentNode.remove();
-                        listOfTaskIds = listOfTaskIds.filter(el => el != input.value);
+                        listOfTaskIds = listOfTaskIds.filter(el => el != input.value)
 
                         if (listOfTaskIds.length == 0) {
                             showElement("#taskListPlaceHolder")
@@ -215,7 +187,7 @@
 
                     const alertMessage = `
                         <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        This task already exist in a list of required task
+                        This skill has already been selected to add
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                         </button>

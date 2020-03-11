@@ -139,12 +139,19 @@
             let listOfTaskIds = [];
 
 
-            const removeElement = (selector) => {
+            const hideElement = (selector) => {
                 const element = document.querySelector(selector);
                 if (element) {
-                    element.parentNode.removeChild(element);
+                    element.style.display = "none";
                 }
 
+            }
+
+            const showElement = (selector) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.style.display = "block";
+                }
             }
 
             const hideErrorMessage = () => {
@@ -166,7 +173,11 @@
 
                     span.addEventListener("click", () => {
                         span.parentNode.remove();
-                        listOfTaskIds = listOfTaskIds.filter(el => el != input.value)
+                        listOfTaskIds = listOfTaskIds.filter(el => el != input.value);
+
+                        if (listOfTaskIds.length == 0) {
+                            showElement("#taskListPlaceHolder")
+                        }
                     })
 
                     li.classList.add("list-group-item");
@@ -193,7 +204,7 @@
 
                     ul.appendChild(li);
 
-                    removeElement("#taskListPlaceHolder")
+                    hideElement("#taskListPlaceHolder")
                     listOfTaskIds.push(taskValue)
 
 
