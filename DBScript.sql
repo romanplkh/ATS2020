@@ -38,6 +38,18 @@ CREATE TABLE IF NOT EXISTS teams (
     deletedAt datetime DEFAULT NULL
 )ENGINE=InnoDB;
 
+CREATE TABLE `employeetasks` (
+    `employeeId` INT  NOT NULL,
+    `taskId` INT NOT NULL,
+    PRIMARY KEY (`employeeId`, `taskId`),
+    CONSTRAINT `Constr_employeetasks_employees_fk`
+        FOREIGN KEY `employeeId_fk` (`employeeId`) REFERENCES `employees` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `Constr_employeetasks_tasks_fk`
+        FOREIGN KEY `taskId_fk` (`taskId`) REFERENCES `tasks` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB CHARACTER SET ascii COLLATE ascii_general_ci
+
 
 -- -----------------------------------------------------
 -- Table `atsnovember`.`teammembers`
@@ -318,5 +330,13 @@ BEGIN
 END 
 //
 DELIMITER ;
+
+CREATE TABLE IF NOT EXISTS `employeetasks` (
+  `employeeId` int(11) NOT NULL,
+  `taskId` int(11) NOT NULL,
+  PRIMARY KEY (`employeeId`,`taskId`),
+  KEY `employeeId_idx` (`employeeId`),
+  CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

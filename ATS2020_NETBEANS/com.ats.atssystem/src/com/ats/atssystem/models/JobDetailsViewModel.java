@@ -12,4 +12,7 @@ package com.ats.atssystem.models;
 public class JobDetailsViewModel {
     private Team team;
     private Job job;
+    
+    //add private List<Tasks> to display all tasks
+    //List<Team> to display all teams
 }

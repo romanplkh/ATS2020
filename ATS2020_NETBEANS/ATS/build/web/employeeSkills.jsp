@@ -35,7 +35,7 @@
                             <div class="row mt-5">
                                 <div class="col-md-6">
                                     <h3 class="text-center">Skills Management</h1>
-                                        <div class="form-group">
+                                        <div class="form-group w-80">
                                             <label>Employees</label>
                                             <select class="form-control" name="employee">
                                                 <option>Employee 1</option>
@@ -46,8 +46,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Skills</label>
-                                            <div class="row ">
-                                                <div class="col-md-9 py-1">
+                                            <div class="row no-gutters">
+                                                <div class="col-md-11 py-1">
                                                     <select class="form-control" name="task" id="listTasks">
                                                         <option value="1">Skill 1</option>
                                                         <option value="2">Skill 2</option>
@@ -58,7 +58,7 @@
                                                         </c:forEach>
                                                     </select>
                                                 </div>
-                                                <div class="col-md-3 py-1"><button id="addTask" class="btn btn-primary btn-block">Add</button></div>
+                                                <div class="col-md-1 pl-0 py-1 ml-0"><button id="addTask" class="btn btn-link">Add</button></div>
                                             </div>
                                         </div>
 
