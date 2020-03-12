@@ -5,6 +5,11 @@
  */
 package com.ats.atssystem.controllers;
 
+import com.ats.atssystem.business.IJobService;
+import com.ats.atssystem.business.JobServiceFactory;
+import com.ats.atssystem.models.ErrorViewModel;
+import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.JobFactory;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,11 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 public class JobController extends CommonController {
 
     private static String JOB_DETAILS_VIEW = "/job-details.jsp";
+//  ---------  NEED TO CHANGE AFTER  --------------------
+    private static String JOB_MAINT_VIEW = "/dashboard.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String pathInfo = request.getPathInfo();
+        IJobService service = JobServiceFactory.createInstance();
 
         if (pathInfo == null) {
             //show all jobs
@@ -33,16 +41,23 @@ public class JobController extends CommonController {
             //job id
             int jobId = super.getInteger(pathParts[1]);
 
+            IJob job = JobFactory.createInstance();
+
             if (jobId != 0) {
 
                 String page = pathParts[2].toLowerCase();
+                job = service.getJobDetails(jobId);
 
-                switch (page) {
-                    case "details":
-                        //get a job with that id and assosiated info 
-                        // VM instance
-                        //request.setAttribute("jobVm", page);
-                        super.setView(request, JOB_DETAILS_VIEW);
+                if (job != null) {
+                    switch (page) {
+                        case "details":
+                            request.setAttribute("job", job);
+                            super.setView(request, JOB_DETAILS_VIEW);
+                    }
+                } else {
+                    request.setAttribute("error",
+                            new ErrorViewModel(String.format("Requested job was not found")));
+                    super.setView(request, JOB_DETAILS_VIEW);
                 }
 
             } else {

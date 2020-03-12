@@ -395,7 +395,9 @@ CREATE PROCEDURE spGetJobDetails(
 BEGIN
 
 	SELECT jobs.id, jobs.description, clientName, 
-		   start, end, teams.Name AS team, tasks.name AS task
+		   start, end, 
+           CONCAT(teams.Name) AS team, 
+           CONCAT(tasks.name) AS task
 	FROM jobs
     INNER JOIN teams
     ON jobs.teamId = teams.id

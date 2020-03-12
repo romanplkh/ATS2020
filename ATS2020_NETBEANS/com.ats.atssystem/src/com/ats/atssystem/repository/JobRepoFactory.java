@@ -13,7 +13,7 @@ package com.ats.atssystem.repository;
  * JobRepoFactory class responsible for creating an
  * instance of JobRepo class
  */
-public class JobRepoFactory {
+public abstract class JobRepoFactory {
       /**
      * Creates an instance of JobRepo
      * @return new instance of JobRepo class

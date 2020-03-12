@@ -18,58 +18,73 @@
 
 
         <main>
-            <c:set var="job" value="${jobVm}"/>
+
             <div class="container my-5">
                 <h1 class="display-4 text-center mb-5">Job Details Information</h1>
 
+
                 <div class="row">
-                    <div class="col-lg-8 col-md-6">
 
-                        <div class="card" style="width: 100%;">
-                            <div class="card-body">
-                                <h3 class="card-title">Job Information</h3>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item"><span class="font-weight-bold">
-                                            Description: </span>&nbsp; ${jobVm.job.description}
-                                    </li>
-                                    <li class="list-group-item"><span class="font-weight-bold">
-                                            Client: </span>&nbsp; ${jobVm.job.client}
-                                    </li>
-                                    <li class="list-group-item"><span class="font-weight-bold">
-                                            Start: </span>&nbsp; ${jobVm.job.start}
-                                    </li>
-                                    <li class="list-group-item"><span class="font-weight-bold">
-                                            End: </span>&nbsp; ${jobVm.job.end}
-                                    </li>
+                    <c:choose>
 
-                                </ul>
+                        <c:when test="${error.errors != null}">
+                            <div class="col-12">
+                                <div class="alert alert-dismissible alert-light" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <c:forEach items="${error.errors}" var="err">
+                                        ${err}
+                                    </c:forEach>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mt-md-0 mt-sm-4 ">
-                        <div class="card" style="width: 100%">
-                            <div class="card-body">
-                                <h3 class="card-title">Current Team</h3>
-                                <h1 class="card-subtitle mb-2 text-success display-4">
-                                    ${jobVm.team.name}</h1>
-                            </div>
-                        </div>
 
-                        <div class="card mt-5" style="width: 100%;">
-                            <div class="card-body">
-                                <h3 class="card-title">Tasks</h3>
-                                <ul class="list-group list-group-flush">
-                                    <c:forEach items="${jobVm.tasks.getTasks()}" var="task">
-                                        <li class="list-group-item text-muted">${task.name}</li>
-                                        </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            
+                            <div class="col-lg-8 col-md-6">
 
-                                    <li class="list-group-item text-muted">Router configuration</li>
-                                    <li class="list-group-item text-muted">Linux Server configuration</li>
-                                    <li class="list-group-item text-muted">Windows configuration</li>
-                                </ul>
+                                <div class="card" style="width: 100%;">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Job Information</h3>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item"><span class="font-weight-bold">
+                                                    Description: </span>&nbsp; ${job.description}
+                                            </li>
+                                            <li class="list-group-item"><span class="font-weight-bold">
+                                                    Client: </span>&nbsp; ${job.clientName}
+                                            </li>
+                                            <li class="list-group-item"><span class="font-weight-bold">
+                                                    Start: </span>&nbsp; ${job.start} 
+                                            </li>
+                                            <li class="list-group-item"><span class="font-weight-bold">
+                                                    End: </span>&nbsp; ${job.end}
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="col-lg-4 col-md-6 mt-md-0 mt-sm-4 ">
+                                <div class="card" style="width: 100%">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Current Team</h3>
+                                        <h1 class="card-subtitle mb-2 text-success display-4">
+                                            ${job.getTeam().name}</h1>
+                                    </div>
+                                </div>
+
+                                <div class="card mt-5" style="width: 100%;">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Tasks</h3>
+                                        <ul class="list-group list-group-flush">
+                                            <c:forEach items="${job.getTasks()}" var="task">
+                                                <li class="list-group-item text-muted">${task.name}</li>
+                                                </c:forEach>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
 

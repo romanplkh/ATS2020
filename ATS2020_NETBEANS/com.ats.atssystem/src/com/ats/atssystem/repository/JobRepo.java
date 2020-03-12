@@ -6,22 +6,31 @@
 package com.ats.atssystem.repository;
 
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITask;
+import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.JobFactory;
+import com.ats.atssystem.models.TaskFactory;
+import com.ats.atssystem.models.TeamFactory;
 import com.ats.dataaccess.IDAL;
 import com.ats.dataaccess.IParameter;
 import com.ats.dataaccess.*;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
+import javax.sql.rowset.CachedRowSet;
 
 /**
  *
  * @author Roman Pelikh
+ * @author Olena Stepanova
  */
 public class JobRepo extends BaseRepo implements IJobRepo {
 
-  private final String SP_JOB_DETAILS = "CALL getJobDetails(?)";
+    private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
     private final String SPROC_INSERT_JOB = "CALL spInsertJob();";
 
     //Dependancy of Dataaccess layer
-    private IDAL dataAccess;
+    private IDAL dataAccess = DALFactory.createInstance();
 
     @Override
     public int addJob(IJob job) {
@@ -45,22 +54,21 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 //        } catch (Exception e) {
 //            System.out.println(e.getMessage());
 //        }
-
         return returnedId;
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
-    public JobDetailsViewModel getJobDetails(int jobId) {
-        JobDetailsViewModel jobDetails = new JobDetailsViewModel();
+    public IJob getJobDetails(int jobId) {
+        IJob jobDetails = JobFactory.createInstance();
 
         try {
             List<IParameter> parms = ParameterFactory.createListInstance();
             parms.add(ParameterFactory.createInstance(jobId, IParameter.Direction.IN, Types.INTEGER));
 
-            CachedRowSet rs = this.dataaccess.executeFill(SP_JOB_DETAILS, parms);
+            CachedRowSet rs = this.dataAccess.executeFill(SP_JOB_DETAILS, parms);
 
             jobDetails = populateJobDetails(rs);
         } catch (Exception e) {
@@ -68,32 +76,42 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
         return jobDetails;
     }
-    
-    private JobDetailsViewModel populateJobDetails(CachedRowSet rs) throws SQLException {
-        
-        JobDetailsViewModel vm = null;
-        ITeam team = null;
+
+    private IJob populateJobDetails(CachedRowSet rs) throws SQLException {
+
         IJob job = null;
+        ITeam team = null;
         List<ITask> tasks = null;
-        
-        while (rs.next()) {
-            vm = new JobDetailsViewModel();
+
+        if (rs.next()) {
+            job = JobFactory.createInstance();
             team = TeamFactory.createInstance();
             tasks = TaskFactory.createListInstance();
+            ITask task = TaskFactory.createInstance();
 
-            
             //set job properties
-            //set list of tasks to a job
-            
-                       
+            job.setId(super.getInt("id", rs));
+            job.setClientName(rs.getString("clientName"));
+            job.setDescription(rs.getString("description"));
+            job.setStart(super.getLocalDate("start", rs));
+            job.setEnd(super.getLocalDate("end", rs));
+            //set team name
             team.setName(rs.getString("team"));
-            
-            vm.setTeam(team);
-            vm.setJob(job);           
+
+            //set list of tasks to a job
+            task.setName(rs.getString("task"));
+            tasks.add(task);
+            while (rs.next()) {
+                task = TaskFactory.createInstance();
+                task.setName(rs.getString("task"));
+                tasks.add(task);
+            }
+
+            job.setTeam(team);
+            job.setTasks(tasks);
         }
-        
-        return vm;
+
+        return job;
     }
 
-    }
-
+}
