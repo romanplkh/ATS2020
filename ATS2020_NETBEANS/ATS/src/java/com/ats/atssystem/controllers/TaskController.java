@@ -135,6 +135,17 @@ public class TaskController extends CommonController {
 
                     break;
 
+                case "delete":
+                    task = service.deleteTask(service.getTask(taskId));
+
+                    if (task.getErrors().isEmpty()) {
+                        super.setView(request, TASKS_VIEW);
+                    } else {
+
+                        request.setAttribute("task", task);
+                        super.setView(request, TASK_MAINT_VIEW);
+                    }
+                    break;
             }
 
         } catch (Exception e) {

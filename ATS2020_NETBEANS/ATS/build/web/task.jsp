@@ -91,6 +91,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <button class="btn btn-warning btn-lg" value="update" name="action">Update</button>
+                                    <button class="btn btn-danger btn-lg" value="delete" name="action">Delete</button>
                                 </c:otherwise>
                             </c:choose>
                             <a href="${pageContext.request.contextPath}/tasks"

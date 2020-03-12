@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class JobRepo extends BaseRepo implements IJobRepo {
 
+  private final String SP_JOB_DETAILS = "CALL getJobDetails(?)";
     private final String SPROC_INSERT_JOB = "CALL spInsertJob();";
 
     //Dependancy of Dataaccess layer
@@ -46,7 +47,53 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 //        }
 
         return returnedId;
+    }
+
+     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public JobDetailsViewModel getJobDetails(int jobId) {
+        JobDetailsViewModel jobDetails = new JobDetailsViewModel();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            parms.add(ParameterFactory.createInstance(jobId, IParameter.Direction.IN, Types.INTEGER));
+
+            CachedRowSet rs = this.dataaccess.executeFill(SP_JOB_DETAILS, parms);
+
+            jobDetails = populateJobDetails(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return jobDetails;
+    }
+    
+    private JobDetailsViewModel populateJobDetails(CachedRowSet rs) throws SQLException {
+        
+        JobDetailsViewModel vm = null;
+        ITeam team = null;
+        IJob job = null;
+        List<ITask> tasks = null;
+        
+        while (rs.next()) {
+            vm = new JobDetailsViewModel();
+            team = TeamFactory.createInstance();
+            tasks = TaskFactory.createListInstance();
+
+            
+            //set job properties
+            //set list of tasks to a job
+            
+                       
+            team.setName(rs.getString("team"));
+            
+            vm.setTeam(team);
+            vm.setJob(job);           
+        }
+        
+        return vm;
+    }
 
     }
 
-}

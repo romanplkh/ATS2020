@@ -22,4 +22,12 @@ public interface IJobRepo {
      * @return int Id of last inserted record
      */
     int addJob(IJob job);
+
+      /**
+     * Returns specified job from database with all
+     * the details
+     * @param jobId int id of specified job
+     * @return job vm object with details
+     */
+    JobDetailsViewModel getJobDetails(int jobId);
 }

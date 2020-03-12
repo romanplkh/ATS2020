@@ -33,4 +33,11 @@ public interface ITaskRepo {
      * @return list of tasks retrieved from database
      */
     List<ITask> getTasks();
+    
+    /**
+     * Deletes specified task from a database table
+     * @param taskId int task Id
+     * @return status code with SP execution result
+     */
+    int deleteTask(int taskId);
 }
