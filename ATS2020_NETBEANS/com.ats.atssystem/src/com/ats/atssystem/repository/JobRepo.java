@@ -6,34 +6,50 @@
 package com.ats.atssystem.repository;
 
 import com.ats.atssystem.models.IJob;
-import com.ats.atssystem.models.ITask;
-import com.ats.atssystem.models.ITeam;
-import com.ats.atssystem.models.JobDetailsViewModel;
-import com.ats.atssystem.models.TaskFactory;
-import com.ats.atssystem.models.TeamFactory;
-import com.ats.dataaccess.DALFactory;
 import com.ats.dataaccess.IDAL;
 import com.ats.dataaccess.IParameter;
-import com.ats.dataaccess.ParameterFactory;
-import java.sql.SQLException;
-import java.sql.Types;
+import com.ats.dataaccess.*;
 import java.util.List;
-import javax.sql.rowset.CachedRowSet;
 
 /**
  *
- * @author Olena Stepanova
+ * @author Roman Pelikh
  */
 public class JobRepo extends BaseRepo implements IJobRepo {
 
-    private final String SP_JOB_DETAILS = "CALL getJobDetails(?)";
+  private final String SP_JOB_DETAILS = "CALL getJobDetails(?)";
+    private final String SPROC_INSERT_JOB = "CALL spInsertJob();";
 
-    private IDAL dataaccess = DALFactory.createInstance();
+    //Dependancy of Dataaccess layer
+    private IDAL dataAccess;
 
-    public JobRepo() {
+    @Override
+    public int addJob(IJob job) {
+        int returnedId = 0;
+        List<Object> returnedValues;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+//        params.add(ParameterFactory.createInstance(employee.getFirstName()));
+//        params.add(ParameterFactory.createInstance(employee.getLastName()));
+//        params.add(ParameterFactory.createInstance(employee.getSin()));
+//        params.add(ParameterFactory.createInstance(employee.getHourlyRate()));
+
+//Get back id of inserted employee
+        //params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
+        //returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
+//        try {
+//            if (returnedValues != null) {
+//                returnedId = Integer.parseInt(returnedValues.get(0).toString());
+//            }
+//
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+
+        return returnedId;
     }
 
-    /**
+     /**
      * {@inheritDoc }
      */
     @Override
@@ -77,7 +93,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
         
         return vm;
-        
     }
 
-}
+    }
+

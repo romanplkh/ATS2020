@@ -6,15 +6,24 @@
 package com.ats.atssystem.repository;
 
 import com.ats.atssystem.models.IJob;
-import com.ats.atssystem.models.JobDetailsViewModel;
 
 /**
- *
- * @author Olena Stepanova
+ * @author Roman Pelikh
+ */
+/**
+ * IEmployeeRepo class provides methods signatures to perform CRUD operations with employee object
  */
 public interface IJobRepo {
     
-    /**
+    
+      /**
+     * Inserts a new job record in database
+     * @param job a job to insert into database as a new record
+     * @return int Id of last inserted record
+     */
+    int addJob(IJob job);
+
+      /**
      * Returns specified job from database with all
      * the details
      * @param jobId int id of specified job
