@@ -57,7 +57,7 @@ public class JobController extends CommonController {
                 } else {
                     request.setAttribute("error",
                             new ErrorViewModel(String.format("Requested job was not found")));
-                    super.setView(request, JOB_DETAILS_VIEW);
+                    
                 }
 
             } else {

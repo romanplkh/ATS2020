@@ -211,7 +211,7 @@ INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt
 VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
 
 
--- TEAMS
+-- CREATE TEAM ------
 DELIMITER //
 DROP PROCEDURE IF EXISTS spCreateTeam;
 // DELIMITER ;
@@ -296,12 +296,15 @@ CREATE TABLE IF NOT EXISTS `atsnovember`.`jobstasks` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE);
 
-
+-- DELETE TASK -------
 DELIMITER //
 DROP PROCEDURE IF EXISTS spDeleteTask;
 // DELIMITER ;
 
--- RETURNES 0 - deleted, -1 - an employee has a skill, -2 - the job has this task assigned
+-- RETURN CODES:
+-- 0 - deleted
+-- -1 - an employee has a skill
+-- -2 - the job has this task assigned
 
 DELIMITER //
 CREATE PROCEDURE spDeleteTask ( 
@@ -333,21 +336,31 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
   `taskId` int(11) NOT NULL,
   PRIMARY KEY (`employeeId`,`taskId`),
   KEY `employeeId_idx` (`employeeId`),
-  CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) 
+  REFERENCES `employees` (`id`) 
+  ON DELETE NO ACTION 
+  ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 
--- INSERT JOB 
-USE `atsnovember`;
+-- INSERT JOB --------
+DELIMITER //
 DROP procedure IF EXISTS `spInsertJob`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), IN client_param VARCHAR(255), start_param DATETIME, end_param DATETIME, team_id_param INT(11), 
-cost_param DOUBLE, revenue_param DOUBLE, tasks_param VARCHAR(255), OUT id_OUT INT)
+CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+IN client_param VARCHAR(255), 
+start_param DATETIME, 
+end_param DATETIME, 
+team_id_param INT(11), 
+cost_param DOUBLE, 
+revenue_param DOUBLE, 
+tasks_param VARCHAR(255), OUT id_OUT INT)
+
 BEGIN
-DECLARE delimiterCount int;
+DECLARE numTasks int;
 DECLARE task_id INT;
 DECLARE loopCount int;
 
@@ -380,10 +393,9 @@ SET tasks_param = REPLACE(tasks_param, ' ', '');
  COMMIT;
  
 END$$
-
 DELIMITER ;
--- JOB DETAILS
 
+-- GET JOB DETAILS ------
 DELIMITER //
 DROP PROCEDURE IF EXISTS spGetJobDetails;
 // DELIMITER ;
@@ -410,7 +422,7 @@ END //
 
 DELIMITER ;
 
--- NOT WORKING
+-- ASSIGN TASKS TO EMPLOYEE --------
 DELIMITER //
 DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
 // DELIMITER ;
@@ -418,22 +430,39 @@ DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
 DELIMITER //
 CREATE PROCEDURE spAddTaskToEmployee(
 	IN employeeId_param INT,
-	IN taskArray VARCHAR(255)
+	IN taskIdArray_param VARCHAR(255)
 )
 BEGIN
 
-	START TRANSACTION;
-		BEGIN 
-			SET @sql = CONCAT('insert into employeetasks(employeeId, taskId) 
-             VALUES(employeeId_param, ',taskArray, ')');
-                
-			PREPARE stmt FROM @sql; 
-			EXECUTE stmt; 
-			DEALLOCATE PREPARE stmt; 
-		END;
-    COMMIT;
-END //
+DECLARE numTasks int;
+DECLARE task_id INT;
+DECLARE loopCount int;
 
+ START TRANSACTION;
+    
+ SET taskIdArray_param = REPLACE(taskIdArray_param, ' ', '');   
+ -- Get number of values without commas
+ SET numTasks = LENGTH(taskIdArray_param) - LENGTH(REPLACE(taskIdArray_param, ',', ''));
+
+	BEGIN 
+		SET loopCount = 1;
+        WHILE loopCount <= numTasks + 1 DO
+            -- get number id
+            SET task_id = SUBSTRING_INDEX(taskIdArray_param, ',', 1);
+            
+				INSERT INTO employeetasks (employeeId, taskId)
+				VALUES (employeeId_param, task_id);
+                
+            /* Remove last used id with comma from input string */
+            SET taskIdArray_param = REPLACE(taskIdArray_param, CONCAT(task_id, ','), ''); 
+            SET loopCount = loopCount + 1;
+
+        END WHILE;
+	END;	
+    
+    COMMIT;
+	
+END; //
 DELIMITER ;
 
 -- SET @taskArray = '2,3';
