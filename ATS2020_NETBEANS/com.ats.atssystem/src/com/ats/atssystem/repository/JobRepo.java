@@ -27,33 +27,40 @@ import javax.sql.rowset.CachedRowSet;
 public class JobRepo extends BaseRepo implements IJobRepo {
 
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
-    private final String SPROC_INSERT_JOB = "CALL spInsertJob();";
+    private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int addJob(IJob job) {
         int returnedId = 0;
         List<Object> returnedValues;
 
         List<IParameter> params = ParameterFactory.createListInstance();
-//        params.add(ParameterFactory.createInstance(employee.getFirstName()));
-//        params.add(ParameterFactory.createInstance(employee.getLastName()));
-//        params.add(ParameterFactory.createInstance(employee.getSin()));
-//        params.add(ParameterFactory.createInstance(employee.getHourlyRate()));
+        params.add(ParameterFactory.createInstance(job.getDescription()));
+        params.add(ParameterFactory.createInstance(job.getClientName()));
+        params.add(ParameterFactory.createInstance(job.getStart()));
+        params.add(ParameterFactory.createInstance(job.getEnd()));
+        params.add(ParameterFactory.createInstance(job.getTeamId()));
+        params.add(ParameterFactory.createInstance("100,200,300,400")); //cost param
+        params.add(ParameterFactory.createInstance("200,300,400,500")); //revenue param
+        params.add(ParameterFactory.createInstance(job.getTasks())); //revenue param
 
 //Get back id of inserted employee
-        //params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
-        //returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
-//        try {
-//            if (returnedValues != null) {
-//                returnedId = Integer.parseInt(returnedValues.get(0).toString());
-//            }
-//
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
+        params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
+        returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_JOB, params);
+        try {
+            if (returnedValues != null) {
+                returnedId = Integer.parseInt(returnedValues.get(0).toString());
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return returnedId;
     }
 
@@ -108,7 +115,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             }
 
             job.setTeam(team);
-            job.setTasks(tasks);
+            job.setTasksList(tasks);
         }
 
         return job;

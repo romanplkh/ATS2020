@@ -26,8 +26,9 @@ public class Job extends Base implements Serializable, IJob {
     private LocalDateTime end;
     private boolean isEmergency;
 
-    private double cost;
-    private double revenue;
+    private String tasksIds;
+    private String cost;
+    private String revenue;
 
     public Job() {
     }
@@ -40,12 +41,28 @@ public class Job extends Base implements Serializable, IJob {
     }
 
     @Override
-    public List<ITask> getTasks() {
+    public ITeam getTeam() {
+        return team;
+    }
+
+    @Override
+    public void setTeam(ITeam team) {
+        this.team = team;
+    }
+
+    @Override
+    public List<ITask> getTasksList() {
         return tasks;
     }
 
     @Override
-    public void setTasks(List<ITask> tasks) {
+    public String getTasks() {
+        this.buildTaskIdsString();
+        return tasksIds;
+    }
+
+    @Override
+    public void setTasksList(List<ITask> tasks) {
         this.tasks = tasks;
     }
 
@@ -119,49 +136,46 @@ public class Job extends Base implements Serializable, IJob {
     }
 
     @Override
-    public double getCost() {
-        return cost;
-    }
-
-    @Override
-    public double getRevenue() {
-        return revenue;
-    }
-
-    @Override
     public void setIsEmergency(boolean isEmergency) {
         this.isEmergency = isEmergency;
     }
 
     @Override
-    public ITeam getTeam() {
-        return team;
+    public String getCost() {
+        return cost;
     }
 
     @Override
-    public void setTeam(ITeam team) {
-        this.team = team;
+    public String getRevenue() {
+        return revenue;
     }
 
-    @Override
-    public void calculateCost() {
-        double result = this.team.getTeamMembers()
-                .stream()
-                .reduce(0.0, (subtotal, employee)
-                        -> subtotal + employee.getHourlyRate(), Double::sum)
-                / (this.calculateTotalTasksDuration() / 60);
-
-        this.cost = result;
+    private void buildTaskIdsString() {
+        this.tasks.forEach(t -> this.tasksIds += t.getId() + ",");
     }
 
-    @Override
-    public void calculateRevenue() {
+//    private void buildCostValuesString(){
+//        
+//    }
+    private double calculateCost(int duration, double empRate) {
+        return duration * empRate;
+
+//        double result = this.team.getTeamMembers()
+//                .stream()
+//                .reduce(0.0, (subtotal, employee)
+//                        -> subtotal + employee.getHourlyRate(), Double::sum)
+//                / (this.calculateTotalTasksDuration() / 60);
+//
+//        this.cost = result;
+    }
+
+    private double calculateRevenue(double cost) {
         int incrementRate = 3;
         if (isEmergency) {
             incrementRate = 4;
         }
 
-        this.revenue = this.cost * incrementRate;
+        return cost * incrementRate;
     }
 
     //It is a utility method, This is why interface does not have it

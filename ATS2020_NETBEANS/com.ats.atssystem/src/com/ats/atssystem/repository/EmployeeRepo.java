@@ -8,6 +8,7 @@ import com.ats.atssystem.models.IEmployeeDTO;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TeamFactory;
 import com.ats.dataaccess.*;
+import com.sun.webkit.dom.XPathResultImpl;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
@@ -18,15 +19,16 @@ import java.util.List;
  * @author Roman Pelikh
  */
 public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
-    
+
     private final String SPROC_INSERT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?,?);";
     private final String SPROC_SELECT_EMPLOYEES = "CALL spGetEmployee(?);";
     private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
     private final String SPROC_GET_EMPLOYEE_DETAILS = "CALL spGetEmployeeDetails(?);";
+    private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess;
-    
+
     public EmployeeRepo() {
         dataAccess = DALFactory.createInstance();
     }
@@ -40,9 +42,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         //Get returned values and store them in list
         List<Object> returnedValues;
-        
+
         List<IParameter> params = ParameterFactory.createListInstance();
-        
+
         params.add(ParameterFactory.createInstance(employee.getFirstName()));
         params.add(ParameterFactory.createInstance(employee.getLastName()));
         params.add(ParameterFactory.createInstance(employee.getSin()));
@@ -51,16 +53,16 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
         returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
-        
+
         try {
             if (returnedValues != null) {
                 returnedId = Integer.parseInt(returnedValues.get(0).toString());
             }
-            
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        
+
         return returnedId;
     }
 
@@ -69,9 +71,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      */
     @Override
     public int updateEmployee(IEmployee employee) {
-        
+
         int rowsAffected = 0;
-        
+
         return rowsAffected;
     }
 
@@ -79,8 +81,28 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      * {@inheritDoc}
      */
     @Override
-    public int deleteEmployee(IEmployee employee) {
-        return 0;
+    public int deleteEmployee(int id) {
+        int result = -1;
+
+        List<Object> returnedValues;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(id));
+        params.add(ParameterFactory.createInstance(result, IParameter.Direction.OUT, Types.INTEGER));
+        returnedValues = this.dataAccess.executeNonQuery(SPROC_REMOVE_EMPLOYEE, params);
+
+        try {
+            if (returnedValues != null) {
+                result = (int) returnedValues.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+
     }
 
     /**
@@ -88,19 +110,19 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      */
     @Override
     public List<IEmployee> retrieveEmployees() {
-        
+
         List<IEmployee> employees = EmployeeFactory.createListInstance();
         List<IParameter> params = ParameterFactory.createListInstance();
         params.add(ParameterFactory.createInstance(null));
-        
+
         try {
             CachedRowSet rs = this.dataAccess.executeFill(SPROC_SELECT_EMPLOYEES, params);
             employees = toListOfEmployees(rs);
-            
+
         } catch (Exception e) {
             System.out.print(e.getMessage());
         }
-        
+
         return employees;
     }
 
@@ -110,20 +132,20 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     @Override
     public IEmployee retrieveEmployee(int id) {
         IEmployee employee = EmployeeFactory.createInstance();
-        
+
         try {
             List<IParameter> params = ParameterFactory.createListInstance();
-            
+
             params.add(ParameterFactory.createInstance(id));
-            
+
             CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_SELECT_EMPLOYEE, params);
-            
+
             employee = mapPropsEmployeeToModel(rs);
-            
+
         } catch (Exception e) {
             System.out.print(e.getMessage());
         }
-        
+
         return employee;
     }
 
@@ -132,24 +154,24 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      */
     @Override
     public IEmployeeDTO retrieveEmployeeDetails(int id) {
-        
+
         IEmployeeDTO employeeDetails = null;
-        
+
         try {
             List<IParameter> params = ParameterFactory.createListInstance();
-            
+
             params.add(ParameterFactory.createInstance(id));
-            
+
             CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_GET_EMPLOYEE_DETAILS, params);
-            
+
             employeeDetails = populateEmployeeDTO(rs);
-            
+
         } catch (Exception e) {
             System.out.print(e.getMessage());
         }
-        
+
         return employeeDetails;
-        
+
     }
 
     /**
@@ -160,17 +182,17 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      * @throws SQLException
      */
     private IEmployeeDTO populateEmployeeDTO(CachedRowSet rs) throws SQLException {
-        
+
         IEmployeeDTO employeeDetails = null;
         ITeam team = null;
         IEmployee employee = null;
-        
+
         if (rs.next()) {
             employeeDetails = EmployeeDTOFactory.createInstance();
             team = TeamFactory.createInstance();
-            
+
             employee = EmployeeFactory.createInstance();
-            
+
             employee.setId(super.getInt("id", rs));
             employee.setSin(rs.getString("sin"));
             employee.setHourlyRate(super.getDouble("hourlyRate", rs));
@@ -180,19 +202,19 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setUpdatedAt(super.getDate("updatedAt", rs));
             employee.setDeletedAt(super.getDate("deletedAt", rs));
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
-            
+
             if (rs.getString("Name") != null) {
                 team.setName(rs.getString("Name"));
             } else {
                 team.setName("");
             }
-            
+
             employeeDetails.setEmployee(employee);
             employeeDetails.setTeam(team);
         }
-        
+
         return employeeDetails;
-        
+
     }
 
     /**
@@ -204,7 +226,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      */
     private IEmployee mapPropsEmployeeToModel(CachedRowSet rs) throws SQLException {
         IEmployee employee = null;
-        
+
         if (rs.next()) {
             employee = EmployeeFactory.createInstance();
             employee.setId(super.getInt("id", rs));
@@ -217,9 +239,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setDeletedAt(super.getDate("deletedAt", rs));
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
         }
-        
+
         return employee;
-        
+
     }
 
     /**
@@ -231,9 +253,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      */
     private List<IEmployee> toListOfEmployees(CachedRowSet rs) throws SQLException {
         List<IEmployee> employees = EmployeeFactory.createListInstance();
-        
+
         IEmployee employee;
-        
+
         while (rs.next()) {
             employee = EmployeeFactory.createInstance();
             employee.setId(super.getInt("id", rs));
@@ -247,9 +269,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
             employees.add(employee);
         }
-        
+
         return employees;
-        
+
     }
-    
+
 }

@@ -146,12 +146,7 @@ END$$
 
 
 
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+
 
 
 -- Get a LIST of TASKS procedure or
@@ -344,24 +339,78 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
 
 
 
--- INSERT JOB --------
+-- INSERT JOB OLD WHERE TOTAL COST AND REVENUE ARE INSERTED--------
+-- DELIMITER //
+-- DROP procedure IF EXISTS `spInsertJob`;
+-- DELIMITER ;
+
+-- DELIMITER $$
+-- CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+-- IN client_param VARCHAR(255), 
+-- start_param DATETIME, 
+-- end_param DATETIME, 
+-- team_id_param INT(11), 
+-- cost_param DOUBLE, 
+-- revenue_param DOUBLE, 
+-- tasks_param VARCHAR(255), OUT id_OUT INT)
+
+-- BEGIN
+-- DECLARE numTasks int;
+-- DECLARE task_id INT;
+-- DECLARE loopCount int;
+
+-- START TRANSACTION;
+
+-- INSERT INTO jobs (description, clientName, start, end, teamId)
+-- VALUES (desc_param, client_param, start_param, end_param, team_id_param);
+
+--  SET id_out = LAST_INSERT_ID();
+
+--  -- Remove space
+-- SET tasks_param = REPLACE(tasks_param, ' ', '');
+-- -- Get number of values without commas
+--  SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
+
+--  SET loopCount = 1;
+--         WHILE loopCount <= numTasks + 1 DO
+--             -- get number id
+--             SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
+            
+-- 				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
+-- 				VALUES (task_id, id_out, cost_param, revenue_param);
+                
+--             /* Remove last used id with comma from input string */
+--             SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
+--             SET loopCount = loopCount + 1;
+
+--         END WHILE;
+
+--  COMMIT;
+ 
+-- END$$
+-- DELIMITER ;
+
+
+
 DELIMITER //
 DROP procedure IF EXISTS `spInsertJob`;
 DELIMITER ;
-
+-- INSERT JOB NEW WITH SEPARATED COST AND REVENUE
 DELIMITER $$
 CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
 IN client_param VARCHAR(255), 
 start_param DATETIME, 
 end_param DATETIME, 
 team_id_param INT(11), 
-cost_param DOUBLE, 
-revenue_param DOUBLE, 
+cost_param VARCHAR(255), 
+revenue_param VARCHAR(255), 
 tasks_param VARCHAR(255), OUT id_OUT INT)
 
 BEGIN
 DECLARE numTasks int;
 DECLARE task_id INT;
+DECLARE cost_value DOUBLE;
+DECLARE revenue_value DOUBLE;
 DECLARE loopCount int;
 
 START TRANSACTION;
@@ -373,21 +422,28 @@ VALUES (desc_param, client_param, start_param, end_param, team_id_param);
 
  -- Remove space
 SET tasks_param = REPLACE(tasks_param, ' ', '');
+
+
 -- Get number of values without commas
  SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
 
  SET loopCount = 1;
         WHILE loopCount <= numTasks + 1 DO
-            -- get number id
+            -- get task id
             SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
+            -- get cost value
+            SET cost_value = SUBSTRING_INDEX(cost_param, ',', 1);
+            -- get revenue value
+            SET revenue_value = SUBSTRING_INDEX(revenue_param, ',', 1);
             
 				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
-				VALUES (task_id, id_out, cost_param, revenue_param);
+				VALUES (task_id, id_out, cost_value, revenue_value);
                 
             /* Remove last used id with comma from input string */
             SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
+            SET cost_param = replace(cost_param, CONCAT(cost_value, ','), '');
+            SET revenue_param = replace(revenue_param, CONCAT(revenue_value, ','), '');
             SET loopCount = loopCount + 1;
-
         END WHILE;
 
  COMMIT;
@@ -464,6 +520,44 @@ DECLARE loopCount int;
 	
 END; //
 DELIMITER ;
+
+
+-- DELETE EMPLOYEE 
+
+-- 0 - deleted
+
+USE `atsnovember`;
+DROP procedure IF EXISTS `spRemoveEmployee`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
+BEGIN 
+    IF ((SELECT COUNT(*) FROM teammembers WHERE EmployeeId = id_param) > 0)
+		THEN UPDATE employees SET isDeleted = true, deletedAt = now() WHERE id = id_param;
+     SET result = 0;
+	ELSE 
+		DELETE FROM employees WHERE id = id_param;
+     SET result = 0;
+	END IF;
+    
+   
+END$$
+
+DELIMITER ;
+
+
+
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+
+
+
+
 
 -- SET @taskArray = '2,3';
 -- CALL atsnovember.spAddTaskToEmployee(1, @taskArray);
