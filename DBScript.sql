@@ -48,12 +48,9 @@ CREATE TABLE `employeetasks` (
     CONSTRAINT `Constr_employeetasks_tasks_fk`
         FOREIGN KEY `taskId_fk` (`taskId`) REFERENCES `tasks` (`id`)
         ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=INNODB CHARACTER SET ascii COLLATE ascii_general_ci
+) ENGINE=INNODB CHARACTER SET ascii COLLATE ascii_general_ci;
 
 
--- -----------------------------------------------------
--- Table `atsnovember`.`teammembers`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `atsnovember`.`teammembers` (
   `EmployeeId` INT(11) NOT NULL,
   `TeamId` INT(11) NOT NULL,
@@ -279,7 +276,7 @@ CREATE TABLE IF NOT EXISTS `atsnovember`.`jobs` (
     FOREIGN KEY (`teamId`)
     REFERENCES `atsnovember`.`teams` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON UPDATE CASCADE);
 
 CREATE TABLE IF NOT EXISTS `atsnovember`.`jobstasks` (
   `taskId` INT NOT NULL,
@@ -292,12 +289,12 @@ CREATE TABLE IF NOT EXISTS `atsnovember`.`jobstasks` (
     FOREIGN KEY (`taskId`)
     REFERENCES `atsnovember`.`tasks` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   CONSTRAINT `jobId`
     FOREIGN KEY (`jobId`)
     REFERENCES `atsnovember`.`jobs` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON UPDATE CASCADE);
 
 
 DELIMITER //
@@ -339,4 +336,50 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
   CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+
+-- INSERT JOB 
+USE `atsnovember`;
+DROP procedure IF EXISTS `spInsertJob`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), IN client_param VARCHAR(255), start_param DATETIME, end_param DATETIME, team_id_param INT(11), 
+cost_param DOUBLE, revenue_param DOUBLE, tasks_param VARCHAR(255), OUT id_OUT INT)
+BEGIN
+DECLARE delimiterCount int;
+DECLARE task_id INT;
+DECLARE loopCount int;
+
+START TRANSACTION;
+
+INSERT INTO jobs (description, clientName, start, end, teamId)
+VALUES (desc_param, client_param, start_param, end_param, team_id_param);
+
+ SET id_out = LAST_INSERT_ID();
+
+ -- Remove space
+SET tasks_param = REPLACE(tasks_param, ' ', '');
+-- Get number of values without commas
+ SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
+
+ SET loopCount = 1;
+        WHILE loopCount <= numTasks + 1 DO
+            -- get number id
+            SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
+            
+				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
+				VALUES (task_id, id_out, cost_param, revenue_param);
+                
+            /* Remove last used id with comma from input string */
+            SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
+            SET loopCount = loopCount + 1;
+
+        END WHILE;
+
+ COMMIT;
+ 
+END$$
+
+DELIMITER ;
 
