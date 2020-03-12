@@ -9,9 +9,10 @@ import com.ats.atssystem.models.IJob;
 
 /**
  * @author Roman Pelikh
+ * @author Olena Stepanova
  */
 /**
- * IEmployeeRepo class provides methods signatures to perform CRUD operations with employee object
+ * IJobeRepo class provides methods signatures to perform CRUD operations with employee object
  */
 public interface IJobRepo {
     
@@ -27,7 +28,7 @@ public interface IJobRepo {
      * Returns specified job from database with all
      * the details
      * @param jobId int id of specified job
-     * @return job vm object with details
+     * @return job object with details
      */
-    JobDetailsViewModel getJobDetails(int jobId);
+    IJob getJobDetails(int jobId);
 }

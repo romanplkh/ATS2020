@@ -145,7 +145,11 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void calculateCost() {
-        double result = this.team.getTeamMembers().stream().reduce(0.0, (subtotal, employee) -> subtotal + employee.getHourlyRate(), Double::sum) / (this.calculateTotalTasksDuration() / 60);
+        double result = this.team.getTeamMembers()
+                .stream()
+                .reduce(0.0, (subtotal, employee)
+                        -> subtotal + employee.getHourlyRate(), Double::sum)
+                / (this.calculateTotalTasksDuration() / 60);
 
         this.cost = result;
     }
