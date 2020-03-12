@@ -12,8 +12,6 @@ import java.util.List;
 /**
  * @author Roman Pelikh
  */
-
-
 public class EmployeeService implements IEmployeeService {
 
     //Repo depenancy
@@ -60,8 +58,18 @@ public class EmployeeService implements IEmployeeService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteEmployee(int id) {
-        return 0;
+    public IEmployee deleteEmployee(IEmployee emp) {
+
+        repo = EmployeeRepoFactory.createInstance();
+
+        if (repo.deleteEmployee(emp.getId()) != 0) {
+
+            emp.addError(ErrorFactory.createInstance(1, "Could not delete employee"));
+
+        }
+
+        return emp;
+
     }
 
     /**

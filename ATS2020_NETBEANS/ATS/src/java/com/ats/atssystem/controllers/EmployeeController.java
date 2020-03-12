@@ -63,16 +63,14 @@ public class EmployeeController extends CommonController {
                             break;
                         case "details":
                             IEmployeeDTO employeeDetails = EmployeeDTOFactory.createInstance();
-
                             employeeDetails = employeeService.getEmployeeDetails(id);
-
                             request.setAttribute("empDetails", employeeDetails);
                             super.setView(request, EMPLOYEE_DETAILS_VIEW);
                             break;
                     }
 
                 } else {
-                    request.setAttribute("error", new ErrorViewModel(String.format("Employee ID: %s not found", id)));
+                    request.setAttribute("vmError", new ErrorViewModel(String.format("Employee ID: %s not found", id)));
                     super.setView(request, EMPLOYEE_MAINT_VIEW);
                 }
 
@@ -99,30 +97,37 @@ public class EmployeeController extends CommonController {
             String action = super.getValue(request, "action").toLowerCase();
 
             //Get hidden id
-            int empId = super.getInteger(request, "empId");
-
             switch (action) {
                 case "create":
                     //Populate employee object
                     emp = populateEmployeeModel(request);
 
                     if (!employeeService.isValid(emp)) {
-                        request.setAttribute("modelErrors", emp.getErrors());
+                        request.setAttribute("employeeErrors", emp.getErrors());
                         request.setAttribute("employee", emp);
                         super.setView(request, EMPLOYEE_MAINT_VIEW);
                     } else {
                         emp = employeeService.createEmployee(emp);
+
                     }
                     break;
                 case "update":
                     break;
                 case "delete":
+                    emp = employeeService.deleteEmployee(populateEmployeeModel(request));
+
+                    if (!emp.getErrors().isEmpty()) {
+                        request.setAttribute("employee", emp);
+                        request.setAttribute("employeeErrors", emp.getErrors());
+                        super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    }
+
                     break;
 
             }
         } catch (Exception e) {
             super.setView(request, EMPLOYEE_MAINT_VIEW);
-            request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
+            request.setAttribute("vmError", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
         }
 
         if (!employeeService.isValid(emp)) {
@@ -154,8 +159,10 @@ public class EmployeeController extends CommonController {
         String lastName = super.getValue(request, "lastName");
         String sin = super.getValue(request, "sin");
         double hRate = super.getDouble(request, "hRate");
+        int id = super.getInteger(request, "empId");
 
         IEmployee emp = EmployeeFactory.createInstance(firstName, lastName, sin, hRate);
+        emp.setId(id);
 
         return emp;
 

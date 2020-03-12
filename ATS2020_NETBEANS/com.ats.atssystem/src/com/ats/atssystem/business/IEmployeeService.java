@@ -45,10 +45,10 @@ public interface IEmployeeService {
     
     /**
      * Enables deletion of an employee
-     * @param id id of employee to delete
+     * @param employee to delete
      * @return number of elements affected
      */
-    int deleteEmployee(int id);
+    IEmployee deleteEmployee(IEmployee emp);
 
     
     /**

@@ -35,7 +35,7 @@ public interface IEmployeeRepo {
      * @param employee an employee to delete
      * @return
      */
-    int deleteEmployee(IEmployee employee);
+    int deleteEmployee(int id);
 
     /**
      * Retrieves all employees from database 

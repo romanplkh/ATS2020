@@ -15,9 +15,9 @@ import java.util.List;
  */
 public interface IJob extends IBase {
 
-    public List<ITask> getTasks();
+    public List<ITask> getTasksList();
 
-    public void setTasks(List<ITask> tasks);
+    public void setTasksList(List<ITask> tasks);
 
     public int getId();
 
@@ -51,14 +51,14 @@ public interface IJob extends IBase {
 
     public boolean getIsEmergency();
 
-    public double getCost();
+    public String getCost();
 
-    public double getRevenue();
+    public String getRevenue();
+    public String getTasks();
 
-    public void calculateCost();
 
     public LocalDateTime getEndCalculated();
 
-    public void calculateRevenue();
+
 
 }
