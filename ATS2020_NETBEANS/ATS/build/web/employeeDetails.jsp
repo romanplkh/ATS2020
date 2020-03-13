@@ -76,9 +76,13 @@
                             <div class="card-body">
                                 <h3 class="card-title">Skills</h3>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item text-muted">Router configuration</li>
-                                    <li class="list-group-item text-muted">Linux Server configuration</li>
-                                    <li class="list-group-item text-muted">Windows configuration</li>
+                                    <c:if test="${emp.skills.size() > 0}">
+                                        <c:forEach items="${emp.skills}" var="skill">
+                                            <li class="list-group-item text-muted">${skill.name}</li>
+                                            </c:forEach>
+
+
+                                    </c:if>
                                 </ul>
                             </div>
                         </div>

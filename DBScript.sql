@@ -128,21 +128,26 @@ END$$
 
 
 
-DELIMITER //
+-- GET EMPLOYEE DETAILS
+USE `atsnovember`;
 DROP procedure IF EXISTS `spGetEmployeeDetails`;
-// DELIMITER ;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE PROCEDURE `spGetEmployeeDetails` (IN id_param INT)
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `spGetEmployeeDetails`(IN id_param INT)
 BEGIN
 
-SELECT * FROM employees 
-LEFT JOIN teammembers on employees.id = teammembers.EmployeeId 
+SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, teams.Name, CONCAT(tasks.name) AS TaskName  FROM employees e
+LEFT JOIN teammembers on e.id = teammembers.EmployeeId 
 LEFT JOIN teams on teams.id = teammembers.TeamId 
-WHERE employees.id = id_param;
+LEFT JOIN employeetasks ON employeetasks.employeeId = e.id
+LEFT JOIN tasks on employeetasks.taskId = tasks.id
+WHERE e.id = id_param;
 
 END$$
+
+DELIMITER ;
+
 
 
 
