@@ -5,7 +5,9 @@ import com.ats.atssystem.models.EmployeeDTOFactory;
 import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IEmployeeDTO;
+import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.models.TeamFactory;
 import com.ats.dataaccess.*;
 import com.sun.webkit.dom.XPathResultImpl;
@@ -186,12 +188,18 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         IEmployeeDTO employeeDetails = null;
         ITeam team = null;
         IEmployee employee = null;
+        List<ITask> tasks = null;
+        
+       
+        
 
         if (rs.next()) {
             employeeDetails = EmployeeDTOFactory.createInstance();
             team = TeamFactory.createInstance();
-
             employee = EmployeeFactory.createInstance();
+            tasks = TaskFactory.createListInstance();
+            
+            
 
             employee.setId(super.getInt("id", rs));
             employee.setSin(rs.getString("sin"));
@@ -208,7 +216,25 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             } else {
                 team.setName("");
             }
+            
+            
+             
+            //Populate employee skills (task)
+            if(rs.getString("TaskName") != null){
+                ITask t = TaskFactory.createInstance();
+                t.setName(rs.getString("TaskName"));
+                tasks.add(t);
+                
+                while(rs.next() && rs.getString("TaskName") != null){
+                    ITask newTask = TaskFactory.createInstance();
+                    newTask.setName(rs.getString("TaskName"));
+                     tasks.add(newTask);
+                }
+            }
+            
+            
 
+            employeeDetails.setSkills(tasks);
             employeeDetails.setEmployee(employee);
             employeeDetails.setTeam(team);
         }
