@@ -36,13 +36,12 @@
 
                 <div class="row">
                     <div class="col-md-10">
-                        <form method="POST" action="employees/search"
+                        <form method="get"
                               class="form-inline my-2 my-lg-0">
                             <input class="form-control mr-sm-2 w-50" type="text"
-                                   name="searchCriteria"
+                                   name="search" required
                                    placeholder="Search by SIN or last name">
                             <button class="btn btn-secondary my-2 my-sm-0"
-                                    value="Search" name="action"
                                     type="submit">Search</button>
                         </form>
 

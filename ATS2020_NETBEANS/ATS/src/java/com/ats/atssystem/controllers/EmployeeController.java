@@ -37,7 +37,13 @@ public class EmployeeController extends CommonController {
 
         if (pathInfo == null) {
             //Show all employees
-            request.setAttribute("employees", employeeService.getEmployees());
+            String search = super.getValue(request, "search");
+
+            if (search == null) {
+                request.setAttribute("employees", employeeService.getEmployees());
+            } else {
+                request.setAttribute("employees", employeeService.getEmployees(search));
+            }
 
             super.setView(request, EMPLOYEES_VIEW);
         } else {
@@ -77,20 +83,9 @@ public class EmployeeController extends CommonController {
                 }
 
             } else {
-                //Create OR SEARCH
-                String search = pathParts[1];
-                if (!search.isEmpty()) {
 
-                    String searchCriteria = super.getValue(request, "searchCriteria");
-                    if (searchCriteria == null) {
-                        request.setAttribute("error", new ErrorViewModel("Please specify your search first"));
-                        super.setView(request, EMPLOYEES_VIEW);
-
-                    }
-                } else {
-                    request.setAttribute("employee", employee);
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-                }
+                request.setAttribute("employee", employee);
+                super.setView(request, EMPLOYEE_MAINT_VIEW);
 
             }
 
@@ -136,20 +131,20 @@ public class EmployeeController extends CommonController {
                     }
 
                     break;
-                case "search":
-                    String search = super.getValue(request, "searchCriteria");
-                    if (search.isEmpty()) {
-                        request.setAttribute("error", new ErrorViewModel("Please specify your search criteria"));
-                    } else {
-                        employees = employeeService.getEmployees(search);
-                        request.setAttribute("employees", employees);
-
-                    }
-                    //----------DOESN"T WORK ----------------------------
-                    //new mapping in web.xml
-                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-//                    response.sendRedirect(request.getContextPath() + "/employees/search");
-                    break;
+//                case "search":
+//                    String search = super.getValue(request, "searchCriteria");
+//                    if (search.isEmpty()) {
+//                        request.setAttribute("error", new ErrorViewModel("Please specify your search criteria"));
+//                    } else {
+//                        employees = employeeService.getEmployees(search);
+//                        request.setAttribute("employees", employees);
+//
+//                    }
+//                    //----------DOESN"T WORK ----------------------------
+//                    //new mapping in web.xml
+//                    super.setView(request, EMPLOYEE_MAINT_VIEW);
+////                    response.sendRedirect(request.getContextPath() + "/employees/search");
+//                    break;
 
             }
         } catch (Exception e) {
