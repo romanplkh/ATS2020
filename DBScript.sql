@@ -551,12 +551,20 @@ DELIMITER ;
 
 
 -- DELETE SKILL FROM EMPLOYEE
+
+/*
+ NOT RUBUST BUT ALSO DO THE TRICK
+  SELECT product_id, product_price
+  FROM product
+  WHERE FIND_IN_SET(product_type, param);
+
+*/
 USE `atsnovember`;
 DROP procedure IF EXISTS `spRemoveEmployeeSkiil`;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spRemoveEmployeeSkiil`(IN id_param INT, IN idsSkill_param VARCHAR(255))
+CREATE  PROCEDURE `spRemoveEmployeeSkiil`(IN id_param INT, IN idsSkill_param VARCHAR(255))
 BEGIN
 
 DECLARE numSkills INT;
