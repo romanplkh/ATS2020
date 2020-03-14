@@ -93,7 +93,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             job = JobFactory.createInstance();
             team = TeamFactory.createInstance();
             tasks = TaskFactory.createListInstance();
-            ITask task = TaskFactory.createInstance();
+            ITask task = null;
 
             //set job properties
             job.setId(super.getInt("id", rs));
@@ -105,8 +105,8 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             team.setName(rs.getString("team"));
 
             //set list of tasks to a job
-            task.setName(rs.getString("task"));
-            tasks.add(task);
+            rs.beforeFirst();
+           
             while (rs.next()) {
                 task = TaskFactory.createInstance();
                 task.setName(rs.getString("task"));

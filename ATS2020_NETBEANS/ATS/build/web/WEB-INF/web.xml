@@ -47,8 +47,10 @@
     <!-- GET ALL EMPLOYEES-->
     <servlet-mapping>
         <servlet-name>EmployeeController</servlet-name>
-        <url-pattern>/employees</url-pattern>
+        <url-pattern>/employees/*</url-pattern>
     </servlet-mapping>
+    
+       
 
     <!--EMPLOYEE MAINTENANCE-->
     <servlet-mapping>

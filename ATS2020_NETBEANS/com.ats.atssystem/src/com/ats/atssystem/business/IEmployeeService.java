@@ -75,5 +75,13 @@ public interface IEmployeeService {
      * @return List of all employees
      */
     List<IEmployee> getEmployees();
+    
+    /**
+     * Enables to retrieve all employees
+     * that match search criteria by sin or last name 
+     * @param searchCriteria
+     * @return List of all employees or null
+     */
+    List<IEmployee> getEmployees(String searchCriteria);
 
 }
