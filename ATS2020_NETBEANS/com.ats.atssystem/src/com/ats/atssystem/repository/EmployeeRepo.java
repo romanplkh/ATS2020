@@ -27,6 +27,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
     private final String SPROC_GET_EMPLOYEE_DETAILS = "CALL spGetEmployeeDetails(?);";
     private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
+    private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkiil(?, ?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess;
@@ -104,6 +105,35 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         }
 
         return result;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int deleteEmployeeSkill(int id, String skillIds) {
+
+        int rowsAffected = 0;
+
+        List<Object> returnedValues;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(id));
+        params.add(ParameterFactory.createInstance(skillIds));
+        returnedValues = this.dataAccess.executeNonQuery(SPROC_REMOVE_EMPLOYEE, params);
+
+        try {
+            if (returnedValues != null) {
+                rowsAffected = Integer.parseInt(returnedValues.get(0).toString());
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rowsAffected;
 
     }
 
@@ -189,17 +219,12 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         ITeam team = null;
         IEmployee employee = null;
         List<ITask> tasks = null;
-        
-       
-        
 
         if (rs.next()) {
             employeeDetails = EmployeeDTOFactory.createInstance();
             team = TeamFactory.createInstance();
             employee = EmployeeFactory.createInstance();
             tasks = TaskFactory.createListInstance();
-            
-            
 
             employee.setId(super.getInt("id", rs));
             employee.setSin(rs.getString("sin"));
@@ -216,23 +241,19 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             } else {
                 team.setName("");
             }
-            
-            
-             
+
             //Populate employee skills (task)
-            if(rs.getString("TaskName") != null){
+            if (rs.getString("TaskName") != null) {
                 ITask t = TaskFactory.createInstance();
                 t.setName(rs.getString("TaskName"));
                 tasks.add(t);
-                
-                while(rs.next() && rs.getString("TaskName") != null){
+
+                while (rs.next() && rs.getString("TaskName") != null) {
                     ITask newTask = TaskFactory.createInstance();
                     newTask.setName(rs.getString("TaskName"));
-                     tasks.add(newTask);
+                    tasks.add(newTask);
                 }
             }
-            
-            
 
             employeeDetails.setSkills(tasks);
             employeeDetails.setEmployee(employee);

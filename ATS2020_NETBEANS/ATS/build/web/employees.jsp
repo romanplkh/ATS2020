@@ -31,6 +31,7 @@
                                             <th scope="col">Last Name</th>
                                             <th></th>
                                             <th></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -40,6 +41,7 @@
                                                 <td>${employee.lastName}</td>
                                                 <td><a href="employee/${employee.id}/update">Edit</a></td>
                                                 <td><a href="employee/${employee.id}/details">Details</a></td>
+                                                <td><a href="employeeSkills.jsp">Skills</a></td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>

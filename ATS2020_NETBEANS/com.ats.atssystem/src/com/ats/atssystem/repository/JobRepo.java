@@ -74,7 +74,6 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         try {
             List<IParameter> parms = ParameterFactory.createListInstance();
             parms.add(ParameterFactory.createInstance(jobId, IParameter.Direction.IN, Types.INTEGER));
-
             CachedRowSet rs = this.dataAccess.executeFill(SP_JOB_DETAILS, parms);
 
             jobDetails = populateJobDetails(rs);
