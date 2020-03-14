@@ -37,6 +37,16 @@ public interface IEmployeeRepo {
      * @return
      */
     int deleteEmployee(int id);
+    
+    
+    
+    /**
+     * Removes one or many skills from selected employee
+     * @param id employee to perform operation
+     * @param skillIds String of skill IDs 
+     * @return numbers of rows affected;
+     */
+    int deleteEmployeeSkill(int id, String skillIds);
 
     /**
      * Retrieves all employees from database 

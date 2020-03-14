@@ -102,7 +102,6 @@ public class TeamController extends CommonController {
                             request.setAttribute("error", teamToValidate.getErrors());
                             request.setAttribute("team", team);
                             super.setView(request, TEAM_MAINT_VIEW);
-
                         } else {
 
                             busRulesAreValid = true;
