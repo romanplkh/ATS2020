@@ -3,6 +3,7 @@ package com.ats.atssystem.repository;
 import com.ats.atssystem.models.EmployeeDTO;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IEmployeeDTO;
+import com.ats.atssystem.models.ITask;
 import java.util.List;
 
 /**
@@ -57,5 +58,12 @@ public interface IEmployeeRepo {
      */
     IEmployee retrieveEmployee(int id);
     
+    /**
+     * Add new skills to an employee skill set
+     * @param id int employee Id
+     * @param skills list of skills to add
+     * @return 
+     */
+    IEmployeeDTO addSkillsToEmployee(int id, List<ITask> skills);
     
 }
