@@ -525,13 +525,11 @@ DELIMITER ;
 -- DELETE EMPLOYEE 
 
 -- 0 - deleted
-
-USE `atsnovember`;
 DROP procedure IF EXISTS `spRemoveEmployee`;
 
 DELIMITER $$
-USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
+
+CREATE PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
 BEGIN 
     IF ((SELECT COUNT(*) FROM teammembers WHERE EmployeeId = id_param) > 0)
 		THEN UPDATE employees SET isDeleted = true, deletedAt = now() WHERE id = id_param;
@@ -556,11 +554,24 @@ INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
 
 
+-- SEARCH EMPLOYEE
+DELIMITER //
+DROP PROCEDURE IF EXISTS spSearchEmployee;
+// DELIMITER ;
 
-
-
--- SET @taskArray = '2,3';
--- CALL atsnovember.spAddTaskToEmployee(1, @taskArray);
+DELIMITER //
+CREATE PROCEDURE spSearchEmployee(
+IN sin_param varchar(255), 
+IN lastname_param varchar(255))
+	BEGIN
+		SELECT id, firstName, lastName 
+		FROM employees
+		WHERE (lastname_param IS NULL OR lastName LIKE CONCAT('%',lastname_param,'%'))
+		AND (sin_param IS NULL OR sin = sin_param);
+	END;
+  
+//
+DELIMITER ;
 
 
 
