@@ -491,7 +491,8 @@ DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
 DELIMITER //
 CREATE PROCEDURE spAddTaskToEmployee(
 	IN employeeId_param INT,
-	IN taskIdArray_param VARCHAR(255)
+	IN taskIdArray_param VARCHAR(255),
+    OUT rows_aff INT
 )
 BEGIN
 
@@ -519,6 +520,7 @@ DECLARE loopCount int;
             SET loopCount = loopCount + 1;
 
         END WHILE;
+        SET rows_aff = row_count();
 	END;	
     
     COMMIT;
@@ -557,12 +559,10 @@ DELIMITER ;
   WHERE FIND_IN_SET(product_type, param);
 
 */
-USE `atsnovember`;
-DROP procedure IF EXISTS `spRemoveEmployeeSkiil`;
+DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
 
 DELIMITER $$
-USE `atsnovember`$$
-CREATE  PROCEDURE `spRemoveEmployeeSkiil`(IN id_param INT, IN idsSkill_param VARCHAR(255))
+CREATE  PROCEDURE `spRemoveEmployeeSkill`(IN id_param INT, IN idsSkill_param VARCHAR(255))
 BEGIN
 
 DECLARE numSkills INT;
@@ -582,8 +582,6 @@ SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', '')
      
      SELECT row_count();
 COMMIT;
-
-  
 END$$
 
 DELIMITER ;
@@ -602,23 +600,21 @@ VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
 
 -- SEARCH EMPLOYEE
 DELIMITER //
-DROP PROCEDURE IF EXISTS spSearchEmployee;
+DROP PROCEDURE IF EXISTS spSearchEmployees;
 // DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE spSearchEmployee(
-IN sin_param varchar(255), 
-IN lastname_param varchar(255))
+CREATE PROCEDURE spSearchEmployees(
+IN search_param varchar(255))
 	BEGIN
-		SELECT id, firstName, lastName 
+		SELECT * 
 		FROM employees
-		WHERE (lastname_param IS NULL OR lastName LIKE CONCAT('%',lastname_param,'%'))
-		AND (sin_param IS NULL OR sin = sin_param);
+		WHERE (lastName LIKE CONCAT('%',search_param,'%'))
+		OR (sin = search_param);
 	END;
   
 //
 DELIMITER ;
-
 
 
 

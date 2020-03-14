@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * @author Roman Pelikh
+ * @author Olena Stepanova
  */
 public class EmployeeService implements IEmployeeService {
 
@@ -129,4 +130,21 @@ public class EmployeeService implements IEmployeeService {
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<IEmployee> getEmployees(String searchCriteria) {
+
+        repo = EmployeeRepoFactory.createInstance();
+
+        List<IEmployee> employees = EmployeeFactory.createListInstance();
+
+        employees = repo.retrieveEmployees(searchCriteria);
+
+        return employees;
+
+    }
 }
+
+
