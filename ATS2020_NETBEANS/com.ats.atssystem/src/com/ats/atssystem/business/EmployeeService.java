@@ -76,6 +76,16 @@ public class EmployeeService implements IEmployeeService {
      * {@inheritDoc}
      */
     @Override
+    public int deleteEmployeeSkill(int id, String skillIds) {
+        repo = EmployeeRepoFactory.createInstance();
+        return repo.deleteEmployeeSkill(id, skillIds);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IEmployee getEmployee(int id) {
         repo = EmployeeRepoFactory.createInstance();
 

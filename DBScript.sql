@@ -134,7 +134,7 @@ DROP procedure IF EXISTS `spGetEmployeeDetails`;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spGetEmployeeDetails`(IN id_param INT)
+CREATE PROCEDURE `spGetEmployeeDetails`(IN id_param INT)
 BEGIN
 
 SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, teams.Name, CONCAT(tasks.name) AS TaskName  FROM employees e
@@ -544,12 +544,53 @@ BEGIN
 	ELSE 
 		DELETE FROM employees WHERE id = id_param;
      SET result = 0;
-	END IF;
-    
-   
+	END IF;   
 END$$
 
 DELIMITER ;
+
+
+-- DELETE SKILL FROM EMPLOYEE
+
+/*
+ NOT RUBUST BUT ALSO DO THE TRICK
+  SELECT product_id, product_price
+  FROM product
+  WHERE FIND_IN_SET(product_type, param);
+
+*/
+USE `atsnovember`;
+DROP procedure IF EXISTS `spRemoveEmployeeSkiil`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE  PROCEDURE `spRemoveEmployeeSkiil`(IN id_param INT, IN idsSkill_param VARCHAR(255))
+BEGIN
+
+DECLARE numSkills INT;
+DECLARE loopCount INT;
+DECLARE curSkillId INT;
+
+START TRANSACTION;
+SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', ''));
+
+ SET loopCount = 1;
+	 WHILE loopCount <= numSkills + 1 DO
+     SET curSkillId = SUBSTRING_INDEX(idsSkill_param, ',', 1);
+     DELETE FROM employeetasks WHERE employeeId = id_param AND taskId = curSkillId;
+     SET idsSkill_param = REPLACE(idsSkill_param, CONCAT(curSkillId, ','), '');
+     SET loopCount = loopCount + 1;
+     END WHILE;
+     
+     SELECT row_count();
+COMMIT;
+
+  
+END$$
+
+DELIMITER ;
+
+
 
 
 
