@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Employee Skills</title>
+        <title>Employee's Skills</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
     <noscript>
@@ -95,7 +95,8 @@
                                                             </c:forEach>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-1 pl-0 py-1 ml-0"><button id="addTask" class="btn btn-link">Add</button></div>
+                                                    <div class="col-md-1 pl-0 py-1 ml-0">
+                                                        <button id="addTask" class="btn btn-link">Add</button></div>
                                                 </div>
                                             </div>
 
@@ -130,13 +131,16 @@
 
                                 <c:choose>
                                     <c:when test="${evm.employee.skills.size() == 0}">
-                                        <input type="submit" value="Add Skills" class="btn btn-success btn-lg" name="action">
+                                        <input type="submit" value="Add Skills" 
+                                               class="btn btn-success btn-lg" name="action">
                                     </c:when>
                                     <c:otherwise>
-                                        <input class="btn btn-warning btn-lg" type="submit" value="Update Skills" name="action"/>
+                                        <input class="btn btn-warning btn-lg" 
+                                               type="submit" value="Update Skills" name="action"/>
                                     </c:otherwise>
                                 </c:choose>
-                                <a href="${pageContext.request.contextPath}/employees" class="btn btn-secondary btn-lg ml-2">Cancel</a>
+                                <a href="${pageContext.request.contextPath}/employees" 
+                                   class="btn btn-secondary btn-lg ml-2">Cancel</a>
 
                             </div>
 
@@ -166,6 +170,9 @@
 
             //REF TO INPUT WHERE TO RECORD ALL SKILLS TO REMOVE
             const skillsToDelete = document.querySelector("input[name='skillsToDelete']");
+
+            //REF TO INPUT WHERE TO RECORD ALL SKILLS TO ADD
+            const skillsToAdd = document.querySelector("input[name='skillsToAdd']");
 
             //DATA FROM DB
             const empSkills = document.querySelectorAll(".employeeSkillRemove");
@@ -243,10 +250,11 @@
                 }
 
 
-
                 //GET VALUE FROM SELECT MENU
                 const taskValue = parseInt(listTasks.value);
                 const taskText = listTasks.options[listTasks.selectedIndex].text;
+
+                const taskId = parseInt(el.parentNode.lastElementChild.value);
 
 
                 //CHECH IF SKILL WAS NOT ALREADY ADDED
@@ -260,7 +268,7 @@
                     const input = document.createElement("input");
 
                     //ADD LISTENER TO REMOVE TASK
-                    span.addEventListener("click", () => removeSkill(span))
+                    span.addEventListener("click", () => removeSkill(span));
 
                     //ADD BANCH OF CLASSES :-)
                     li.classList.add("list-group-item");
@@ -275,7 +283,7 @@
                     span.appendChild(document.createTextNode("X"));
                     span.classList.add("text-danger");
                     span.style.cursor = "pointer";
-                    li.appendChild(span)
+                    li.appendChild(span);
 
                     //BUILD HIDDEN INPUT THAT WILL HOLD THE VALUE ID OF ADDED SKILL
                     input.setAttribute("name", "requiredTask");
@@ -288,10 +296,11 @@
 
 
                     //IF HAS AT LEAST ONE SKILL HIDE MESSAGE THAT NO SKILLS
-                    hideElement("#taskListPlaceHolder")
+                    hideElement("#taskListPlaceHolder");
 
                     //ADD CREATED TASK ID TO ARRRAY OF IDS
                     addedTasks.push(taskValue);
+
                 } else {
 
 
@@ -303,21 +312,23 @@
                          <span aria-hidden="true">&times;</span>
                         </button>
                             </div>
-                        `
+                        `;
 
 
                     //WHERE TO ADD IN DOM ERROR MESSAGE
-                    errorJs.insertAdjacentHTML("afterbegin", alertMessage)
+                    errorJs.insertAdjacentHTML("afterbegin", alertMessage);
                 }
-            }
+                
+                
+            };
 
 
 
             function setEnabled(element, enabled) {
-                enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled)
+                enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled);
                 element.style.cursor = enabled ? "pointer" : "not-allowed";
 
-            }
+            };
 
             function  hideElement(selector) {
                 const element = document.querySelector(selector);

@@ -75,12 +75,11 @@ public interface IEmployeeRepo {
 
     /**
      * Adds necessary skills to an employee's skill set
-     *
-     * @param employee employee object
-     * @param skills list of skills
+     * @param employeeId employee Id
+     * @param skillIds id of all skills to add
      * @return number of row affected
      */
-    int addSkillsToEmployee(IEmployee employee, List<ITask> skills);
+    int addSkillsToEmployee(int employeeId, String skillIds);
 
     /**
      * Looks for an employees with specific sin or last name
