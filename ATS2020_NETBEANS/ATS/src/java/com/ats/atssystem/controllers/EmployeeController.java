@@ -142,9 +142,11 @@ public class EmployeeController extends CommonController {
 
                     //VALIDATE ONE MORE TIME IF REQUEST WILL BE MADE NOT OVER UI
                     if (emp != null) {
+
                         if (skillsManagementActionEquals(request) == "delete") {
                             //TRY DELETE SKILLS
-                            int result = employeeService.deleteEmployeeSkill(employeeId, super.getValue(request, "skillsToDelete"));
+                            String skillsToDelete = super.getValue(request, "skillsToDelete");
+                            int result = employeeService.deleteEmployeeSkill(employeeId, skillsToDelete);
 
                             if (result == 0) {
                                 EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
@@ -152,9 +154,10 @@ public class EmployeeController extends CommonController {
                                 evm.setEmployee(emp);
                                 evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
                                 request.setAttribute("evm", evm);
-
                             }
+
                         }
+
                         if (skillsManagementActionEquals(request) == "add") {
                             //TRY Add SKILLS
                             String skills = super.getValue(request, "skillsToAdd");
@@ -171,6 +174,14 @@ public class EmployeeController extends CommonController {
 
                             }
 
+                        }
+
+                        if (skillsManagementActionEquals(request).isEmpty()) {
+                            EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                            emp.addError(ErrorFactory.createInstance(2, "Please add/remove skills you want to be deleted from employee"));
+                            evm.setEmployee(emp);
+                            evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                            request.setAttribute("evm", evm);
                         }
 
                     } else {
@@ -216,10 +227,12 @@ public class EmployeeController extends CommonController {
     }
 
     private String skillsManagementActionEquals(HttpServletRequest request) {
-        String action = "add";
+        String action = "";
 
         if (!super.getValue(request, "skillsToDelete").isEmpty() && super.getValue(request, "skillsToAdd").isEmpty()) {
             action = "delete";
+        } else if (super.getValue(request, "skillsToDelete").isEmpty() && !super.getValue(request, "skillsToAdd").isEmpty()) {
+            action = "add";
         } else if (!super.getValue(request, "skillsToDelete").isEmpty() && !super.getValue(request, "skillsToAdd").isEmpty()) {
             action = "addDelete";
         }
@@ -237,8 +250,7 @@ public class EmployeeController extends CommonController {
     }
 
     /**
-     * Gets values from form and creates instance of employee based on input
-     * values
+     * Gets values from form and creates instance of employee based on input values
      *
      * @param request HttpServletRequest
      * @return instance of employee with populated values
