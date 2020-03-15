@@ -52,6 +52,14 @@ public interface IEmployeeService {
      * @return numberOfElementsAffected
      */
     int deleteEmployeeSkill(int id, String skillIds);
+    
+        /**
+     * Add skill set to employee record
+     * @param id employeeId
+     * @param skillIds 
+     * @return number of rows affected
+     */
+    int addEmployeeSkill(int id, String skillIds);
 
     /**
      * Enables retrieve an employee

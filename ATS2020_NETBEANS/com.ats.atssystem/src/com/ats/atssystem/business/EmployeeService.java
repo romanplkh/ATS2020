@@ -82,6 +82,16 @@ public class EmployeeService implements IEmployeeService {
         return repo.deleteEmployeeSkill(id, skillIds);
 
     }
+    
+        /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int addEmployeeSkill(int id, String skillIds) {
+        repo = EmployeeRepoFactory.createInstance();
+        return repo.addSkillsToEmployee(id, skillIds);
+
+    }
 
     /**
      * {@inheritDoc}

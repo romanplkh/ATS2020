@@ -116,21 +116,15 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
      * {@inheritDoc }
      */
     @Override
-    public int addSkillsToEmployee(IEmployee employee, List<ITask> skills) {
+    public int addSkillsToEmployee(int employeeId, String skillIds) {
         int rowsAffected = 0;
 
         List<Object> retVal;
 
-        String skillset = "";
-
-        for (ITask t : skills) {
-            skillset += t.getId();
-        }
-
         // -- MAYBE return true/false if count skills in list == retVal
         List<IParameter> params = ParameterFactory.createListInstance();
-        params.add(ParameterFactory.createInstance(employee.getId()));
-        params.add(ParameterFactory.createInstance(skillset));
+        params.add(ParameterFactory.createInstance(employeeId));
+        params.add(ParameterFactory.createInstance(skillIds));
         params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
 
         retVal = dataAccess.executeNonQuery(SPROC_ADD_EMPLOYEE_SKILL, params);
