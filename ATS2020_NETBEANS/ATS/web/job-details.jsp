@@ -39,7 +39,8 @@
 
                         </c:when>
                         <c:otherwise>
-                            
+                            <fmt:parseDate value="${job.start}" pattern="yyyy-MM-dd'T'HH:mm" var="start" type="both" />
+                            <fmt:parseDate value="${job.end}" pattern="yyyy-MM-dd'T'HH:mm" var="end" type="both" />
                             <div class="col-lg-8 col-md-6">
 
                                 <div class="card" style="width: 100%;">
@@ -53,10 +54,10 @@
                                                     Client: </span>&nbsp; ${job.clientName}
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
-                                                    Start: </span>&nbsp; ${job.start} 
+                                                    Start: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${start}" /> 
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
-                                                    End: </span>&nbsp; ${job.end}
+                                                    End: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${end}" />
                                             </li>
 
                                         </ul>
@@ -76,7 +77,7 @@
                                     <div class="card-body">
                                         <h3 class="card-title">Tasks</h3>
                                         <ul class="list-group list-group-flush">
-                                            <c:forEach items="${job.getTasks()}" var="task">
+                                            <c:forEach items="${job.getTasksList()}" var="task">
                                                 <li class="list-group-item text-muted">${task.name}</li>
                                                 </c:forEach>
                                         </ul>

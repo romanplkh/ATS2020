@@ -16,6 +16,7 @@ import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Roman Pelikh
@@ -29,6 +30,8 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     private final String SPROC_GET_EMPLOYEE_WITH_SKILLS = "CALL spGetEmployeeWithSkills(?);";
     private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
     private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkill(?,?,?);";
+    private final String SPROC_ADD_EMPLOYEE_SKILL = "CALL spAddTaskToEmployee(?,?,?)";
+    private final String SPROC_SEARCH_EMPLOYEES = "CALL spSearchEmployees(?)";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess;
@@ -107,6 +110,41 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         return result;
 
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int addSkillsToEmployee(IEmployee employee, List<ITask> skills) {
+        int rowsAffected = 0;
+
+        List<Object> retVal;
+
+        String skillset = "";
+
+        for (ITask t : skills) {
+            skillset += t.getId();
+        }
+
+        // -- MAYBE return true/false if count skills in list == retVal
+        List<IParameter> params = ParameterFactory.createListInstance();
+        params.add(ParameterFactory.createInstance(employee.getId()));
+        params.add(ParameterFactory.createInstance(skillset));
+        params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = dataAccess.executeNonQuery(SPROC_ADD_EMPLOYEE_SKILL, params);
+
+        try {
+            if (retVal != null) {
+                rowsAffected = Integer.parseInt(retVal.get(0).toString());
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rowsAffected;
     }
 
     /**
@@ -371,6 +409,28 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         return employees;
 
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<IEmployee> retrieveEmployees(String searchCriteria) {
+
+        List<IEmployee> employees = EmployeeFactory.createListInstance();
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(searchCriteria));
+
+        try {
+            CachedRowSet rs = this.dataAccess.executeFill(SPROC_SEARCH_EMPLOYEES, params);
+            employees = toListOfEmployees(rs);
+
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
+
+        return employees;
     }
 
 }

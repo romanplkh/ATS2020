@@ -509,7 +509,8 @@ DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
 DELIMITER //
 CREATE PROCEDURE spAddTaskToEmployee(
 	IN employeeId_param INT,
-	IN taskIdArray_param VARCHAR(255)
+	IN taskIdArray_param VARCHAR(255),
+    OUT rows_aff INT
 )
 BEGIN
 
@@ -537,6 +538,7 @@ DECLARE loopCount int;
             SET loopCount = loopCount + 1;
 
         END WHILE;
+        SET rows_aff = row_count();
 	END;	
     
     COMMIT;
@@ -548,13 +550,11 @@ DELIMITER ;
 -- DELETE EMPLOYEE 
 
 -- 0 - deleted
-
-USE `atsnovember`;
 DROP procedure IF EXISTS `spRemoveEmployee`;
 
 DELIMITER $$
-USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
+
+CREATE PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
 BEGIN 
     IF ((SELECT COUNT(*) FROM teammembers WHERE EmployeeId = id_param) > 0)
 		THEN UPDATE employees SET isDeleted = true, deletedAt = now() WHERE id = id_param;
@@ -610,8 +610,6 @@ SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', '')
 		SET affected_out = 1;
 	END IF;
 COMMIT;
-
-  
 END$$
 
 DELIMITER ;
@@ -630,12 +628,23 @@ INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
 
 
+-- SEARCH EMPLOYEE
+DELIMITER //
+DROP PROCEDURE IF EXISTS spSearchEmployees;
+// DELIMITER ;
 
-
-
--- SET @taskArray = '2,3';
--- CALL atsnovember.spAddTaskToEmployee(1, @taskArray);
-
+DELIMITER //
+CREATE PROCEDURE spSearchEmployees(
+IN search_param varchar(255))
+	BEGIN
+		SELECT * 
+		FROM employees
+		WHERE (lastName LIKE CONCAT('%',search_param,'%'))
+		OR (sin = search_param);
+	END;
+  
+//
+DELIMITER ;
 
 
 

@@ -11,6 +11,7 @@ import com.ats.atssystem.models.ErrorViewModel;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IEmployeeDTO;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,14 @@ public class EmployeeController extends CommonController {
 
         if (pathInfo == null) {
             //Show all employees
-            request.setAttribute("employees", employeeService.getEmployees());
+            String search = super.getValue(request, "search");
+
+            if (search == null) {
+                request.setAttribute("employees", employeeService.getEmployees());
+            } else {
+                request.setAttribute("employees", employeeService.getEmployees(search));
+            }
+
             super.setView(request, EMPLOYEES_VIEW);
         } else {
             //// employee/:id/[details : update : skills]
@@ -79,16 +87,13 @@ public class EmployeeController extends CommonController {
                 }
 
             } else {
-                //Create
-               
                 request.setAttribute("employee", employee);
                 super.setView(request, EMPLOYEE_MAINT_VIEW);
+
             }
 
         }
-
         super.getView().forward(request, response);
-
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -96,6 +101,7 @@ public class EmployeeController extends CommonController {
 
         IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
         IEmployee emp = EmployeeFactory.createInstance();
+        List<IEmployee> employees = EmployeeFactory.createListInstance();
 
         try {
             //Get action of button
@@ -128,6 +134,20 @@ public class EmployeeController extends CommonController {
                     }
 
                     break;
+//                case "search":
+//                    String search = super.getValue(request, "searchCriteria");
+//                    if (search.isEmpty()) {
+//                        request.setAttribute("error", new ErrorViewModel("Please specify your search criteria"));
+//                    } else {
+//                        employees = employeeService.getEmployees(search);
+//                        request.setAttribute("employees", employees);
+//
+//                    }
+//                    //----------DOESN"T WORK ----------------------------
+//                    //new mapping in web.xml
+//                    super.setView(request, EMPLOYEE_MAINT_VIEW);
+////                    response.sendRedirect(request.getContextPath() + "/employees/search");
+//                    break;
 
                 case "update skills":
                     //HERE WE WILL ADD AND REMOVE SKILLS 
@@ -165,6 +185,7 @@ public class EmployeeController extends CommonController {
             super.getView().forward(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + extractNameFromJSP());
+
         }
 
     }
@@ -191,7 +212,8 @@ public class EmployeeController extends CommonController {
     }
 
     /**
-     * Gets values from form and creates instance of employee based on input values
+     * Gets values from form and creates instance of employee based on input
+     * values
      *
      * @param request HttpServletRequest
      * @return instance of employee with populated values
