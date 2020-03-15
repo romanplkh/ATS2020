@@ -193,7 +193,7 @@
                 }
 
                 //Enabled button Submit
-                if (updateBtn.hasAttribute("disabled")) {
+                if (updateBtn && updateBtn.hasAttribute("disabled")) {
                     setEnabled(updateBtn, true)
                 }
             }
@@ -235,9 +235,8 @@
 
 
             const addTask = () => {
-
                 //CHECK IF BUTTON IS DISABLED
-                if (updateBtn.hasAttribute("disabled")) {
+                if (updateBtn && updateBtn.hasAttribute("disabled")) {
                     setEnabled(updateBtn, true)
 
                 }
@@ -314,8 +313,12 @@
 
 
             function setEnabled(element, enabled) {
-                enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled)
-                element.style.cursor = enabled ? "pointer" : "not-allowed";
+
+                if (element) {
+                    enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled)
+                    element.style.cursor = enabled ? "pointer" : "not-allowed";
+                }
+
 
             }
 
@@ -339,6 +342,8 @@
                     errorJs.removeChild(document.querySelector("#error-alert"))
                 }
 
-            }</script>
+            }
+
+        </script>
     </body>
 </html>
