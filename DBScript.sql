@@ -152,11 +152,11 @@ DELIMITER ;
 
 
 -- GET EMPLOYEE WITH SKILLS
-USE `atsnovember`;
+
 DROP procedure IF EXISTS `spGetEmployeeWithSkills`;
 
 DELIMITER $$
-USE `atsnovember`$$
+
 CREATE PROCEDURE `spGetEmployeeWithSkills` (IN empId_param INT)
 BEGIN
 SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, CONCAT(tasks.id) AS skillId, name  FROM employees e
@@ -517,6 +517,7 @@ BEGIN
 DECLARE numTasks int;
 DECLARE task_id INT;
 DECLARE loopCount int;
+DECLARE rowsAffected INT;
 
  START TRANSACTION;
     
@@ -538,7 +539,10 @@ DECLARE loopCount int;
             SET loopCount = loopCount + 1;
 
         END WHILE;
-        SET rows_aff = row_count();
+        SET rowsAffected = (SELECT row_count());
+		IF (rowsAffected > 0) THEN 
+		SET rows_aff = 1;
+		END IF;
 	END;	
     
     COMMIT;
@@ -577,14 +581,15 @@ DELIMITER ;
   WHERE FIND_IN_SET(product_type, param);
 
 */
-USE `atsnovember`;
+
 DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
 
 
 -- FLAG FOR MERGE
 DELIMITER $$
-USE `atsnovember`$$
-CREATE PROCEDURE PROCEDURE `spRemoveEmployeeSkill`(IN id_param INT, IN idsSkill_param VARCHAR(255), OUT affected_out INT)
+CREATE PROCEDURE `spRemoveEmployeeSkill`(IN id_param INT, 
+IN idsSkill_param VARCHAR(255), 
+OUT affected_out INT)
 BEGIN
 
 DECLARE numSkills INT;
@@ -645,6 +650,23 @@ IN search_param varchar(255))
   
 //
 DELIMITER ;
+
+
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', '1');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', '2');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '1');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '3');
+
+INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`) 
+VALUES ('November', b'0', b'0', '2020-03-03');
+INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`, `updatedAt`) 
+VALUES ('December', b'0', b'0', '2020-03-01', '2020-03-02');
+
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('1', '1');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('2', '1');
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Configure Router', 'Advatek Systems', '2020-03-10 10:00', '2020-03-10 11:00', '2');
 
 
 

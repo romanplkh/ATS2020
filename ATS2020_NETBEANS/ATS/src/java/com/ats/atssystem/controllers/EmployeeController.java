@@ -134,30 +134,16 @@ public class EmployeeController extends CommonController {
                     }
 
                     break;
-//                case "search":
-//                    String search = super.getValue(request, "searchCriteria");
-//                    if (search.isEmpty()) {
-//                        request.setAttribute("error", new ErrorViewModel("Please specify your search criteria"));
-//                    } else {
-//                        employees = employeeService.getEmployees(search);
-//                        request.setAttribute("employees", employees);
-//
-//                    }
-//                    //----------DOESN"T WORK ----------------------------
-//                    //new mapping in web.xml
-//                    super.setView(request, EMPLOYEE_MAINT_VIEW);
-////                    response.sendRedirect(request.getContextPath() + "/employees/search");
-//                    break;
 
                 case "update skills":
                     //HERE WE WILL ADD AND REMOVE SKILLS 
                     int employeeId = super.getInteger(request, "employeeId");
                     emp = employeeService.getEmployee(employeeId);
 
-                    //VALIDATE ONE MORE TIME IF REQUEST WILL BE MADRE NOT OVER UI
+                    //VALIDATE ONE MORE TIME IF REQUEST WILL BE MADE NOT OVER UI
                     if (emp != null) {
                         if (skillsManagementActionEquals(request) == "delete") {
-                            //TRY DELTE SKILLS
+                            //TRY DELETE SKILLS
                             int result = employeeService.deleteEmployeeSkill(employeeId, super.getValue(request, "skillsToDelete"));
 
                             if (result == 0) {
@@ -169,13 +155,52 @@ public class EmployeeController extends CommonController {
 
                             }
                         }
+                        if (skillsManagementActionEquals(request) == "add") {
+                            //TRY Add SKILLS
+                            String skills = super.getValue(request, "skillsToAdd");
+                            int result = employeeService
+                                    .addEmployeeSkill(employeeId, skills);
+
+                            if (result == 0) {
+                                EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                                emp.addError(ErrorFactory
+                                        .createInstance(1, "Something went wrong when updating skills"));
+                                evm.setEmployee(emp);
+                                evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                                request.setAttribute("evm", evm);
+
+                            }
+
+                        }
 
                     } else {
                         request.setAttribute("errorVM", new ErrorViewModel("Employee with this ID does not exist"));
                     }
+                    break;
 
+                case "add skills":
+                    int empId = super.getInteger(request, "employeeId");
+                    emp = employeeService.getEmployee(empId);
+                    if (skillsManagementActionEquals(request) == "add") {
+                        //TRY Add SKILLS
+                        String skills = super.getValue(request, "skillsToAdd");
+                        int result = employeeService
+                                .addEmployeeSkill(empId, skills);
+
+                        if (result == 0) {
+                            EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                            emp.addError(ErrorFactory
+                                    .createInstance(1, "Something went wrong while adding skills"));
+                            evm.setEmployee(emp);
+                            evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                            request.setAttribute("evm", evm);
+
+                        }
+
+                    }
+                    break;
             }
-            
+
         } catch (Exception e) {
             super.setView(request, EMPLOYEE_MAINT_VIEW);
             request.setAttribute("vmError", new ErrorViewModel("Something bad happened when attempting to maintain employee"));

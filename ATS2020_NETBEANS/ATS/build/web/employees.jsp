@@ -69,7 +69,7 @@
                                                 <td>${employee.lastName}</td>
                                                 <td><a href="employee/${employee.id}/update">Edit</a></td>
                                                 <td><a href="employee/${employee.id}/details">Details</a></td>
-                                                <td><a href="employee/${employee.id}/skills">Skills</a></td>
+                                                <td><a href="employee/${employee.id}/skills">Manage Skills</a></td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
