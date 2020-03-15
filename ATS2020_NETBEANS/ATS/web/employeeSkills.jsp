@@ -163,13 +163,11 @@
             //ARRAY TO HOLD VALUES FROM DB IF PRESENT
             let listOfTaskIds = [];
 
-            //ARRAY TO HOLD ADDED TASKS. ALSO COPIES TASKS FROM CURRENT EMPLOYEE SO IT IS NOT DOUBLE ADDED
+            //ARRAY TO HOLD ADDED TASKS.
             let addedTasks = [];
 
 
             const updateBtn = document.querySelector("input[value='Update Skills']");
-
-
 
 
             //On load set disabled
