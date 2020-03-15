@@ -2,16 +2,14 @@ package com.ats.atssystem.controllers;
 
 import com.ats.atssystem.business.EmployeeServiceFactory;
 import com.ats.atssystem.business.IEmployeeService;
-import com.ats.atssystem.models.Employee;
-import com.ats.atssystem.models.EmployeeDTO;
+import com.ats.atssystem.business.TaskServiceFactory;
 import com.ats.atssystem.models.EmployeeDTOFactory;
 import com.ats.atssystem.models.EmployeeFactory;
+import com.ats.atssystem.models.EmployeeSkillsViewModel;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.ErrorViewModel;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IEmployeeDTO;
-import com.ats.atssystem.models.ITeam;
-import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -27,6 +25,7 @@ public class EmployeeController extends CommonController {
     private static final String EMPLOYEES_VIEW = "/employees.jsp";
     private static final String EMPLOYEE_MAINT_VIEW = "/employee.jsp";
     private static final String EMPLOYEE_DETAILS_VIEW = "/employeeDetails.jsp";
+    private static final String EMPLOYEE_SKILLS_MANAGEMENT = "/employeeSkills.jsp";
     private static final String PAGE_404 = "/404.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -47,8 +46,7 @@ public class EmployeeController extends CommonController {
 
             super.setView(request, EMPLOYEES_VIEW);
         } else {
-            //// employee/:id/[details : update]
-
+            //// employee/:id/[details : update : skills]
             IEmployee employee = EmployeeFactory.createInstance();
 
             String[] pathParts = super.getUrlParts(pathInfo);
@@ -58,13 +56,13 @@ public class EmployeeController extends CommonController {
 
             if (id != 0) {
 
-                //Update OR Details  
-                String urlContext = pathParts[2].toLowerCase();
+                //Update, Details or Skills
+                String urlContext = pathParts[2];
 
                 employee = employeeService.getEmployee(id);
 
                 if (employee != null) {
-                    switch (urlContext) {
+                    switch (urlContext.toLowerCase()) {
                         case "update":
                             request.setAttribute("employee", employee);
                             super.setView(request, EMPLOYEE_MAINT_VIEW);
@@ -75,6 +73,12 @@ public class EmployeeController extends CommonController {
                             request.setAttribute("empDetails", employeeDetails);
                             super.setView(request, EMPLOYEE_DETAILS_VIEW);
                             break;
+                        case "skills":
+                            EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                            evm.setEmployee(employee);
+                            evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                            request.setAttribute("evm", evm);
+                            super.setView(request, EMPLOYEE_SKILLS_MANAGEMENT);
                     }
 
                 } else {
@@ -83,7 +87,6 @@ public class EmployeeController extends CommonController {
                 }
 
             } else {
-
                 request.setAttribute("employee", employee);
                 super.setView(request, EMPLOYEE_MAINT_VIEW);
 
@@ -102,10 +105,10 @@ public class EmployeeController extends CommonController {
 
         try {
             //Get action of button
-            String action = super.getValue(request, "action").toLowerCase();
+            String action = super.getValue(request, "action");
 
             //Get hidden id
-            switch (action) {
+            switch (action.toLowerCase()) {
                 case "create":
                     //Populate employee object
                     emp = populateEmployeeModel(request);
@@ -146,7 +149,33 @@ public class EmployeeController extends CommonController {
 ////                    response.sendRedirect(request.getContextPath() + "/employees/search");
 //                    break;
 
+                case "update skills":
+                    //HERE WE WILL ADD AND REMOVE SKILLS 
+                    int employeeId = super.getInteger(request, "employeeId");
+                    emp = employeeService.getEmployee(employeeId);
+
+                    //VALIDATE ONE MORE TIME IF REQUEST WILL BE MADRE NOT OVER UI
+                    if (emp != null) {
+                        if (skillsManagementActionEquals(request) == "delete") {
+                            //TRY DELTE SKILLS
+                            int result = employeeService.deleteEmployeeSkill(employeeId, super.getValue(request, "skillsToDelete"));
+
+                            if (result == 0) {
+                                EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                                emp.addError(ErrorFactory.createInstance(1, "Something went wrong when updating skills"));
+                                evm.setEmployee(emp);
+                                evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                                request.setAttribute("evm", evm);
+
+                            }
+                        }
+
+                    } else {
+                        request.setAttribute("errorVM", new ErrorViewModel("Employee with this ID does not exist"));
+                    }
+
             }
+            
         } catch (Exception e) {
             super.setView(request, EMPLOYEE_MAINT_VIEW);
             request.setAttribute("vmError", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
@@ -159,6 +188,18 @@ public class EmployeeController extends CommonController {
 
         }
 
+    }
+
+    private String skillsManagementActionEquals(HttpServletRequest request) {
+        String action = "add";
+
+        if (!super.getValue(request, "skillsToDelete").isEmpty() && super.getValue(request, "skillsToAdd").isEmpty()) {
+            action = "delete";
+        } else if (!super.getValue(request, "skillsToDelete").isEmpty() && !super.getValue(request, "skillsToAdd").isEmpty()) {
+            action = "addDelete";
+        }
+
+        return action;
     }
 
     /**

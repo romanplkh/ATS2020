@@ -13,7 +13,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8">
 
-                        <h1 class="display-4 text-center">${employee.id == 0 ? "Add Employee" : "Update Employee"}</h1>
+                        <h1 class="display-4 text-center">${employee == null ? "" : employee.id == 0 ? "Add Employee" : "Update Employee"}</h1>
 
                         <c:if test="${employeeErrors != null}">
                             <div class="alert alert-danger" role="alert">
@@ -24,8 +24,8 @@
                         </c:if>
 
                         <c:choose>
-                            <c:when test="${vmError.errors != null}">
-                                <c:forEach items="${error.errors}" var="errVm">
+                            <c:when test="${vmError.errors.size() > 0}">
+                                <c:forEach items="${vmError.errors}" var="errVm">
                                     <div class="alert alert-danger" role="alert">
                                         <p class="m-0 font-weight-bold">${errVm}</p>
                                     </div>
