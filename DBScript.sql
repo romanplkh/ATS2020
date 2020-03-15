@@ -151,6 +151,24 @@ DELIMITER ;
 
 
 
+-- GET EMPLOYEE WITH SKILLS
+USE `atsnovember`;
+DROP procedure IF EXISTS `spGetEmployeeWithSkills`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spGetEmployeeWithSkills` (IN empId_param INT)
+BEGIN
+SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, CONCAT(tasks.id) AS skillId, name  FROM employees e
+LEFT JOIN employeetasks ON employeetasks.employeeId = e.id
+LEFT JOIN tasks on employeetasks.taskId = tasks.id
+WHERE e.id = empId_param;
+END$$
+
+DELIMITER ;
+
+
+
 
 
 
@@ -560,18 +578,23 @@ DELIMITER ;
 
 */
 USE `atsnovember`;
-DROP procedure IF EXISTS `spRemoveEmployeeSkiil`;
+DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
 
+
+-- FLAG FOR MERGE
 DELIMITER $$
 USE `atsnovember`$$
-CREATE  PROCEDURE `spRemoveEmployeeSkiil`(IN id_param INT, IN idsSkill_param VARCHAR(255))
+CREATE PROCEDURE PROCEDURE `spRemoveEmployeeSkill`(IN id_param INT, IN idsSkill_param VARCHAR(255), OUT affected_out INT)
 BEGIN
 
 DECLARE numSkills INT;
 DECLARE loopCount INT;
 DECLARE curSkillId INT;
+DECLARE rowsAffected INT;
 
 START TRANSACTION;
+SET rowsAffected = 0;
+SET affected_out = 0;
 SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', ''));
 
  SET loopCount = 1;
@@ -582,13 +605,18 @@ SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', '')
      SET loopCount = loopCount + 1;
      END WHILE;
      
-     SELECT row_count();
+     SET rowsAffected = (SELECT row_count());
+     IF (rowsAffected > 0) THEN 
+		SET affected_out = 1;
+	END IF;
 COMMIT;
 
   
 END$$
 
 DELIMITER ;
+
+
 
 
 

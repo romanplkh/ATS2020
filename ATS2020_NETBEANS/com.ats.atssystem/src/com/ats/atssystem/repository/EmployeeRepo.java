@@ -24,10 +24,11 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     private final String SPROC_INSERT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?,?);";
     private final String SPROC_SELECT_EMPLOYEES = "CALL spGetEmployee(?);";
-    private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
-    private final String SPROC_GET_EMPLOYEE_DETAILS = "CALL spGetEmployeeDetails(?);";
+//    private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
+    private final String SPROC_GET_EMPLOYEE_FULL_DETAILS = "CALL spGetEmployeeDetails(?);";
+    private final String SPROC_GET_EMPLOYEE_WITH_SKILLS = "CALL spGetEmployeeWithSkills(?);";
     private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
-    private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkiil(?, ?);";
+    private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkill(?,?,?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess;
@@ -122,7 +123,9 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         params.add(ParameterFactory.createInstance(id));
         params.add(ParameterFactory.createInstance(skillIds));
-        returnedValues = this.dataAccess.executeNonQuery(SPROC_REMOVE_EMPLOYEE, params);
+        
+        params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
+        returnedValues = this.dataAccess.executeNonQuery(SPROC_REMOVE_EMPLOYEE_SKILL, params);
 
         try {
             if (returnedValues != null) {
@@ -170,9 +173,12 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
             params.add(ParameterFactory.createInstance(id));
 
-            CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_SELECT_EMPLOYEE, params);
+//            CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_SELECT_EMPLOYEE, params);
+            CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_GET_EMPLOYEE_WITH_SKILLS, params);
 
-            employee = mapPropsEmployeeToModel(rs);
+            //UNKOMMENT IF ERRORS WITH GET EMPLOYEE
+//            employee = mapPropsEmployeeToModel(rs);
+            employee = populateEmployee(rs);
 
         } catch (Exception e) {
             System.out.print(e.getMessage());
@@ -194,7 +200,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
             params.add(ParameterFactory.createInstance(id));
 
-            CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_GET_EMPLOYEE_DETAILS, params);
+            CachedRowSet rs = this.dataAccess.executeFill(this.SPROC_GET_EMPLOYEE_FULL_DETAILS, params);
 
             employeeDetails = populateEmployeeDTO(rs);
 
@@ -265,17 +271,19 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     }
 
     /**
-     * Maps properties of an employee stored in Database to the model IEmployee
      *
      * @param rs CachedRowSet with values from database
-     * @return employee model with populated properties or null
+     * @return employee information with skills
      * @throws SQLException
      */
-    private IEmployee mapPropsEmployeeToModel(CachedRowSet rs) throws SQLException {
+    private IEmployee populateEmployee(CachedRowSet rs) throws SQLException {
+
         IEmployee employee = null;
+        ITask skill = null;
 
         if (rs.next()) {
             employee = EmployeeFactory.createInstance();
+
             employee.setId(super.getInt("id", rs));
             employee.setSin(rs.getString("sin"));
             employee.setHourlyRate(super.getDouble("hourlyRate", rs));
@@ -285,11 +293,55 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setUpdatedAt(super.getDate("updatedAt", rs));
             employee.setDeletedAt(super.getDate("deletedAt", rs));
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
+
+            //Populate employee skills (task)
+            if (rs.getString("skillId") != null) {
+                skill = TaskFactory.createInstance();
+
+                skill.setId(super.getInt("skillId", rs));
+                skill.setName(rs.getString("name"));
+
+                employee.getSkills().add(skill);
+
+                while (rs.next() && rs.getString("skillId") != null) {
+                    skill = TaskFactory.createInstance();
+                    skill.setId(super.getInt("skillId", rs));
+                    skill.setName(rs.getString("name"));
+                    employee.getSkills().add(skill);
+                }
+            }
         }
 
         return employee;
 
     }
+
+    /**
+     * Maps properties of an employee stored in Database to the model IEmployee
+     *
+     * @param rs CachedRowSet with values from database
+     * @return employee model with populated properties or null
+     * @throws SQLException
+     */
+//    private IEmployee mapPropsEmployeeToModel(CachedRowSet rs) throws SQLException {
+//        IEmployee employee = null;
+//
+//        if (rs.next()) {
+//            employee = EmployeeFactory.createInstance();
+//            employee.setId(super.getInt("id", rs));
+//            employee.setSin(rs.getString("sin"));
+//            employee.setHourlyRate(super.getDouble("hourlyRate", rs));
+//            employee.setFirstName(rs.getString("firstName"));
+//            employee.setLastName(rs.getString("lastName"));
+//            employee.setCreatedAt(super.getDate("createdAt", rs));
+//            employee.setUpdatedAt(super.getDate("updatedAt", rs));
+//            employee.setDeletedAt(super.getDate("deletedAt", rs));
+//            employee.setIsDeleted(rs.getBoolean("isDeleted"));
+//        }
+//
+//        return employee;
+//
+//    }
 
     /**
      * Allows to map data from CachedRowSet to List of objects (employees)
