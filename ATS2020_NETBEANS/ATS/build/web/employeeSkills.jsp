@@ -15,19 +15,19 @@
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
     <noscript>
-        <!-- anchor linking to external file -->
-        <style>
-            #noJS {
-                display: none;
-            }
+    <!-- anchor linking to external file -->
+    <style>
+        #noJS {
+            display: none;
+        }
 
-            #noJSMessage {
-                display: block;
-            }
-        </style>
+        #noJSMessage {
+            display: block;
+        }
+    </style>
 
-        <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! Good luck with that.
-        </h1>
+    <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! Good luck with that.
+    </h1>
     </noscript>
 
     <body>
@@ -119,7 +119,7 @@
                                                     d-flex justify-content-between align-items-center ">
                                                     ${skill.name}
                                                     <span class="text-danger employeeSkillRemove"
-                                                        style="cursor: pointer;">
+                                                          style="cursor: pointer;">
                                                         X
                                                     </span><input type="hidden" value="${skill.id}">
                                                 </li>
@@ -136,15 +136,15 @@
                                 <c:choose>
                                     <c:when test="${evm.employee.skills.size() == 0}">
                                         <input type="submit" value="Add Skills" class="btn btn-success btn-lg"
-                                            name="action">
+                                               name="action">
                                     </c:when>
                                     <c:otherwise>
                                         <input class="btn btn-warning btn-lg" type="submit" value="Update Skills"
-                                            name="action" />
+                                               name="action" />
                                     </c:otherwise>
                                 </c:choose>
                                 <a href="${pageContext.request.contextPath}/employees"
-                                    class="btn btn-secondary btn-lg ml-2">Cancel</a>
+                                   class="btn btn-secondary btn-lg ml-2">Cancel</a>
 
                             </div>
 
@@ -160,11 +160,15 @@
 
         <script>
 
+            //ARRAY TO HOLD VALUES FROM DB IF PRESENT
             let listOfTaskIds = [];
 
-            let addedTasks = [].concat(listOfTaskIds);
+            //ARRAY TO HOLD ADDED TASKS. ALSO COPIES TASKS FROM CURRENT EMPLOYEE SO IT IS NOT DOUBLE ADDED
+            let addedTasks = [];
+
 
             const updateBtn = document.querySelector("input[value='Update Skills']");
+
 
 
 
@@ -175,6 +179,7 @@
             //REF TO INPUT WHERE TO RECORD ALL SKILLS TO REMOVE
             const skillsToDelete = document.querySelector("input[name='skillsToDelete']");
 
+
             //REF TO INPUT WHERE TO RECORD ALL SKILLS TO ADD
             const skillsToAdd = document.querySelector("input[name='skillsToAdd']");
 
@@ -182,10 +187,26 @@
             const empSkills = document.querySelectorAll(".employeeSkillRemove");
 
 
+            Array.from(empSkills).forEach(el => {
+
+                //FILL ARRAY WITH EMPLOYEE SKILLS FROM DB WHEN HE HAS ONES
+                listOfTaskIds.push(parseInt(el.nextSibling.value));
+
+                //ATTACH LISTENERS ON LIST ELEMENTS FROM DB
+                el.addEventListener("click", (ev) => {
+                    const taskId = parseInt(el.parentNode.lastElementChild.value);
+                    removeSkill(el)
+                })
+            })
+
+
             //Add to hidden input skills we want to delete so we can pass them to controller
             const removeSkill = (el) => {
+                hideErrorMessage();
+                //GET VALUE OF ELEMENT TO REMOVE
                 const taskId = parseInt(el.parentNode.lastElementChild.value);
 
+                //CHECK IF SKILL WAS AVAILABLE WHEN WE RETRIEVED EMPLOYEE
                 if (listOfTaskIds.indexOf(taskId) != -1) {
                     if (!skillsToDelete.value) {
                         skillsToDelete.value += taskId;
@@ -194,13 +215,15 @@
                     }
                 }
 
-
-
-                listOfTaskIds = listOfTaskIds.filter(el => el != taskId)
+                //IF SKILL WAS NOT AVAILABLE FOR EMPLOYEE FROM DB SIMPLY DELETE FROM UI
+                addedTasks = addedTasks.filter(el => el != taskId)
                 el.parentNode.remove();
 
+                //SHOW/HIDE MESSAGE IF NO TASKS
                 if (listOfTaskIds.length == 0) {
                     showElement("#taskListPlaceHolder")
+                } else {
+                    hideElement("#taskListPlaceHolder")
                 }
 
                 //Enabled button Submit
@@ -211,15 +234,7 @@
 
 
 
-            //ATTACH LISTENERS ON ELEMENTS FROM DB
-            Array.from(empSkills).forEach(el => {
-                listOfTaskIds.push(parseInt(el.nextSibling.value));
-                el.addEventListener("click", (ev) => {
-
-                    removeSkill(el)
-                })
-            })
-
+            //HIDE ELEMENT ON PAGE LOAD IF HAS TASK
             if (listOfTaskIds.length > 0) {
                 hideElement("#taskListPlaceHolder")
             }
@@ -253,15 +268,19 @@
                 }
 
 
+
+
                 //GET VALUE FROM SELECT MENU
                 const taskValue = parseInt(listTasks.value);
                 const taskText = listTasks.options[listTasks.selectedIndex].text;
 
-                const taskId = parseInt(el.parentNode.lastElementChild.value);
 
 
-                //CHECH IF SKILL WAS NOT ALREADY ADDED
-                if (addedTasks.indexOf(taskValue) == -1) {
+
+
+
+                //CHECK IF SKILL WAS NOT ALREADY ADDED OR ALREADY PRESENT WITH EMPLOYEE
+                if (listOfTaskIds.indexOf(taskValue) == -1 && addedTasks.indexOf(taskValue) == -1) {
                     hideErrorMessage();
 
 
@@ -310,12 +329,12 @@
                     //LAZY WAY TO BUILD ERROR MESSAGE
                     const alertMessage = `
                         <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        This skill is already present
+                        This skill is already present refresh the page or add another one
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                         </button>
                             </div>
-                        `;
+                    `;
 
 
                     //WHERE TO ADD IN DOM ERROR MESSAGE
@@ -335,7 +354,8 @@
                 }
 
 
-            };
+            }
+            ;
 
             function hideElement(selector) {
                 const element = document.querySelector(selector);
