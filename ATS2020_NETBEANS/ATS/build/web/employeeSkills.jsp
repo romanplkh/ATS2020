@@ -8,25 +8,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Employee's Skills</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
     <noscript>
-    <!-- anchor linking to external file -->
-    <style>
-        #noJS{
-            display: none;
-        }
+        <!-- anchor linking to external file -->
+        <style>
+            #noJS {
+                display: none;
+            }
 
-        #noJSMessage{
-            display: block;
-        }
-    </style>
+            #noJSMessage {
+                display: block;
+            }
+        </style>
 
-    <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! Good luck with that.</h1>
+        <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! Good luck with that.
+        </h1>
     </noscript>
+
     <body>
 
 
@@ -115,7 +118,8 @@
                                                 <li class="list-group-item list-group-item-action active my-1
                                                     d-flex justify-content-between align-items-center ">
                                                     ${skill.name}
-                                                    <span class="text-danger employeeSkillRemove" style="cursor: pointer;">
+                                                    <span class="text-danger employeeSkillRemove"
+                                                        style="cursor: pointer;">
                                                         X
                                                     </span><input type="hidden" value="${skill.id}">
                                                 </li>
@@ -131,16 +135,16 @@
 
                                 <c:choose>
                                     <c:when test="${evm.employee.skills.size() == 0}">
-                                        <input type="submit" value="Add Skills" 
-                                               class="btn btn-success btn-lg" name="action">
+                                        <input type="submit" value="Add Skills" class="btn btn-success btn-lg"
+                                            name="action">
                                     </c:when>
                                     <c:otherwise>
-                                        <input class="btn btn-warning btn-lg" 
-                                               type="submit" value="Update Skills" name="action"/>
+                                        <input class="btn btn-warning btn-lg" type="submit" value="Update Skills"
+                                            name="action" />
                                     </c:otherwise>
                                 </c:choose>
-                                <a href="${pageContext.request.contextPath}/employees" 
-                                   class="btn btn-secondary btn-lg ml-2">Cancel</a>
+                                <a href="${pageContext.request.contextPath}/employees"
+                                    class="btn btn-secondary btn-lg ml-2">Cancel</a>
 
                             </div>
 
@@ -200,7 +204,7 @@
                 }
 
                 //Enabled button Submit
-                if (updateBtn.hasAttribute("disabled")) {
+                if (updateBtn && updateBtn.hasAttribute("disabled")) {
                     setEnabled(updateBtn, true)
                 }
             }
@@ -242,9 +246,8 @@
 
 
             const addTask = () => {
-
                 //CHECK IF BUTTON IS DISABLED
-                if (updateBtn.hasAttribute("disabled")) {
+                if (updateBtn && updateBtn.hasAttribute("disabled")) {
                     setEnabled(updateBtn, true)
 
                 }
@@ -318,19 +321,23 @@
                     //WHERE TO ADD IN DOM ERROR MESSAGE
                     errorJs.insertAdjacentHTML("afterbegin", alertMessage);
                 }
-                
-                
+
+
             };
 
 
 
             function setEnabled(element, enabled) {
-                enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled);
-                element.style.cursor = enabled ? "pointer" : "not-allowed";
+
+                if (element) {
+                    enabled ? element.removeAttribute("disabled") : element.setAttribute("disabled", !enabled)
+                    element.style.cursor = enabled ? "pointer" : "not-allowed";
+                }
+
 
             };
 
-            function  hideElement(selector) {
+            function hideElement(selector) {
                 const element = document.querySelector(selector);
                 if (element) {
                     element.style.display = "none";
@@ -350,6 +357,9 @@
                     errorJs.removeChild(document.querySelector("#error-alert"))
                 }
 
-            }</script>
+            }
+
+        </script>
     </body>
+
 </html>
