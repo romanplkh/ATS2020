@@ -660,6 +660,8 @@ INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Sam', 'Donovan', '423-133-289','60.00', now());
 
 
 -- SEARCH EMPLOYEE
@@ -685,6 +687,10 @@ INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', 
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', '2');
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '1');
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '3');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '3');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '2');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('3', '4');
+
 
 INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`) 
 VALUES ('November', b'0', b'0', '2020-03-03');
@@ -693,10 +699,46 @@ VALUES ('December', b'0', b'0', '2020-03-01', '2020-03-02');
 
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('1', '1');
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('2', '1');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('3', '2');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('4', '2');
 
 INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
-VALUES ('Configure Router', 'Advatek Systems', '2020-03-10 10:00', '2020-03-10 11:00', '2');
+VALUES ('Configure Router', 'Advatek Systems', '2020-03-16 10:00', '2020-03-16 11:00', '2');
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Design Network', 'Dovico', '2020-03-16 10:00', '2020-03-16 10:45', '1');
+INSERT INTO `atsnovember`.`jobs` (`id`, `description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('3', 'Mobile hardware repair', 'Samsung Inc', '2020-03-16 12:00', '2020-03-16 14:00:00', '1');
 
+
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('1', '2', '31.50', '94.50');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('2', '1', '60', '180');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('4', '3', '78.00', '234.00');
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS spGetJobsSchedule;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spGetJobsSchedule(
+IN date_param VARCHAR(255)
+)
+
+BEGIN
+	SELECT jobs.id, CONCAT(date_format(start, '%H:%i:%s')) as start_time, 
+		CONCAT(date_format(end, '%H:%i:%s')) as end_time,  
+		CONCAT(teams.name) as team
+	FROM jobs
+	INNER JOIN teams
+	ON jobs.teamId = teams.id
+	WHERE date_format(start, '%Y-%m-%d') = date_param 
+	GROUP BY start, teams.name;
+END;
+//
+DELIMITER ;
 
 
 
