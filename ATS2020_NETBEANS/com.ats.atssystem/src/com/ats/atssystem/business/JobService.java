@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
@@ -12,22 +13,41 @@ import com.ats.atssystem.repository.JobRepoFactory;
 /**
  *
  * @author Olena Stepanova
+ * @author Roman Pelikh
  */
-public class JobService implements IJobService{
+public class JobService implements IJobService {
 
     public JobService() {
     }
-    
+
     private IJobRepo repo = JobRepoFactory.createInstance();
 
     /**
-     * {@inheritDoc } 
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValid(IJob job) {
+        return job.getErrors().isEmpty();
+    }
+
+    /**
+     * {@inheritDoc }
      */
     @Override
     public IJob getJobDetails(int jobId) {
         return repo.getJobDetails(jobId);
     }
-    
-    
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public IJob deleteJob(IJob job) {
+        if (repo.deleteJob(job.getId()) == 0) {
+            job.addError(ErrorFactory.createInstance(1, "Something went wrong. Job was not deleted. Try again"));
+
+        }
+        return job;
+    }
+
 }
