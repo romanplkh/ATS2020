@@ -742,3 +742,22 @@ DELIMITER ;
 
 
 
+-- DELETE JOB
+
+USE `atsnovember`;
+DROP procedure IF EXISTS `spDeleteJob`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spDeleteJob` (IN jobId_param INT, OUT rows_affected_param INT)
+BEGIN
+START TRANSACTION;
+DELETE FROM jobstasks WHERE jobId IN (jobId_param);
+SET rows_affected_param = (SELECT row_count());
+DELETE FROM jobs WHERE id = jobId_param;
+
+SET rows_affected_param = rows_affected_param  + (SELECT row_count());
+COMMIT;
+END$$
+
+DELIMITER ;

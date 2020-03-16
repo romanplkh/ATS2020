@@ -12,6 +12,8 @@ import java.util.List;
 /**
  *
  * @author Olena Stepanova
+ * @author Roman Pelikh
+ * 
  */
 public class Job extends Base implements Serializable, IJob {
 
