@@ -26,7 +26,8 @@
         }
     </style>
 
-    <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! Good luck with that.
+    <h1 id="noJSMessage" class="display-4 p-5">You do not have Java Script enabled in 2020! 
+        Good luck with that.
     </h1>
     </noscript>
 
@@ -39,34 +40,49 @@
         <main id="noJS">
 
 
-
-            <div class="container my-5" id="errorJs">
+            <div class="container my-5">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h1 class="text-center display-4">Skills Management Area</h1>
+                    </div>
+                </div>
+                <div id="errorJs"></div>
                 <c:if test="${evm.employee.errors.size() > 0}">
                     <div class="row justify-content-center">
-                        <c:forEach items="${evm.employee.errors}" var="errVm">
-                            <div class="alert alert-danger" role="alert">
-                                <p class="m-0 font-weight-bold">${errVm.description}</p>
+                        <div class="col-12">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <c:forEach items="${evm.employee.errors}" var="errVm">
+                                    <p class="m-0 font-weight-bold">${errVm.description}</p>
+                                </c:forEach>
+                                <button type="button" class="close" 
+                                        data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
-                        </c:forEach>
+                        </div>
                     </div>
                 </c:if>
 
                 <c:choose>
                     <c:when test="${errorsVM.errors != null}">
                         <div class="row justify-content-center">
-                            <c:forEach items="${errorsVM.errors}" var="errVm">
-                                <div class="alert alert-danger" role="alert">
-                                    <p class="m-0 font-weight-bold">${errVm}</p>
+                            <div class="col-12">
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <c:forEach items="${errorsVM.errors}" var="errVm">
+                                        <p class="m-0 font-weight-bold">${errVm}</p>
+                                    </c:forEach>
+                                    <button type="button" class="close" 
+                                            data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                            </c:forEach>
+                            </div>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <h1 class="text-center">Skill Management</h1>
                         <form method="post">
                             <div class="row mt-5">
                                 <div class="col-md-6">
-
                                     <div class="form-group">
                                         <h3 class="text-center">Employee Details</h1>
                                             <div class="card" style="width: 100%;">
@@ -282,6 +298,7 @@
                     hideErrorMessage();
 
 
+
                     //BUILD UI ELEMENT WITH SKILL
                     const li = document.createElement("li");
                     const span = document.createElement("span");
@@ -320,6 +337,15 @@
 
                     //ADD CREATED TASK ID TO ARRRAY OF IDS
                     addedTasks.push(taskValue);
+
+                    const taskId = parseInt(document.querySelector("#requiredTasks")
+                            .lastElementChild.lastElementChild.value);
+
+                    if (skillsToAdd.value == "") {
+                        skillsToAdd.value = taskId;
+                    } else {
+                        skillsToAdd.value += "," + taskId;
+                    }
 
                 } else {
 
