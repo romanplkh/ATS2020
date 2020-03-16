@@ -587,7 +587,8 @@ DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
 
 -- FLAG FOR MERGE
 DELIMITER $$
-CREATE PROCEDURE `spRemoveEmployeeSkill`(IN id_param INT, 
+CREATE PROCEDURE `spRemoveEmployeeSkill`(
+IN id_param INT, 
 IN idsSkill_param VARCHAR(255), 
 OUT affected_out INT)
 BEGIN
@@ -619,7 +620,35 @@ END$$
 
 DELIMITER ;
 
+-- UPDATE SKILLS EMPLOYEE
+DELIMITER //
+DROP PROCEDURE IF EXISTS spUpdateEmployeeSkills;
+// DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE spUpdateEmployeeSkills(
+IN empId_param INT, 
+IN skillsDelete_param VARCHAR(255), 
+IN skillsAdd_param VARCHAR(255), 
+OUT affected_out INT)
+	BEGIN
+		START TRANSACTION;
+			BEGIN
+				CALL spRemoveEmployeeSkill(empId_param, skillsDelete_param, @numDeleted);
+				SELECT @numDeleted;
+		
+				CALL spAddTaskToEmployee(empId_param, skillsAdd_param, @numAdded);
+                SELECT @numAdded;
+                
+                 IF (@numDeleted > 0 AND @numAdded > 0) THEN 
+					SET affected_out = 1;
+				END IF;
+        
+        COMMIT;
+        END;
+	END;
+//
+DELIMITER ;
 
 
 
