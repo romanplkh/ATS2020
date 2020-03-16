@@ -80,6 +80,15 @@ public interface IEmployeeRepo {
      * @return number of row affected
      */
     int addSkillsToEmployee(int employeeId, String skillIds);
+    
+      /**
+     * Updates specified skills in employee's skill set
+     * @param employeeId employee Id
+     * @param skillsDelete string skill Ids to delete
+     * @param skillsAdd string skill Id to add
+     * @return number of row affected
+     */
+    int updateEmployeeSkills(int employeeId, String skillsDelete, String skillsAdd);
 
     /**
      * Looks for an employees with specific sin or last name
