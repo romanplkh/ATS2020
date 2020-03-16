@@ -150,33 +150,46 @@ public class EmployeeController extends CommonController {
 
                             if (result == 0) {
                                 EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
-                                emp.addError(ErrorFactory.createInstance(1, "Something went wrong when updating skills"));
+                                emp.addError(ErrorFactory.createInstance(1, "Something went wrong during delete skills"));
                                 evm.setEmployee(emp);
                                 evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
                                 request.setAttribute("evm", evm);
                             }
-
-                        }
-
-                        if (skillsManagementActionEquals(request) == "add") {
-                            //TRY Add SKILLS
+                        } else if ("add".equals(skillsManagementActionEquals(request))) {
+                            //Add SKILLS
                             String skills = super.getValue(request, "skillsToAdd");
+
                             int result = employeeService
                                     .addEmployeeSkill(employeeId, skills);
 
                             if (result == 0) {
                                 EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
                                 emp.addError(ErrorFactory
-                                        .createInstance(1, "Something went wrong when updating skills"));
+                                        .createInstance(1, "Something went wrong during adding skills"));
                                 evm.setEmployee(emp);
                                 evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
                                 request.setAttribute("evm", evm);
 
                             }
 
-                        }
+                        } else if ("addDelete".equals(skillsManagementActionEquals(request))) {
+                            
+                            String skillsToDelete = super.getValue(request, "skillsToDelete");
+                            String skillsToAdd = super.getValue(request, "skillsToAdd");
 
-                        if (skillsManagementActionEquals(request).isEmpty()) {
+                            int result = employeeService
+                                    .updateEmployeeSkills(employeeId, skillsToDelete, skillsToAdd);
+
+                            if (result == 0) {
+                                EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
+                                emp.addError(ErrorFactory
+                                        .createInstance(1, "Something went wrong during updating skills"));
+                                evm.setEmployee(emp);
+                                evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                                request.setAttribute("evm", evm);
+
+                            }
+                        } else {
                             EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
                             emp.addError(ErrorFactory.createInstance(2, "Please add/remove skills you want to be deleted from employee"));
                             evm.setEmployee(emp);
@@ -250,7 +263,8 @@ public class EmployeeController extends CommonController {
     }
 
     /**
-     * Gets values from form and creates instance of employee based on input values
+     * Gets values from form and creates instance of employee based on input
+     * values
      *
      * @param request HttpServletRequest
      * @return instance of employee with populated values

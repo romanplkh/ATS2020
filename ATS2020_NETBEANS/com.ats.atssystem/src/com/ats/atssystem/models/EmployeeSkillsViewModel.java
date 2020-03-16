@@ -35,5 +35,5 @@ public class EmployeeSkillsViewModel implements Serializable {
     public void setTasks(List<ITask> tasks) {
         this.tasks = tasks;
     }
-
+    
 }

@@ -31,6 +31,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
     private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkill(?,?,?);";
     private final String SPROC_ADD_EMPLOYEE_SKILL = "CALL spAddTaskToEmployee(?,?,?)";
+    private final String SPROC_UPDATE_EMPLOYEE_SKILLS = "CALL spUpdateEmployeeSkills(?,?,?,?)";
     private final String SPROC_SEARCH_EMPLOYEES = "CALL spSearchEmployees(?)";
 
     //Dependancy of Dataaccess layer
@@ -155,7 +156,7 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         params.add(ParameterFactory.createInstance(id));
         params.add(ParameterFactory.createInstance(skillIds));
-        
+
         params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
         returnedValues = this.dataAccess.executeNonQuery(SPROC_REMOVE_EMPLOYEE_SKILL, params);
 
@@ -170,6 +171,35 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
         return rowsAffected;
 
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int updateEmployeeSkills(int employeeId, String skillsDelete, String skillsAdd) {
+        int rowsAffected = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+        params.add(ParameterFactory.createInstance(employeeId));
+        params.add(ParameterFactory.createInstance(skillsDelete));
+        params.add(ParameterFactory.createInstance(skillsAdd));
+        params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = dataAccess.executeNonQuery(SPROC_UPDATE_EMPLOYEE_SKILLS, params);
+
+        try {
+            if (retVal != null) {
+                rowsAffected = Integer.parseInt(retVal.get(0).toString());
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rowsAffected;
     }
 
     /**
@@ -374,7 +404,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 //        return employee;
 //
 //    }
-
     /**
      * Allows to map data from CachedRowSet to List of objects (employees)
      *
