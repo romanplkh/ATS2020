@@ -148,23 +148,23 @@ public class EmployeeController extends CommonController {
 
                             if (result == 0) {
                                 EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
-                                emp.addError(ErrorFactory.createInstance(1, "Something went wrong when updating skills"));
+                                emp.addError(ErrorFactory.createInstance(1, "Something went wrong during delete skills"));
                                 evm.setEmployee(emp);
                                 evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
                                 request.setAttribute("evm", evm);
 
                             }
-                        }
-                        if (skillsManagementActionEquals(request) == "add") {
-                            //TRY Add SKILLS
+                        } else if ("add".equals(skillsManagementActionEquals(request))) {
+                            //Add SKILLS
                             String skills = super.getValue(request, "skillsToAdd");
+
                             int result = employeeService
                                     .addEmployeeSkill(employeeId, skills);
 
                             if (result == 0) {
                                 EmployeeSkillsViewModel evm = new EmployeeSkillsViewModel();
                                 emp.addError(ErrorFactory
-                                        .createInstance(1, "Something went wrong when updating skills"));
+                                        .createInstance(1, "Something went wrong during updating skills"));
                                 evm.setEmployee(emp);
                                 evm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
                                 request.setAttribute("evm", evm);
@@ -172,6 +172,7 @@ public class EmployeeController extends CommonController {
                             }
 
                         }
+                        //edit skills
 
                     } else {
                         request.setAttribute("errorVM", new ErrorViewModel("Employee with this ID does not exist"));
