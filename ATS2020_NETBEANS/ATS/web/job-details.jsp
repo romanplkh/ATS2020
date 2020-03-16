@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : job-details
     Created on : Mar 10, 2020, 4:53:53 PM
     Author     : Olena Stepanova
@@ -24,7 +24,6 @@
 
 
                 <div class="row">
-
                     <c:choose>
 
                         <c:when test="${error.errors != null}">
@@ -42,9 +41,9 @@
                             <fmt:parseDate value="${job.start}" pattern="yyyy-MM-dd'T'HH:mm" var="start" type="both" />
                             <fmt:parseDate value="${job.end}" pattern="yyyy-MM-dd'T'HH:mm" var="end" type="both" />
                             <div class="col-lg-8 col-md-6">
-
                                 <div class="card" style="width: 100%;">
                                     <div class="card-body">
+
                                         <h3 class="card-title">Job Information</h3>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item"><span class="font-weight-bold">
@@ -54,7 +53,7 @@
                                                     Client: </span>&nbsp; ${job.clientName}
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
-                                                    Start: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${start}" /> 
+                                                    Start: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${start}" />
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
                                                     End: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${end}" />
@@ -62,7 +61,14 @@
 
                                         </ul>
                                     </div>
+
+
                                 </div>
+
+                                <form method="POST" class="mt-4">
+                                    <input type="hidden" name="jobId" value="job.id">
+                                    <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action"/>
+                                </form>
                             </div>
                             <div class="col-lg-4 col-md-6 mt-md-0 mt-sm-4 ">
                                 <div class="card" style="width: 100%">
@@ -77,9 +83,11 @@
                                     <div class="card-body">
                                         <h3 class="card-title">Tasks</h3>
                                         <ul class="list-group list-group-flush">
+
                                             <c:forEach items="${job.getTasksList()}" var="task">
                                                 <li class="list-group-item text-muted">${task.name}</li>
                                                 </c:forEach>
+
                                         </ul>
                                     </div>
                                 </div>

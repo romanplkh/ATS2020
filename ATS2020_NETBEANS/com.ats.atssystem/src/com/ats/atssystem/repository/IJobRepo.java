@@ -31,4 +31,11 @@ public interface IJobRepo {
      * @return job object with details
      */
     IJob getJobDetails(int jobId);
+    
+    /**
+     * Deletes a job with all associated tasks and revenu
+     * @param jobId id of job to delete
+     * @return number of rows affected
+     */
+    int deleteJob(int jobId);
 }

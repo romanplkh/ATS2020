@@ -28,6 +28,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
     private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?);";
+    private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
@@ -83,6 +84,34 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         return jobDetails;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int deleteJob(int jobId) {
+        int rowsAffected = 0;
+
+        List<Object> returnedValues;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(jobId));
+        params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
+        returnedValues = this.dataAccess.executeNonQuery(SPROC_DELETE_JOB, params);
+
+        try {
+            if (returnedValues != null) {
+                rowsAffected = (int) returnedValues.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rowsAffected;
+
+    }
+
     private IJob populateJobDetails(CachedRowSet rs) throws SQLException {
 
         IJob job = null;
@@ -106,7 +135,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 
             //set list of tasks to a job
             rs.beforeFirst();
-           
+
             while (rs.next()) {
                 task = TaskFactory.createInstance();
                 task.setName(rs.getString("task"));
