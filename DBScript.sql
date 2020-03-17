@@ -662,6 +662,10 @@ INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Sam', 'Donovan', '423-133-289','60.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Amanda', 'Sallivan', '508-889-343','85.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Phoebe', 'Smith', '332-453-345','45.00', now());
 
 
 -- SEARCH EMPLOYEE
@@ -743,21 +747,20 @@ DELIMITER ;
 
 
 -- DELETE JOB
-
-USE `atsnovember`;
 DROP procedure IF EXISTS `spDeleteJob`;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spDeleteJob` (IN jobId_param INT, OUT rows_affected_param INT)
 BEGIN
-START TRANSACTION;
-DELETE FROM jobstasks WHERE jobId IN (jobId_param);
-SET rows_affected_param = (SELECT row_count());
-DELETE FROM jobs WHERE id = jobId_param;
+	START TRANSACTION;
+		DELETE FROM jobstasks 
+        WHERE jobId IN (jobId_param);
+        
+		SET rows_affected_param = (SELECT row_count());
+		DELETE FROM jobs WHERE id = jobId_param;
 
-SET rows_affected_param = rows_affected_param  + (SELECT row_count());
-COMMIT;
+		SET rows_affected_param = rows_affected_param  + (SELECT row_count());
+	COMMIT;
 END$$
 
 DELIMITER ;
