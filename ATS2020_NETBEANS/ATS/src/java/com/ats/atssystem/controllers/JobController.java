@@ -15,6 +15,7 @@ import com.ats.atssystem.models.JobFactory;
 import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +42,7 @@ public class JobController extends CommonController {
             //show all jobs
         } else {
             //job/:id/[details]
-
+            
             String[] pathParts = super.getUrlParts(pathInfo);
             //job id
             int jobId = super.getInteger(pathParts[1]);

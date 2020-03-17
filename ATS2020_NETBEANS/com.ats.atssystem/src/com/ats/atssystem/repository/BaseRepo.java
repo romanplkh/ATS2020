@@ -5,6 +5,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -89,8 +90,13 @@ public abstract class BaseRepo {
      * @throws SQLException
      */
     protected LocalDateTime getLocalDate(String columnName, CachedRowSet rs) throws SQLException {
-
         return rs.getTimestamp(getByColumnLabel(columnName, rs)).toLocalDateTime();
-
     }
+    
+     protected LocalTime getLocalTime(String columnName, CachedRowSet rs) throws SQLException {
+        return LocalTime.parse(rs.getString(columnName));
+                
+    }
+    
+    
 }

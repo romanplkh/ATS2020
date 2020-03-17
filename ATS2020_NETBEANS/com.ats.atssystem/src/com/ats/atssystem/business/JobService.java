@@ -7,8 +7,10 @@ package com.ats.atssystem.business;
 
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
+import java.util.List;
 
 /**
  *
@@ -48,6 +50,11 @@ public class JobService implements IJobService {
 
         }
         return job;
+    }
+
+    @Override
+    public List<ITeam> getScheduledJobs(String date) {
+        return repo.getScheduledJobs(date);
     }
 
 }

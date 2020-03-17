@@ -7,6 +7,7 @@ package com.ats.atssystem.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -55,6 +56,12 @@ public interface IJob extends IBase {
 
     public String getRevenue();
     public String getTasks();
+    
+    public LocalTime getStartTime();
+    public void setStartTime(LocalTime startTime);
+    
+    public LocalTime getEndTime();
+    public void setEndTime(LocalTime endTime);
 
 
     public LocalDateTime getEndCalculated();

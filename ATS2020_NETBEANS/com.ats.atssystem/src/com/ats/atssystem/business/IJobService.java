@@ -7,6 +7,8 @@ package com.ats.atssystem.business;
 
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITeam;
+import java.util.List;
 
 /**
  *
@@ -41,4 +43,11 @@ public interface IJobService {
      * @return deleted job with errors or not
      */
     IJob deleteJob(IJob job);
+    
+    /**
+     * Returns all scheduled jobs with assigned teams
+     * @param date String date
+     * @return list of teams
+     */
+    List<ITeam> getScheduledJobs(String date);
 }

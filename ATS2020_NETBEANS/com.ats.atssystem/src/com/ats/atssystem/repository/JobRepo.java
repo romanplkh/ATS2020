@@ -16,6 +16,7 @@ import com.ats.dataaccess.IParameter;
 import com.ats.dataaccess.*;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalTime;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
 
@@ -28,7 +29,8 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
     private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?);";
-    private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?);";
+    private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?)";
+    private final String SPROC_GET_SCHEDULED_JOBS = "CALL spGetJobsSchedule(?)";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
@@ -147,6 +149,62 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
 
         return job;
+    }
+
+    @Override
+    public List<ITeam> getScheduledJobs(String date) {
+        List<ITeam> teams = TeamFactory.createListInstance();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            parms.add(ParameterFactory.createInstance(date, IParameter.Direction.IN, Types.VARCHAR));
+            CachedRowSet rs = this.dataAccess.executeFill(SPROC_GET_SCHEDULED_JOBS, parms);
+
+            teams = populateTeamsWithJobs(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return teams;
+    }
+
+    private List<ITeam> populateTeamsWithJobs(CachedRowSet rs) throws SQLException {
+        List<ITeam> list = TeamFactory.createListInstance();
+        ITeam team = null;
+        List<IJob> jobs = null;
+        IJob job = null;
+
+        while (rs.next()) {
+            team = TeamFactory.createInstance();
+            job = JobFactory.createInstance();
+            jobs = JobFactory.createListInstance();
+
+            team.setName(rs.getString("team"));
+            job.setId(super.getInt("id", rs));
+            job.setStartTime(super.getLocalTime("start_time", rs));
+            job.setEndTime(super.getLocalTime("end_time", rs));
+            jobs.add(job);
+
+            if (rs.next()) {
+                if (team.getName().equalsIgnoreCase(rs.getString("team"))) {
+                    rs.previous();
+                    while (rs.next()) {
+                        job = JobFactory.createInstance();
+                        job.setStartTime(super.getLocalTime("start_time", rs));
+                        job.setEndTime(super.getLocalTime("end_time", rs));
+                        jobs.add(job);
+                    }
+                    rs.previous();
+                } else {
+                    rs.previous();
+                }
+            }
+
+            team.setJobs(jobs);
+            list.add(team);
+        }
+
+        return list;
     }
 
 }

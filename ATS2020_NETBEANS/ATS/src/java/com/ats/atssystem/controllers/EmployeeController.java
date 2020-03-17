@@ -35,6 +35,7 @@ public class EmployeeController extends CommonController {
         IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
 
         if (pathInfo == null) {
+                       
             //Show all employees
             String search = super.getValue(request, "search");
 

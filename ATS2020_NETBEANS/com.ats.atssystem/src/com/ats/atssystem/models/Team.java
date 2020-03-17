@@ -18,6 +18,7 @@ public class Team extends Base implements Serializable, ITeam {
     private int id;
     private String name;
     private List<IEmployee> teamMembers = EmployeeFactory.createListInstance();
+    private List<IJob> jobs = JobFactory.createListInstance();
     private boolean isOnCall;
     private boolean isDeleted;
     private Date createdAt;
@@ -127,5 +128,17 @@ public class Team extends Base implements Serializable, ITeam {
         }
 
     }
+
+    @Override
+    public List<IJob> getJobs() {
+        return this.jobs;
+    }
+
+    @Override
+    public void setJobs(List<IJob> jobsList) {
+        this.jobs = jobsList;
+    }
+    
+    
 
 }
