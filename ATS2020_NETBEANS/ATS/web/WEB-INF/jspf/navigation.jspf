@@ -55,7 +55,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/job.jsp">Create Job</a>
-                        <a class="dropdown-item" href="#"></a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/jobs.jsp">Jobs</a>
                     </div>
                 </li>
             </ul>
