@@ -6,6 +6,8 @@
 package com.ats.atssystem.repository;
 
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITeam;
+import java.util.List;
 
 /**
  * @author Roman Pelikh
@@ -33,9 +35,17 @@ public interface IJobRepo {
     IJob getJobDetails(int jobId);
     
     /**
-     * Deletes a job with all associated tasks and revenu
+     * Deletes a job with all associated tasks and revenue
      * @param jobId id of job to delete
      * @return number of rows affected
      */
     int deleteJob(int jobId);
+    
+    /**
+     * Retrieves all teams and scheduled jobs for
+     * specified date
+     * @param date string date
+     * @return list of teams and theirs scheduled jobs
+     */
+    List<ITeam> getScheduledJobs(String date);
 }

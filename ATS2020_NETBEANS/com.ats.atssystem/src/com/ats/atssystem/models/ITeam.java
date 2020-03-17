@@ -49,4 +49,7 @@ public interface ITeam extends IBase {
     
     void setTeamMembers(List<IEmployee> employees);
 
+    List<IJob> getJobs();
+    
+    void setJobs(List<IJob> jobsList);
 }

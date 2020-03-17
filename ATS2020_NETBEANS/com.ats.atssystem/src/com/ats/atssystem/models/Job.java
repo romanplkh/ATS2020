@@ -7,6 +7,7 @@ package com.ats.atssystem.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ public class Job extends Base implements Serializable, IJob {
     private LocalDateTime start;
     private LocalDateTime end;
     private boolean isEmergency;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     private String tasksIds;
     private String cost;
@@ -128,9 +131,31 @@ public class Job extends Base implements Serializable, IJob {
         return this.end;
     }
 
+    @Override
     public LocalDateTime getEndCalculated() {
         return this.start.plusMinutes(this.calculateTotalTasksDuration());
     }
+
+    @Override
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    @Override
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+    
+    
 
     @Override
     public boolean getIsEmergency() {
@@ -184,5 +209,6 @@ public class Job extends Base implements Serializable, IJob {
     private int calculateTotalTasksDuration() {
         return this.tasks.stream().reduce(0, (calculatedTime, task) -> calculatedTime + task.getDuration(), Integer::sum);
     }
+
 
 }
