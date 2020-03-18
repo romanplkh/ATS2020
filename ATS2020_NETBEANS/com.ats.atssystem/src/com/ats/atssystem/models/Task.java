@@ -15,6 +15,9 @@ public class Task extends Base implements ITask, Serializable {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+    
+    private double cost;
+    private double revenue;
 
     public Task() {
     }
@@ -106,5 +109,18 @@ public class Task extends Base implements ITask, Serializable {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public double getCost() {
+        return this.cost;
+    }
+
+    @Override
+    public double getRevenue() {
+        return this.revenue;
+    }
+    
+    
+
 
 }

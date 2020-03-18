@@ -32,8 +32,10 @@ public class Job extends Base implements Serializable, IJob {
     private LocalTime endTime;
 
     private String tasksIds;
-    private String cost;
-    private String revenue;
+    
+    private double cost;
+    private double revenue;
+    
 
     public Job() {
     }
@@ -168,12 +170,12 @@ public class Job extends Base implements Serializable, IJob {
     }
 
     @Override
-    public String getCost() {
+    public double getCost() {
         return cost;
     }
 
     @Override
-    public String getRevenue() {
+    public double getRevenue() {
         return revenue;
     }
 
@@ -185,7 +187,7 @@ public class Job extends Base implements Serializable, IJob {
 //        
 //    }
     private double calculateCost(int duration, double empRate) {
-        return duration * empRate;
+        return (duration/60) * empRate;
 
 //        double result = this.team.getTeamMembers()
 //                .stream()
@@ -204,10 +206,18 @@ public class Job extends Base implements Serializable, IJob {
 
         return cost * incrementRate;
     }
+    
+    
+
 
     //It is a utility method, This is why interface does not have it
     private int calculateTotalTasksDuration() {
         return this.tasks.stream().reduce(0, (calculatedTime, task) -> calculatedTime + task.getDuration(), Integer::sum);
+    }
+
+    @Override
+    public double calculateBillableCost() {
+         return this.revenue + (this.revenue * 0.15);
     }
 
 
