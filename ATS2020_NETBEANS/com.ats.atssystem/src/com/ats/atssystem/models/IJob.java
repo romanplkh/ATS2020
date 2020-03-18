@@ -52,9 +52,12 @@ public interface IJob extends IBase {
 
     public boolean getIsEmergency();
 
-    public String getCost();
+    public double getCost();
 
-    public String getRevenue();
+    public double getRevenue();
+    
+    public double calculateBillableCost();
+    
     public String getTasks();
     
     public LocalTime getStartTime();

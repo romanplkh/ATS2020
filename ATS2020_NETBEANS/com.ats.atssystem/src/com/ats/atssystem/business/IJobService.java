@@ -37,7 +37,7 @@ public interface IJobService {
     IJob getJobDetails(int jobId);
 
     /**
-     * Deletes a selected job with all associated tasks and revenu
+     * Deletes a selected job with all associated tasks and revenue
      *
      * @param job job to delete
      * @return deleted job with errors or not
@@ -50,4 +50,17 @@ public interface IJobService {
      * @return list of teams
      */
     List<ITeam> getScheduledJobs(String date);
+    
+   /**
+    * Validates if emergency job is scheduled off-hours
+    * @param job job to validate
+    */
+    void validateEmergencyJobTime(IJob job);
+    
+    /**
+     * Validate that team skill set corresponds to 
+     * job tasks
+     * @param job job to validate
+     */
+    void validateSkillset(IJob job);
 }

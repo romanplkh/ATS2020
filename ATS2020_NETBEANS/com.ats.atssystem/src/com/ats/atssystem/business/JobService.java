@@ -6,10 +6,15 @@
 package com.ats.atssystem.business;
 
 import com.ats.atssystem.models.ErrorFactory;
+import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -29,6 +34,11 @@ public class JobService implements IJobService {
      */
     @Override
     public boolean isValid(IJob job) {
+        //--UNCOMMENT--------
+        //validateEmergencyJobTime(job);
+//        if(!job.getIsEmergency()){
+//            validateSkillset(job);
+//        }      
         return job.getErrors().isEmpty();
     }
 
@@ -46,7 +56,8 @@ public class JobService implements IJobService {
     @Override
     public IJob deleteJob(IJob job) {
         if (repo.deleteJob(job.getId()) == 0) {
-            job.addError(ErrorFactory.createInstance(1, "Something went wrong. Job was not deleted. Try again"));
+            job.addError(ErrorFactory
+                    .createInstance(1, "Something went wrong. Job was not deleted. Try again"));
 
         }
         return job;
@@ -55,6 +66,51 @@ public class JobService implements IJobService {
     @Override
     public List<ITeam> getScheduledJobs(String date) {
         return repo.getScheduledJobs(date);
+    }
+
+    @Override
+    public void validateEmergencyJobTime(IJob job) {
+        // emergency calls are only off-hours - 
+        //if emergency checked time should be after 5 pm or before 8am
+
+        LocalDateTime bookingDate = job.getStart();
+
+        LocalTime bookingTime = bookingDate.toLocalTime();
+
+        if (!(job.getIsEmergency()
+                && (bookingTime.isAfter(LocalTime.of(16, 59)))
+                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
+            job.addError(ErrorFactory
+                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
+        }
+    }
+
+    @Override
+    public void validateSkillset(IJob job) {
+        //Team skillset should correspond to selected tasks
+
+        List<ITask> jobSkillset = job.getTasksList();
+
+        List<IEmployee> employees = job.getTeam().getTeamMembers();
+
+        List<ITask> empSkillset = TaskFactory.createListInstance();
+
+        for (IEmployee e : employees) {
+            empSkillset.addAll(e.getSkills());
+        }
+
+        int count = 0;
+        for (ITask skill : jobSkillset) {
+            if (!empSkillset.contains(skill)) {
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            job.addError(ErrorFactory
+                    .createInstance(3, "There is no matching skillset to perform this job"));
+        }
+
     }
 
 }
