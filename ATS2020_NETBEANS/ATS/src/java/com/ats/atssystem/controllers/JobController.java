@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class JobController extends CommonController {
 
     private static String JOB_DETAILS_VIEW = "/job-details.jsp";
+    private static String JOBS_VIEW = "/jobs.jsp";
 //  ---------  NEED TO CHANGE AFTER  --------------------
     private static String JOB_MAINT_VIEW = "/dashboard.jsp";
 
@@ -40,6 +41,13 @@ public class JobController extends CommonController {
 
         if (pathInfo == null) {
             //show all jobs
+            
+            
+            List<ITeam> teams = service.getScheduledJobs("2020-03-16");
+            
+            request.setAttribute("teams", teams);
+            
+            super.setView(request, JOBS_VIEW);
         } else {
             //job/:id/[details]
             
