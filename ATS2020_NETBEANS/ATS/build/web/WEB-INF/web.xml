@@ -74,16 +74,22 @@
     </servlet-mapping>
     
     <!--JOB SERVLET-->
-     <servlet>
+    <servlet>
         <servlet-name>JobController</servlet-name>
         <servlet-class>com.ats.atssystem.controllers.JobController</servlet-class>
     </servlet>
     <!--JOB MAINTENANCE-->
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>JobController</servlet-name>
         <url-pattern>/job/*</url-pattern>
     </servlet-mapping>
     
+    
+    <!--ALL JOBS-->
+    <servlet-mapping>
+        <servlet-name>JobController</servlet-name>
+        <url-pattern>/jobs</url-pattern>
+    </servlet-mapping>
   
     
     
