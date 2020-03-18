@@ -14,6 +14,7 @@ import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.JobFactory;
 import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -34,23 +35,31 @@ public class JobController extends CommonController {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
 
         String pathInfo = request.getPathInfo();
         IJobService service = JobServiceFactory.createInstance();
 
         if (pathInfo == null) {
             //show all jobs
-            
-            
-            List<ITeam> teams = service.getScheduledJobs("2020-03-16");
-            
+
+            String currentDate = LocalDate.now().toString();
+            //GET DATE
+            String searchDate = super.getValue(request, "searchDate");
+
+            if (searchDate != null) {
+                currentDate = searchDate;
+            }
+
+            List<ITeam> teams = service.getScheduledJobs(currentDate);
             request.setAttribute("teams", teams);
-            
+
+            //Display date if not found for this date
+            request.setAttribute("searchDate", currentDate);
+
             super.setView(request, JOBS_VIEW);
         } else {
             //job/:id/[details]
-            
+
             String[] pathParts = super.getUrlParts(pathInfo);
             //job id
             int jobId = super.getInteger(pathParts[1]);
