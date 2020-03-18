@@ -46,7 +46,12 @@
             border-collapse: separate;
             border-spacing: 0 1em;
             padding: 12px;
-            text-align: center;
+            text-align: left;
+        }
+
+        .hh{
+            padding: 0 4px;
+
         }
 
 
@@ -95,7 +100,7 @@
                                                         <c:choose>
                                                             <c:when test="${h != 17}">
                                                                 <c:forEach var="min" begin="0" end="45" step="15">
-                                                                    <td>
+                                                                    <td class="hh">
                                                                         <c:choose>
                                                                             <c:when test="${min == 0}">
                                                                                 <!--TEST-->
@@ -109,7 +114,7 @@
                                                                 </c:forEach>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <td>
+                                                                <td class="hh">
                                                                     17:00
                                                                 </td>
                                                             </c:otherwise>
