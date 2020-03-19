@@ -16,6 +16,7 @@ import com.ats.dataaccess.IParameter;
 import com.ats.dataaccess.*;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
@@ -31,6 +32,8 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?);";
     private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?)";
     private final String SPROC_GET_SCHEDULED_JOBS = "CALL spGetJobsSchedule(?)";
+    private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?);";
+    private final String SP_TEAM_IS_ON_EMERGENCY = "CALL TeamIsOnEmergency(?);";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
@@ -205,6 +208,54 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
 
         return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isTeamAbailableToBook(IJob job) {
+
+        int retValue = -1;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(job.getTeam().getId()));
+        params.add(ParameterFactory.createInstance(job.getStart()));
+        params.add(ParameterFactory.createInstance(job.getEnd()));
+
+        try {
+
+            retValue = Integer.parseInt(this.dataAccess.executeScalar(SP_TEAM_IS_AVAILABLE, params).toString());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return retValue == 0;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isTeamOnEmergencyCall(IJob job) {
+
+        int retValue = -1;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(job.getTeam().getId()));
+
+        try {
+            retValue = Integer.parseInt(this.dataAccess.executeScalar(SP_TEAM_IS_ON_EMERGENCY, params).toString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return retValue == 1;
+
     }
 
 }

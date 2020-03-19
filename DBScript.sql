@@ -650,7 +650,12 @@ OUT affected_out INT)
 //
 DELIMITER ;
 
-
+CREATE PROCEDURE `spTeamIsAvailable` (
+IN teamId_param INT, start_param DATETIME, end_param DATETIME)
+	BEGIN
+		SELECT * FROM jobs
+		WHERE teamId = teamId_param AND (start_param <= end AND end_param >= start);
+	END;
 
 
 
@@ -764,3 +769,46 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+-- IS AVAILABEL 
+-- 0 - is available
+USE `atsnovember`;
+DROP procedure IF EXISTS `spTeamIsAvailable`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spTeamIsAvailable` (
+IN teamId_param INT, start_param DATETIME, end_param DATETIME)
+	BEGIN
+		SELECT COUNT(*) FROM jobs
+		WHERE teamId = teamId_param AND (start_param < end AND end_param >= start);
+	END;$$
+
+DELIMITER ;
+
+
+
+--IS EMERGENCY
+
+-- 1 - is onEmergencyCall
+USE `atsnovember`;
+DROP procedure IF EXISTS `TeamIsOnEmergency`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `TeamIsOnEmergency` (IN teamId_param INT)
+BEGIN
+	SELECT COUNT(*) FROM teams WHERE isOnCall = true AND id = teamId_param;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+2020-03-16 10:00:00	2020-03-16 11:00:00
+2020-03-16 10:00:00	2020-03-16 10:45:00
+2020-03-16 12:00:00	2020-03-16 14:00:00

@@ -13,6 +13,7 @@ import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -36,9 +37,12 @@ public class JobService implements IJobService {
     public boolean isValid(IJob job) {
         //--UNCOMMENT--------
         //validateEmergencyJobTime(job);
-//        if(!job.getIsEmergency()){
+//        if (!job.getIsEmergency()) {
 //            validateSkillset(job);
-//        }      
+//        } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
+//            job.addError(ErrorFactory.createInstance(2, "Selected team is available only for emergency calls. Please select different team"));
+//        }
+
         return job.getErrors().isEmpty();
     }
 
@@ -68,6 +72,7 @@ public class JobService implements IJobService {
         return repo.getScheduledJobs(date);
     }
 
+    //TO TELL YOU
     @Override
     public void validateEmergencyJobTime(IJob job) {
         // emergency calls are only off-hours - 
@@ -77,12 +82,20 @@ public class JobService implements IJobService {
 
         LocalTime bookingTime = bookingDate.toLocalTime();
 
-        if (!(job.getIsEmergency()
-                && (bookingTime.isAfter(LocalTime.of(16, 59)))
-                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
+        //YOU COULD DO IT EASIER ==>
+        if (!job.getIsEmergency() && bookingTime.isAfter(LocalTime.of(17, 0))) {
             job.addError(ErrorFactory
                     .createInstance(2, "Only emergency calls can be scheduled off-hours"));
         }
+
+        //I COMMENTED OUT IT 
+        //THIS VALIDATION ALLOWS TO BOOK JOB START AT 16 and JOB END at 14 :-)
+//        if (!(job.getIsEmergency()
+//                && (bookingTime.isAfter(LocalTime.of(16, 59)))
+//                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
+//            job.addError(ErrorFactory
+//                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
+//        }
     }
 
     @Override
@@ -111,6 +124,51 @@ public class JobService implements IJobService {
                     .createInstance(3, "There is no matching skillset to perform this job"));
         }
 
+    }
+
+    @Override
+    public IJob isTeamAbailableToBook(IJob job) {
+        if (!repo.isTeamAbailableToBook(job)) {
+            job.addError(ErrorFactory.createInstance(1, "This team already has a job during this time. Please select another hours"));
+        }
+
+        return job;
+
+    }
+
+    @Override
+    public boolean isTeamOnEmergencyCall(IJob job) {
+        return repo.isTeamOnEmergencyCall(job);
+
+    }
+
+    public boolean isJobWithinBusinessHours(IJob job) {
+
+        boolean isValid = true;
+        if (!job.getIsEmergency()) {
+
+            //Validate DAY 
+            DayOfWeek startDOW = job.getStart().getDayOfWeek();
+            DayOfWeek endDOW = job.getEnd().getDayOfWeek();
+
+            if (startDOW == DayOfWeek.SATURDAY
+                    || startDOW == DayOfWeek.SUNDAY
+                    || endDOW == DayOfWeek.SATURDAY
+                    || endDOW == DayOfWeek.SUNDAY) {
+
+                isValid = false;
+            }
+
+            if (job.getStart().getHour() < 8
+                    || job.getStart().getHour() >= 17
+                    || (job.getEnd().getHour() == 17 && job.getEnd().getMinute() > 0)
+                    || job.getEnd().getHour() > 17) {
+                isValid = false;
+            }
+
+        }
+
+        return isValid;
     }
 
 }

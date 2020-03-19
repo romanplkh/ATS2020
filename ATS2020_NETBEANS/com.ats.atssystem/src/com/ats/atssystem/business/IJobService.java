@@ -43,24 +43,51 @@ public interface IJobService {
      * @return deleted job with errors or not
      */
     IJob deleteJob(IJob job);
-    
+
     /**
      * Returns all scheduled jobs with assigned teams
+     *
      * @param date String date
      * @return list of teams
      */
     List<ITeam> getScheduledJobs(String date);
-    
-   /**
-    * Validates if emergency job is scheduled off-hours
-    * @param job job to validate
-    */
-    void validateEmergencyJobTime(IJob job);
-    
+
     /**
-     * Validate that team skill set corresponds to 
-     * job tasks
+     * Validates if emergency job is scheduled off-hours
+     *
+     * @param job job to validate
+     */
+    void validateEmergencyJobTime(IJob job);
+
+    /**
+     * Validate that team skill set corresponds to job tasks
+     *
      * @param job job to validate
      */
     void validateSkillset(IJob job);
+
+    /**
+     * Validates if team is available for job and not overbooked
+     *
+     * @param job job to validate team in
+     * @return Job with errors or Empty
+     */
+    public IJob isTeamAbailableToBook(IJob job);
+
+    /**
+     * Validates if team is onEmergencyCall
+     *
+     * @param job job to validate
+     * @return boolean true if is on call, otherwise false
+     */
+    public boolean isTeamOnEmergencyCall(IJob job);
+
+    /**
+     * Validates if job is scheduled within business hours
+     *
+     * @param job job to validate
+     * @return boolean true if within hours, false otherwise
+     */
+    public boolean isJobWithinBusinessHours(IJob job);
+
 }
