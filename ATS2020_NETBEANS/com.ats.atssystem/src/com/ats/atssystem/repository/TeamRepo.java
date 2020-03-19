@@ -16,6 +16,7 @@ import com.ats.dataaccess.IParameter;
 import com.ats.dataaccess.ParameterFactory;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
 
@@ -26,14 +27,22 @@ import javax.sql.rowset.CachedRowSet;
  */
 public class TeamRepo extends BaseRepo implements ITeamRepo {
 
-    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?,?,?);";
+    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
+  
 
     private IDAL dataaccess = DALFactory.createInstance();
 
     public TeamRepo() {
     }
 
+    
+
+   
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int addTeam(ITeam team) {
         int newTeamId = 0;
@@ -64,6 +73,9 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         return newTeamId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITeam getMembersOnTeamToValidate(int idMember_1, int idMember_2) {
         ITeam team = TeamFactory.createInstance();
@@ -83,6 +95,13 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         return team;
     }
 
+    /**
+     * Fills Team model with errors
+     *
+     * @param rs result set from query
+     * @return team model with errors
+     * @throws SQLException
+     */
     private ITeam populateEntityWithErrors(CachedRowSet rs) throws SQLException {
 
 //        List<ITeam> teams = TeamFactory.createListInstance();
