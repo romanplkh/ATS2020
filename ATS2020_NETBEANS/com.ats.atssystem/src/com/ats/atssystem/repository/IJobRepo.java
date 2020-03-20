@@ -56,7 +56,7 @@ public interface IJobRepo {
      * @param job job to validate team in
      * @return boolean true if available, false otherwise
      */
-    public boolean isTeamAbailableToBook(IJob job);
+    public boolean isTeamAvailableToBook(IJob job);
 
     /**
      * Validates if team is onEmergencyCall

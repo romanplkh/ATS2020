@@ -129,9 +129,10 @@ public class JobService implements IJobService {
     }
 
     @Override
-    public IJob isTeamAbailableToBook(IJob job) {
-        if (!repo.isTeamAbailableToBook(job)) {
-            job.addError(ErrorFactory.createInstance(1, "This team already has a job during this time. Please select another hours"));
+    public IJob isTeamAvailableToBook(IJob job) {
+        if (!repo.isTeamAvailableToBook(job)) {
+            job.addError(ErrorFactory
+                    .createInstance(4, "This team already has a job during this time. Please select another hours"));
         }
 
         return job;

@@ -43,6 +43,7 @@ public class EmployeeController extends CommonController {
                 request.setAttribute("employees", employeeService.getEmployees());
             } else {
                 request.setAttribute("employees", employeeService.getEmployees(search));
+                request.setAttribute("search", search);
             }
 
             super.setView(request, EMPLOYEES_VIEW);

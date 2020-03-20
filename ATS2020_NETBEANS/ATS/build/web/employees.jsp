@@ -39,7 +39,7 @@
                         <form method="get"
                               class="form-inline my-2 my-lg-0">
                             <input class="form-control mr-sm-2 w-50" type="text"
-                                   name="search" required
+                                   name="search" value="${search}"
                                    placeholder="Search by SIN or last name">
                             <button class="btn btn-secondary my-2 my-sm-0"
                                     type="submit">Search</button>
