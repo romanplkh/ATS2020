@@ -15,15 +15,23 @@ public class Task extends Base implements ITask, Serializable {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-    
+
     private double cost;
     private double revenue;
 
     public Task() {
     }
-    
-        public Task(int id, String name, String description, int duration) {
 
+    public Task(String name, String description, int duration) {
+
+        setName(name);
+        setDescription(description);
+        setDuration(duration);
+    }
+
+    public Task(int id, String name, String description, int duration) {
+
+        setId(id);
         setName(name);
         setDescription(description);
         setDuration(duration);
@@ -119,8 +127,5 @@ public class Task extends Base implements ITask, Serializable {
     public double getRevenue() {
         return this.revenue;
     }
-    
-    
-
 
 }

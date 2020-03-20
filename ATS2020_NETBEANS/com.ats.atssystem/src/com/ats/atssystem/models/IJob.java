@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.javatuples.Triplet;
 
 /**
  *
@@ -19,6 +20,10 @@ public interface IJob extends IBase {
     public List<ITask> getTasksList();
 
     public void setTasksList(List<ITask> tasks);
+
+    public List<Triplet<Integer, Double, Double>> getTasksCost();
+
+    public void setTasksCost(List<Triplet<Integer, Double, Double>> list);
 
     public int getId();
 
@@ -52,23 +57,16 @@ public interface IJob extends IBase {
 
     public boolean getIsEmergency();
 
-    public double getCost();
+    public void calculateTasksCost();
 
-    public double getRevenue();
-    
-    public double calculateBillableCost();
-    
-    public String getTasks();
-    
+//    public double calculateBillableCost();
+
     public LocalTime getStartTime();
+
     public void setStartTime(LocalTime startTime);
-    
+
     public LocalTime getEndTime();
+
     public void setEndTime(LocalTime endTime);
-
-
-    public LocalDateTime getEndCalculated();
-
-
 
 }
