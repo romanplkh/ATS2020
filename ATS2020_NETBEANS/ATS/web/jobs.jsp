@@ -138,8 +138,6 @@
                                                 <!--CURRENT JOB COUNTER-->
                                                 <c:set var="cJCount" value="0"/>
 
-
-
                                                 <c:forEach var="h" begin="8" end="17">
 
                                                     <c:if  test="${h < 17}">

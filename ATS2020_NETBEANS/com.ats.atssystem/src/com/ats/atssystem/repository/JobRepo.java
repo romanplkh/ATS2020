@@ -37,7 +37,7 @@ enum FieldTypes {
 public class JobRepo extends BaseRepo implements IJobRepo {
 
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
-    private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?);";
+    private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?)";
     private final String SPROC_GET_SCHEDULED_JOBS = "CALL spGetJobsSchedule(?)";
     private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?);";
@@ -252,7 +252,20 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         String val = "";
 
         for (Triplet<Integer, Double, Double> entry : values) {
-            val += entry.getValue(index) + ",";
+
+            if (index == 1 || index == 2) {
+                double value = (double) entry.getValue(index);
+
+                if (value % 1 == 0) {
+                    val += Math.round(value) + ",";
+                } else {
+                    val += entry.getValue(index) + ",";
+                }
+
+            } else {
+                val += entry.getValue(index) + ",";
+            }
+
         }
 
         return val;

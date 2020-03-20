@@ -42,7 +42,7 @@ public class JobController extends CommonController {
         if (pathInfo == null) {
             //show all jobs
 
-            service.addJob(JobFactory.createInstance());
+          
 
             String currentDate = LocalDate.now().toString();
             //GET DATE
