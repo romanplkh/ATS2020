@@ -5,16 +5,25 @@
  */
 package com.ats.atssystem.models;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 /**
  *
  * @author Olena Stepanova
  * @author Roman Pelikh
- * 
+ *
  */
 public class Job extends Base implements Serializable, IJob {
 
@@ -30,12 +39,9 @@ public class Job extends Base implements Serializable, IJob {
     private boolean isEmergency;
     private LocalTime startTime;
     private LocalTime endTime;
-
-    private String tasksIds;
-    
-    private double cost;
-    private double revenue;
-    
+    private boolean isOnSite;
+    private int jobDuration;
+    private List<Triplet<Integer, Double, Double>> tasksCost;
 
     public Job() {
     }
@@ -45,6 +51,157 @@ public class Job extends Base implements Serializable, IJob {
         this.description = description;
         this.clientName = clientName;
         this.start = start;
+    }
+
+    private void calculateJobTime() {
+        if (this.isOnSite) {
+            this.setStart(this.getStart().minusMinutes(30));
+            this.setEnd(this.getStart().plusMinutes(this.jobDuration).plusMinutes(30));
+        } else {
+            this.setEnd(this.getStart().plusMinutes(this.jobDuration));
+        }
+    }
+
+    private void calculateDuration(List<Pair<IEmployee, ITask>> jobTaskSetFiltered) {
+
+        IEmployee emp1 = team.getTeamMembers().get(0);
+        IEmployee emp2 = team.getTeamMembers().get(1);
+
+        //NUMBER OF TASKS FOR EACH EMPLOYEE
+        int totalTasksDurationE1 = 0;
+        int totalTasksDurationE2 = 0;
+
+        //FIND WHICH EMNPLOYEE HAS THE LONGEST NUMBER OF SKILLS
+        for (Pair<IEmployee, ITask> entry : jobTaskSetFiltered) {
+
+            if (entry.getValue0().getId() == emp1.getId()) {
+                totalTasksDurationE1 += entry.getValue1().getDuration();
+            }
+
+            if (entry.getValue0().getId() == emp2.getId()) {
+                totalTasksDurationE2 += entry.getValue1().getDuration();
+            }
+
+        }
+
+        if (totalTasksDurationE1 > totalTasksDurationE2) {
+            this.jobDuration = totalTasksDurationE1;
+        } else {
+            this.jobDuration = totalTasksDurationE2;
+        }
+
+        calculateJobTime();
+
+    }
+
+    ;
+
+
+    public void calculateTasksCost() {
+
+        IEmployee emp1 = team.getTeamMembers().get(0);
+        IEmployee emp2 = team.getTeamMembers().get(1);
+
+        //INT - empId
+        List<Pair<IEmployee, ITask>> jobTasksEmployeeSet = new ArrayList<Pair<IEmployee, ITask>>();
+
+        List<ITask> list = new VirtualFlow.ArrayLinkedList<>();
+
+        int index1 = 0;
+        int index2 = 0;
+
+        //TODO: second getmEmpSkillsID
+        List<Integer> emp1Skills = new ArrayList<>();
+
+        emp1.getSkills().forEach(sk -> {
+            emp1Skills.add(sk.getId());
+        });
+
+        //FILL MAP WITH EMP_ID - TASK values
+        for (ITask t : tasks) {
+
+            if (emp1Skills.contains(t.getId())) {
+                jobTasksEmployeeSet.add(Pair.with(emp1, t));
+            }
+
+            if (index2 < emp2.getSkills().size()) {
+                if (emp2.getSkills().get(index2).getId() == t.getId()) {
+                    jobTasksEmployeeSet.add(Pair.with(emp2, t));
+                }
+            }
+
+            index1++;
+            index2++;
+
+//            //ADD TASK IF EMP HAS SKILLS
+//            if (emp1.getSkills().contains(t)) {
+//                jobTasksEmployeeSet.add(Pair.with(emp1, t));
+//            }
+//
+//            if (emp2.getSkills().contains(t)) {
+//                jobTasksEmployeeSet.add(Pair.with(emp2, t));
+//            }
+        }
+
+        //FILTER TASKS BY EMPLOYEE
+        //HashMap<Integer, ITask> jobTaskSetFiltered = new HashMap<>();
+        List<Pair<IEmployee, ITask>> jobTaskSetFiltered = new ArrayList<>();
+
+        for (Pair<IEmployee, ITask> entry : jobTasksEmployeeSet) {
+
+            IEmployee emp = entry.getValue0();
+            ITask task = entry.getValue1();
+
+            if (emp2.getSkills().contains(task) && emp1.getSkills().contains(task)) {
+                if (emp2.getHourlyRate() > emp1.getHourlyRate()) {
+                    jobTaskSetFiltered.add(Pair.with(emp2, task));
+                } else {
+                    jobTaskSetFiltered.add(Pair.with(emp1, task));;
+                }
+            } else {
+                jobTaskSetFiltered.add(Pair.with(emp, task));;
+            }
+
+        }
+
+        //GET TOTAL TASKS DURATION TO CALCULATE JOB END
+        this.calculateDuration(jobTaskSetFiltered);
+
+        List<Triplet<Integer, Double, Double>> taskCostRevenueInfo = new ArrayList<>();
+
+        for (Pair<IEmployee, ITask> entry : jobTaskSetFiltered) {
+
+            double cost = 0;
+            double revenue = 0;
+            ITask task = entry.getValue1();
+            int curEmpId = entry.getValue0().getId();
+
+            if (emp1.getId() == curEmpId) {
+                cost = emp1.getHourlyRate() * task.getDuration();
+            } else {
+                cost = emp2.getHourlyRate() * task.getDuration();
+            }
+
+            revenue = cost * 3;
+
+            if (this.isEmergency) {
+                revenue = cost * 4;
+            }
+
+            taskCostRevenueInfo.add(Triplet.with(task.getId(), cost, revenue));
+
+        }
+
+        this.tasksCost = taskCostRevenueInfo;
+
+    }
+
+    public boolean isIsOnSite() {
+        return isOnSite;
+    }
+
+    public void setIsOnSite(boolean isOnSite) {
+        this.isOnSite = isOnSite;
     }
 
     @Override
@@ -60,12 +217,6 @@ public class Job extends Base implements Serializable, IJob {
     @Override
     public List<ITask> getTasksList() {
         return tasks;
-    }
-
-    @Override
-    public String getTasks() {
-        this.buildTaskIdsString();
-        return tasksIds;
     }
 
     @Override
@@ -130,12 +281,8 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public LocalDateTime getEnd() {
-        return this.end;
-    }
 
-    @Override
-    public LocalDateTime getEndCalculated() {
-        return this.start.plusMinutes(this.calculateTotalTasksDuration());
+        return this.end;
     }
 
     @Override
@@ -156,8 +303,6 @@ public class Job extends Base implements Serializable, IJob {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
-    
-    
 
     @Override
     public boolean getIsEmergency() {
@@ -169,25 +314,15 @@ public class Job extends Base implements Serializable, IJob {
         this.isEmergency = isEmergency;
     }
 
-    @Override
-    public double getCost() {
-        return cost;
-    }
-
-    @Override
-    public double getRevenue() {
-        return revenue;
-    }
-
     private void buildTaskIdsString() {
-        this.tasks.forEach(t -> this.tasksIds += t.getId() + ",");
+        //this.tasks.forEach(t -> this.tasksIds += t.getId() + ",");
     }
 
 //    private void buildCostValuesString(){
 //        
 //    }
     private double calculateCost(int duration, double empRate) {
-        return (duration/60) * empRate;
+        return (duration / 60) * empRate;
 
 //        double result = this.team.getTeamMembers()
 //                .stream()
@@ -206,19 +341,24 @@ public class Job extends Base implements Serializable, IJob {
 
         return cost * incrementRate;
     }
-    
-    
-
 
     //It is a utility method, This is why interface does not have it
     private int calculateTotalTasksDuration() {
         return this.tasks.stream().reduce(0, (calculatedTime, task) -> calculatedTime + task.getDuration(), Integer::sum);
     }
 
+//    @Override
+//    public double calculateBillableCost() {
+//        return this.revenue + (this.revenue * 0.15);
+//    }
     @Override
-    public double calculateBillableCost() {
-         return this.revenue + (this.revenue * 0.15);
+    public List<Triplet<Integer, Double, Double>> getTasksCost() {
+        return this.tasksCost;
     }
 
+    @Override
+    public void setTasksCost(List<Triplet<Integer, Double, Double>> list) {
+        this.tasksCost = list;
+    }
 
 }

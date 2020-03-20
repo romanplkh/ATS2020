@@ -5,12 +5,14 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TaskFactory;
+import com.ats.atssystem.models.TeamFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
 import java.time.DayOfWeek;
@@ -169,6 +171,57 @@ public class JobService implements IJobService {
         }
 
         return isValid;
+    }
+
+    @Override
+    public IJob addJob(IJob job) {
+
+        job.setClientName("ClientName");
+        job.setDescription("Description");
+        job.setStart(LocalDateTime.now().minusHours(5));
+        job.setTeamId(1);
+
+        ITask t1 = TaskFactory.createInstance(1, "Network design", "descripoto", 45);
+        ITask t2 = TaskFactory.createInstance(2, "Network design", "descripoto", 60);
+        ITask t3 = TaskFactory.createInstance(3, "Network design", "descripoto", 240);
+        ITask t4 = TaskFactory.createInstance(4, "Network design", "descripoto", 120);
+
+        IEmployee e1 = EmployeeFactory.createInstance();
+        e1.setId(1);
+        e1.setHourlyRate(34);
+        e1.getSkills().add(TaskFactory.createInstance(2, "Network", "xxxx", 45));
+        e1.getSkills().add(TaskFactory.createInstance(4, "Network", "xxxx", 45));
+
+        IEmployee e2 = EmployeeFactory.createInstance();
+        e2.setId(2);
+        e2.setHourlyRate(42);
+        e2.getSkills().add(TaskFactory.createInstance(1, "Network", "xxxx", 45));
+        e2.getSkills().add(TaskFactory.createInstance(3, "Network", "xxxx", 45));
+
+        List<IEmployee> teamMembers = EmployeeFactory.createListInstance();
+        teamMembers.add(e1);
+        teamMembers.add(e2);
+
+        List<ITask> tasks = TaskFactory.createListInstance();
+        tasks.add(t1);
+        tasks.add(t2);
+        tasks.add(t3);
+        tasks.add(t4);
+
+        job.setTasksList(tasks);
+
+        ITeam team = TeamFactory.createInstance();
+        team.setId(1);
+
+        team.setTeamMembers(teamMembers);;
+
+        job.setClientName("ClientName");
+        job.setTeam(team);
+
+        repo.addJob(job);
+
+        return job;
+
     }
 
 }

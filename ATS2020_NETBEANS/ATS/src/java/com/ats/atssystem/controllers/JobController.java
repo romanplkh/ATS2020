@@ -42,6 +42,8 @@ public class JobController extends CommonController {
         if (pathInfo == null) {
             //show all jobs
 
+            service.addJob(JobFactory.createInstance());
+
             String currentDate = LocalDate.now().toString();
             //GET DATE
             String searchDate = super.getValue(request, "searchDate");
@@ -59,6 +61,8 @@ public class JobController extends CommonController {
             super.setView(request, JOBS_VIEW);
         } else {
             //job/:id/[details]
+            
+             service.addJob(JobFactory.createInstance());
 
             String[] pathParts = super.getUrlParts(pathInfo);
             //job id
