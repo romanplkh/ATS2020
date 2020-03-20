@@ -182,19 +182,19 @@ public class JobService implements IJobService {
         job.setTeamId(1);
 
         ITask t1 = TaskFactory.createInstance(1, "Network design", "descripoto", 45);
-        ITask t2 = TaskFactory.createInstance(2, "Network design", "descripoto", 60);
-        ITask t3 = TaskFactory.createInstance(3, "Network design", "descripoto", 240);
-        ITask t4 = TaskFactory.createInstance(4, "Network design", "descripoto", 120);
+        ITask t2 = TaskFactory.createInstance(2, "Network design", "descripoto", 30);
+        ITask t3 = TaskFactory.createInstance(3, "Network design", "descripoto", 15);
+        ITask t4 = TaskFactory.createInstance(4, "Network design", "descripoto", 30);
 
         IEmployee e1 = EmployeeFactory.createInstance();
         e1.setId(1);
-        e1.setHourlyRate(34);
+        e1.setHourlyRate(34.17);
         e1.getSkills().add(TaskFactory.createInstance(2, "Network", "xxxx", 45));
         e1.getSkills().add(TaskFactory.createInstance(4, "Network", "xxxx", 45));
 
         IEmployee e2 = EmployeeFactory.createInstance();
         e2.setId(2);
-        e2.setHourlyRate(42);
+        e2.setHourlyRate(42.50);
         e2.getSkills().add(TaskFactory.createInstance(1, "Network", "xxxx", 45));
         e2.getSkills().add(TaskFactory.createInstance(3, "Network", "xxxx", 45));
 

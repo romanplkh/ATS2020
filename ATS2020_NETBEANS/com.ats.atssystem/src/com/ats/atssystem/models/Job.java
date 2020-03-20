@@ -105,42 +105,38 @@ public class Job extends Base implements Serializable, IJob {
         //INT - empId
         List<Pair<IEmployee, ITask>> jobTasksEmployeeSet = new ArrayList<Pair<IEmployee, ITask>>();
 
-        List<ITask> list = new VirtualFlow.ArrayLinkedList<>();
-
         int index1 = 0;
         int index2 = 0;
 
         //TODO: second getmEmpSkillsID
-        List<Integer> emp1Skills = new ArrayList<>();
-
-        emp1.getSkills().forEach(sk -> {
-            emp1Skills.add(sk.getId());
-        });
-
+//        List<Integer> emp1Skills = new ArrayList<>();
+//
+//        emp1.getSkills().forEach(sk -> {
+//            emp1Skills.add(sk.getId());
+//        });
         //FILL MAP WITH EMP_ID - TASK values
         for (ITask t : tasks) {
 
-            if (emp1Skills.contains(t.getId())) {
-                jobTasksEmployeeSet.add(Pair.with(emp1, t));
-            }
-
-            if (index2 < emp2.getSkills().size()) {
-                if (emp2.getSkills().get(index2).getId() == t.getId()) {
-                    jobTasksEmployeeSet.add(Pair.with(emp2, t));
-                }
-            }
-
-            index1++;
-            index2++;
-
-//            //ADD TASK IF EMP HAS SKILLS
-//            if (emp1.getSkills().contains(t)) {
+//            if (emp1Skills.contains(t.getId())) {
 //                jobTasksEmployeeSet.add(Pair.with(emp1, t));
 //            }
 //
-//            if (emp2.getSkills().contains(t)) {
-//                jobTasksEmployeeSet.add(Pair.with(emp2, t));
+//            if (index2 < emp2.getSkills().size()) {
+//                if (emp2.getSkills().get(index2).getId() == t.getId()) {
+//                    jobTasksEmployeeSet.add(Pair.with(emp2, t));
+//                }
 //            }
+//
+//            index1++;
+//            index2++;
+            //ADD TASK IF EMP HAS SKILLS
+            if (emp1.getSkills().contains(t)) {
+                jobTasksEmployeeSet.add(Pair.with(emp1, t));
+            }
+
+            if (emp2.getSkills().contains(t)) {
+                jobTasksEmployeeSet.add(Pair.with(emp2, t));
+            }
         }
 
         //FILTER TASKS BY EMPLOYEE
@@ -164,7 +160,7 @@ public class Job extends Base implements Serializable, IJob {
 
         }
 
-        //GET TOTAL TASKS DURATION TO CALCULATE JOB END
+        //GET TOTAL JOB DURATION
         this.calculateDuration(jobTaskSetFiltered);
 
         List<Triplet<Integer, Double, Double>> taskCostRevenueInfo = new ArrayList<>();
@@ -176,10 +172,14 @@ public class Job extends Base implements Serializable, IJob {
             ITask task = entry.getValue1();
             int curEmpId = entry.getValue0().getId();
 
+            double dur = task.getDuration();
+            
             if (emp1.getId() == curEmpId) {
-                cost = emp1.getHourlyRate() * task.getDuration();
+                
+               
+                cost = emp1.getHourlyRate() * (dur / 60);
             } else {
-                cost = emp2.getHourlyRate() * task.getDuration();
+                cost = emp2.getHourlyRate() * (dur / 60);
             }
 
             revenue = cost * 3;

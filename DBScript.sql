@@ -415,49 +415,66 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
 
 
 
+
+END
+
+
+---- DELETE BELOW IF WORKING
+
+
 DELIMITER //
 DROP procedure IF EXISTS `spInsertJob`;
 DELIMITER ;
 -- INSERT JOB NEW WITH SEPARATED COST AND REVENUE
 DELIMITER $$
-CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
 IN client_param VARCHAR(255), 
 start_param DATETIME, 
 end_param DATETIME, 
 team_id_param INT(11), 
 cost_param VARCHAR(255), 
 revenue_param VARCHAR(255), 
-tasks_param VARCHAR(255), OUT id_OUT INT)
-
+tasks_param VARCHAR(255), OUT id_OUT_param INT)
 BEGIN
 DECLARE numTasks int;
 DECLARE task_id INT;
 DECLARE cost_value DOUBLE;
 DECLARE revenue_value DOUBLE;
 DECLARE loopCount int;
+DECLARE id_out INT;
 
 START TRANSACTION;
 
 INSERT INTO jobs (description, clientName, start, end, teamId)
 VALUES (desc_param, client_param, start_param, end_param, team_id_param);
 
- SET id_out = LAST_INSERT_ID();
+SET id_out = LAST_INSERT_ID();
+SET id_OUT_param = id_out;
+
 
  -- Remove space
-SET tasks_param = REPLACE(tasks_param, ' ', '');
-
+ SET tasks_param = REPLACE(tasks_param, ' ', '');
 
 -- Get number of values without commas
  SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
-
+ 
+ 
  SET loopCount = 1;
         WHILE loopCount <= numTasks + 1 DO
             -- get task id
             SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
             -- get cost value
+            
             SET cost_value = SUBSTRING_INDEX(cost_param, ',', 1);
+            -- if(length(SUBSTRING_INDEX(cost_value, '.', -1))  = 1) THEN
+				-- SET cost_value  = REPLACE(cost_value, CONCAT('.', '0'), '');
+			-- end if;
+                
             -- get revenue value
             SET revenue_value = SUBSTRING_INDEX(revenue_param, ',', 1);
+        -- if(length(SUBSTRING_INDEX(revenue_value, '.', -1))  = 1) THEN
+		-- SET revenue_value  = REPLACE(revenue_value, CONCAT('.', '0'), '');
+		-- end if;
             
 				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
 				VALUES (task_id, id_out, cost_value, revenue_value);
@@ -466,11 +483,13 @@ SET tasks_param = REPLACE(tasks_param, ' ', '');
             SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
             SET cost_param = replace(cost_param, CONCAT(cost_value, ','), '');
             SET revenue_param = replace(revenue_param, CONCAT(revenue_value, ','), '');
+            
             SET loopCount = loopCount + 1;
         END WHILE;
+    
 
- COMMIT;
- 
+
+ COMMIT; 
 END$$
 DELIMITER ;
 
