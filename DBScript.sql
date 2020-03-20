@@ -751,10 +751,9 @@ DROP PROCEDURE IF EXISTS spGetJobsSchedule;
 // DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE spGetJobsSchedule(
+CREATE PROCEDURE `spGetJobsSchedule`(
 IN date_param VARCHAR(255)
 )
-
 BEGIN
 	SELECT jobs.id, CONCAT(date_format(start, '%H:%i:%s')) as start_time, 
 		CONCAT(date_format(end, '%H:%i:%s')) as end_time,  
@@ -763,7 +762,8 @@ BEGIN
 	INNER JOIN teams
 	ON jobs.teamId = teams.id
 	WHERE date_format(start, '%Y-%m-%d') = date_param 
-	GROUP BY start, teams.name;
+	GROUP BY start, teams.name
+    ORDER BY team DESC, start_time;
 END;
 //
 DELIMITER ;
