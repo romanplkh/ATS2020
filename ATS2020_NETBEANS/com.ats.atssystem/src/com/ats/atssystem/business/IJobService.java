@@ -37,6 +37,14 @@ public interface IJobService {
     IJob getJobDetails(int jobId);
 
     /**
+     * Returns all details of specified job
+     *
+     * @param jobId int job id
+     * @return job object with populated details
+     */
+    IJob addJob(IJob jobId);
+
+    /**
      * Deletes a selected job with all associated tasks and revenue
      *
      * @param job job to delete

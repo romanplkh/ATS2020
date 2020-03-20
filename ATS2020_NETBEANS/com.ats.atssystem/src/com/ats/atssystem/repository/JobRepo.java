@@ -20,12 +20,20 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
+import org.javatuples.Triplet;
 
 /**
  *
  * @author Roman Pelikh
  * @author Olena Stepanova
  */
+enum FieldTypes {
+    TaskId,
+    Cost,
+    Revenue
+
+}
+
 public class JobRepo extends BaseRepo implements IJobRepo {
 
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
@@ -46,15 +54,22 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         int returnedId = 0;
         List<Object> returnedValues;
 
+        //GET STRINGS 
+        job.calculateTasksCost();
+
+        String taskparams = getStringValues(job.getTasksCost(), FieldTypes.TaskId);
+        String costParams = getStringValues(job.getTasksCost(), FieldTypes.Cost);
+        String revenueParams = getStringValues(job.getTasksCost(), FieldTypes.Revenue);
+
         List<IParameter> params = ParameterFactory.createListInstance();
         params.add(ParameterFactory.createInstance(job.getDescription()));
         params.add(ParameterFactory.createInstance(job.getClientName()));
         params.add(ParameterFactory.createInstance(job.getStart()));
         params.add(ParameterFactory.createInstance(job.getEnd()));
         params.add(ParameterFactory.createInstance(job.getTeamId()));
-        params.add(ParameterFactory.createInstance("100,200,300,400")); //cost param
-        params.add(ParameterFactory.createInstance("200,300,400,500")); //revenue param
-        params.add(ParameterFactory.createInstance(job.getTasks())); //revenue param
+        params.add(ParameterFactory.createInstance(costParams)); //cost param
+        params.add(ParameterFactory.createInstance(revenueParams)); //revenue param
+        params.add(ParameterFactory.createInstance(taskparams)); //task param
 
 //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
@@ -208,6 +223,39 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
 
         return list;
+    }
+
+    private String getStringValues(List<Triplet<Integer, Double, Double>> values, FieldTypes type) {
+
+        String result = "";
+
+        switch (type) {
+
+            case TaskId:
+                result = tripletValuesIterator(values, 0);
+                break;
+            case Cost:
+                result = tripletValuesIterator(values, 1);
+                break;
+            case Revenue:
+                result = tripletValuesIterator(values, 2);
+                break;
+        }
+
+        result = result.substring(0, result.lastIndexOf(","));
+
+        return result;
+    }
+
+    private String tripletValuesIterator(List<Triplet<Integer, Double, Double>> values, int index) {
+
+        String val = "";
+
+        for (Triplet<Integer, Double, Double> entry : values) {
+            val += entry.getValue(index) + ",";
+        }
+
+        return val;
     }
 
     /**
