@@ -72,7 +72,7 @@ public interface IJobService {
      * @param job job to validate team in
      * @return Job with errors or Empty
      */
-    public IJob isTeamAbailableToBook(IJob job);
+    public IJob isTeamAvailableToBook(IJob job);
 
     /**
      * Validates if team is onEmergencyCall

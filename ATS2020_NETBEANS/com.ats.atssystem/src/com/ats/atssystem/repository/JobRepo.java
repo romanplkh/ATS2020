@@ -214,7 +214,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
      * {@inheritDoc}
      */
     @Override
-    public boolean isTeamAbailableToBook(IJob job) {
+    public boolean isTeamAvailableToBook(IJob job) {
 
         int retValue = -1;
 
