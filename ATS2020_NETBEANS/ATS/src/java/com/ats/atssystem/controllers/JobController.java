@@ -44,9 +44,8 @@ public class JobController extends CommonController {
         String pathInfo = request.getPathInfo();
         IJobService service = JobServiceFactory.createInstance();
 
+        //SHOW JOBS SCHEDULE
         if (pathInfo == null) {
-            //show all jobs
-
             String currentDate = LocalDate.now().toString();
             //GET DATE
             String searchDate = super.getValue(request, "searchDate");
@@ -90,10 +89,10 @@ public class JobController extends CommonController {
                 }
 
             } else {
-                //create job page
+                //CREATE JOB
                 JobViewModel jvm = new JobViewModel();
                 jvm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
-                //------NED TO SET ALL TEAMS--------
+                jvm.setTeams(TeamServiceFactory.createInstance().getTeamsLookup());
                 request.setAttribute("jvm", jvm);
                 super.setView(request, JOB_MAINT_VIEW);
             }
@@ -136,7 +135,7 @@ public class JobController extends CommonController {
                     if (!jobService.isValid(job)) {
                         jvm.setJob(job);
                         jvm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
-                        // ------SET TEAMS HERE BACK
+                        jvm.setTeams(TeamServiceFactory.createInstance().getTeamsLookup());
                         request.setAttribute("jvm", jvm);
                         super.setView(request, JOB_MAINT_VIEW);
                     } else {
@@ -147,7 +146,7 @@ public class JobController extends CommonController {
                                     .createInstance(9, "Sorry, something went wrong during adding a job"));
                             jvm.setJob(job);
                             jvm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
-                            // ------SET TEAMS HERE BACK
+                            jvm.setTeams(TeamServiceFactory.createInstance().getTeamsLookup());
                             request.setAttribute("jvm", jvm);
 
                             super.setView(request, JOB_MAINT_VIEW);
@@ -215,6 +214,9 @@ public class JobController extends CommonController {
             }
         }
         job.setTasksList(tasks);
+        
+        
+  
 
         return job;
     }

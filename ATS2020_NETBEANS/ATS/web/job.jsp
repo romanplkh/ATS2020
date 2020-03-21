@@ -85,7 +85,6 @@
                                         <div class="form-group">
                                             <label>Team</label>
                                             <select class="form-control" name="team">
-                                                <option value="1">Team 1</option>
                                                 <c:forEach items="${jvm.teams}" var="team">
                                                     <option value="${team.id}">${team.name}</option>
                                                 </c:forEach>
@@ -107,30 +106,22 @@
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" name="emergency" 
-                                                       type="checkbox"  value="${jvm.job.isEmergency}">
+                                                       type="checkbox" >
                                                 <label class="form-check-label" for="defaultCheck1">
                                                     Emergency
                                                 </label>
                                                 <input class="form-check-input ml-4" name="onSite" 
-                                                       type="checkbox" value="${jvm.job.isOnSite}">
+                                                       type="checkbox">
                                                 <label class="form-check-label" for="defaultCheck2">
                                                     On site
                                                 </label>
                                             </div>
                                         </div>
 
-                                        <c:choose>
-                                            <c:when test="${0 == 0}">
-                                                <input type="submit" value="Create" 
-                                                       class="btn btn-success btn-lg" name="action">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <input class="btn btn-danger btn-lg" 
-                                                       type="submit" value="Delete" name="action"/>
-                                                <input class="btn btn-warning btn-lg" 
-                                                       type="submit" value="Update" name="action"/>
-                                            </c:otherwise>
-                                        </c:choose>
+
+                                        <input type="submit" value="Create" 
+                                               class="btn btn-success btn-lg" name="action">
+
                                         <a href="${pageContext.request.contextPath}/employees" 
                                            class="btn btn-secondary btn-lg">Cancel</a>
                                 </div>

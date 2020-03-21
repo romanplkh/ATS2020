@@ -40,21 +40,34 @@ public class JobService implements IJobService {
         if (job.getErrors().size() > 0) {
             return job.getErrors().isEmpty();
         } else {
+
+            //5. On call team does not matter skills
             if (!job.getIsEmergency()) {
                 validateSkillset(job);
-            } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "Selected team is available only for emergency calls. "
-                                + "Please select different team"));
             }
 
-            //VALIDATE TIME ----- NOT WORKING
-//        if (!isJobWithinBusinessHours(job)) {
-//            job.addError(ErrorFactory
-//                    .createInstance(3, "Please select different time. Bussiness hrs are 8am-5pm Mon - Fri, "
-//                            + "except for emergency jobs"));
-//        }
-            validateEmergencyJobTime(job);
+            //Calculate cost of a job and get End Time
+            job.calculateTasksCost();
+
+            // 1. Validate that team is not doublebooked
+            if (!isTeamAvailableToBook(job)) {
+                job.addError(ErrorFactory
+                        .createInstance(2, "Selected team is already scheduled for a job during this hours. "
+                                + "Please select diferent date or time"));
+            }
+
+            //2. Validate job within business hours if it is not emergency
+            //4. Emergency only off hours
+            if (!job.getIsEmergency() && !isJobWithinBusinessHours(job)) {
+                job.addError(ErrorFactory
+                        .createInstance(2, "Non emergency job can be scheduled only within business hours"));
+            }
+
+            // 3. I can book onCall Team for Emergency calls
+            if (job.getIsEmergency() && !isTeamOnEmergencyCall(job)) {
+                job.addError(ErrorFactory
+                        .createInstance(2, "Selected team is not on emergency call and cannot be scheduled for emergency calls"));
+            }
 
             return job.getErrors().isEmpty();
         }
@@ -122,6 +135,7 @@ public class JobService implements IJobService {
 
             List<ITask> empSkillset = TaskFactory.createListInstance();
 
+            //ADD ALL SKILLS FROM EMPLOYEE TO ARRAY OF SKILLS
             for (IEmployee e : employees) {
                 empSkillset.addAll(e.getSkills());
             }
@@ -142,14 +156,8 @@ public class JobService implements IJobService {
     }
 
     @Override
-    public IJob isTeamAvailableToBook(IJob job) {
-        if (!repo.isTeamAvailableToBook(job)) {
-            job.addError(ErrorFactory
-                    .createInstance(4, "This team already has a job during this time. Please select another hours"));
-        }
-
-        return job;
-
+    public boolean isTeamAvailableToBook(IJob job) {
+        return repo.isTeamAvailableToBook(job);
     }
 
     @Override

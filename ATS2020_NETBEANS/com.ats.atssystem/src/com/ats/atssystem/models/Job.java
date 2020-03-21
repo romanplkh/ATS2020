@@ -34,7 +34,7 @@ public class Job extends Base implements Serializable, IJob {
     private LocalTime startTime;
     private LocalTime endTime;
     private boolean isOnSite;
-    private int jobDuration;
+    private int totalJobDuration;
     private List<Triplet<Integer, Double, Double>> tasksCost;
 
     public Job() {
@@ -47,21 +47,24 @@ public class Job extends Base implements Serializable, IJob {
         this.start = start;
     }
 
+    //Called inside  calculateDuration of JOB
     private void calculateJobTime() {
         if (this.isOnSite) {
             this.setStart(this.getStart().minusMinutes(30));
-            this.setEnd(this.getStart().plusMinutes(this.jobDuration).plusMinutes(30));
+            this.setEnd(this.getStart().plusMinutes(this.totalJobDuration).plusMinutes(30));
         } else {
-            this.setEnd(this.getStart().plusMinutes(this.jobDuration));
+            this.setEnd(this.getStart().plusMinutes(this.totalJobDuration));
         }
     }
 
+    //Calculates the TOTAL JOB DURATION
+    //Called inside CalculateCost
     private void calculateDuration(List<Pair<IEmployee, ITask>> jobTaskSetFiltered) {
 
         IEmployee emp1 = team.getTeamMembers().get(0);
         IEmployee emp2 = team.getTeamMembers().get(1);
 
-        //NUMBER OF TASKS FOR EACH EMPLOYEE
+        //NUMBER OF TASKS DURATION FOR EACH EMPLOYEE
         int totalTasksDurationE1 = 0;
         int totalTasksDurationE2 = 0;
 
@@ -79,9 +82,9 @@ public class Job extends Base implements Serializable, IJob {
         }
 
         if (totalTasksDurationE1 > totalTasksDurationE2) {
-            this.jobDuration = totalTasksDurationE1;
+            this.totalJobDuration = totalTasksDurationE1;
         } else {
-            this.jobDuration = totalTasksDurationE2;
+            this.totalJobDuration = totalTasksDurationE2;
         }
 
         calculateJobTime();
@@ -99,7 +102,7 @@ public class Job extends Base implements Serializable, IJob {
         int index1 = 0;
         int index2 = 0;
 
-        //FILL MAP WITH EMP_ID - TASK values
+        //FILL LIST WITH EMP_ID - TASK values
         for (ITask t : tasks) {
             //ADD TASK IF EMP HAS SKILLS
             if (emp1.getSkills().contains(t)) {
@@ -115,9 +118,20 @@ public class Job extends Base implements Serializable, IJob {
         List<Pair<IEmployee, ITask>> jobTaskSetFiltered = new ArrayList<>();
 
         for (Pair<IEmployee, ITask> entry : jobTasksEmployeeSet) {
+            int filteredSize = jobTaskSetFiltered.size();
 
             IEmployee emp = entry.getValue0();
             ITask task = entry.getValue1();
+
+            if (filteredSize > 0) {
+                int taskIdInFiltered = jobTaskSetFiltered.get(filteredSize - 1).getValue1().getId();
+
+                //If task is already present in filtered do not add it
+                if (entry.getValue1().getId() == taskIdInFiltered) {
+                    continue;
+                }
+
+            }
 
             if (emp2.getSkills().contains(task) && emp1.getSkills().contains(task)) {
                 if (emp2.getHourlyRate() > emp1.getHourlyRate()) {
@@ -191,9 +205,9 @@ public class Job extends Base implements Serializable, IJob {
         if (tasks.isEmpty()) {
             super.addError(ErrorFactory.createInstance(1, "Tasks are required"));
         } else {
-             this.tasks = tasks;
+            this.tasks = tasks;
         }
-       
+
     }
 
     @Override
@@ -238,8 +252,8 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setClientName(String clientName) {
-        if ("".equals(clientName.trim())) {
-            super.addError(ErrorFactory.createInstance(3, "Client name is required"));
+        if (clientName.isEmpty()) {
+            this.addError(ErrorFactory.createInstance(3, "Client name is required"));
         } else {
             this.clientName = clientName;
         }

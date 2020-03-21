@@ -21,6 +21,9 @@ public class TeamService implements ITeamService {
     //Repo depenancy
     private ITeamRepo repo;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITeam createTeam(ITeam team) {
 
@@ -30,25 +33,41 @@ public class TeamService implements ITeamService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid(ITeam team) {
         return team.getErrors().isEmpty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ITeam validateMembersInTeam(int idMember_1, int idMember_2) {
         repo = TeamRepoFactory.createInstance();
         ITeam team = TeamFactory.createInstance();
-
         team = repo.getMembersOnTeamToValidate(idMember_1, idMember_2);
-
         return team;
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITeam getTeamDetails(int id) {
-       repo = TeamRepoFactory.createInstance();
-       return repo.getTeam(id);
+        repo = TeamRepoFactory.createInstance();
+        return repo.getTeam(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ITeam> getTeamsLookup() {
+        repo = TeamRepoFactory.createInstance();
+        return repo.getTeamsLookup();
     }
 
 }
