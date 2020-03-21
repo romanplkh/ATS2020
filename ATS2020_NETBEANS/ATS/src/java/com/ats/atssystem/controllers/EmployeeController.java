@@ -229,7 +229,8 @@ public class EmployeeController extends CommonController {
 
         } catch (Exception e) {
             super.setView(request, EMPLOYEE_MAINT_VIEW);
-            request.setAttribute("vmError", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
+            request.setAttribute("vmError", 
+                    new ErrorViewModel("Something bad happened when attempting to maintain employee"));
         }
 
         if (!employeeService.isValid(emp)) {

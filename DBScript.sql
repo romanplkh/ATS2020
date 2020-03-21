@@ -427,7 +427,7 @@ DROP procedure IF EXISTS `spInsertJob`;
 DELIMITER ;
 -- INSERT JOB NEW WITH SEPARATED COST AND REVENUE
 DELIMITER $$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
 IN client_param VARCHAR(255), 
 start_param DATETIME, 
 end_param DATETIME, 
@@ -435,10 +435,7 @@ team_id_param INT(11),
 cost_param VARCHAR(255), 
 revenue_param VARCHAR(255), 
 tasks_param VARCHAR(255), OUT id_OUT_param INT)
-<<<<<<< HEAD
 
-=======
->>>>>>> dev
 BEGIN
 DECLARE numTasks int;
 DECLARE task_id INT;
