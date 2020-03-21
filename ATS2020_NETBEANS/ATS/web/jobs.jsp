@@ -20,6 +20,10 @@
 
 
 
+        .mylink{
+            color: #fff;
+
+        }
 
 
 
@@ -158,10 +162,10 @@
                                                                                    pattern="HH:mm:ss" />
 
 
-                                                                    <!--WHAT TO COLOR-->
+                                                                    <!--WHAT TO COLOR job/:id/[details]-->
                                                                     <c:choose>
                                                                         <c:when test="${start.getHour() == h && start.getMinute() == min}">
-                                                                            <td class="booked divider-l"></td>
+                                                                            <td class="booked divider-l"><a class="mylink" href="job/${tJobs.get(cJCount).id}/details">Details</a> </td>
                                                                         </c:when>
                                                                         <c:when test="${end.getHour() == h && end.getMinute() == min}">
                                                                             <c:set var="cJCount" value="${cJCount + 1}"/>
@@ -171,7 +175,7 @@
                                                                                     <c:choose >
 
                                                                                         <c:when test="${newJ.startTime.getHour() == h && newJ.startTime.getMinute() == min}">
-                                                                                            <td class="booked divider-l"></td>
+                                                                                            <td class="booked divider-l"><a class="mylink" href="job/${tJobs.get(cJCount).id}/details">Details</a></td>
                                                                                         </c:when>
                                                                                         <c:otherwise>
                                                                                             <td></td>
