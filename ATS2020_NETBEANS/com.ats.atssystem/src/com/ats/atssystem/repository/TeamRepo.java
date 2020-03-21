@@ -8,7 +8,9 @@ package com.ats.atssystem.repository;
 import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IEmployee;
+import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
+import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.models.TeamFactory;
 import com.ats.dataaccess.DALFactory;
 import com.ats.dataaccess.IDAL;
@@ -16,7 +18,6 @@ import com.ats.dataaccess.IParameter;
 import com.ats.dataaccess.ParameterFactory;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
 
@@ -29,16 +30,12 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
     private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
-  
+    private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
     public TeamRepo() {
     }
-
-    
-
-   
 
     /**
      * {@inheritDoc}
@@ -116,6 +113,93 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         return team;
 
+    }
+
+    @Override
+    public ITeam getTeam(int id) {
+        ITeam team = TeamFactory.createInstance();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+
+            parms.add(ParameterFactory.createInstance(id, IParameter.Direction.IN, Types.INTEGER));
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_TEAM_WITH_EMP_DETAILS, parms);
+
+            team = populateTeamWithDetails(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return team;
+    }
+
+    private ITeam populateTeamWithDetails(CachedRowSet rs) throws SQLException {
+        ITeam team = null;
+
+        List<IEmployee> employees = null;
+        IEmployee emp = null;
+
+        List<ITask> skills = null;
+        ITask skill = null;
+
+        if (rs.next()) {
+            team = TeamFactory.createInstance();
+            emp = EmployeeFactory.createInstance();
+            employees = EmployeeFactory.createListInstance();
+
+            skill = TaskFactory.createInstance();
+            skills = TaskFactory.createListInstance();
+
+            team.setId(super.getInt("teamId", rs));
+            emp.setId(super.getInt("empId", rs));
+            emp.setFirstName(rs.getString("empFname"));
+            emp.setLastName("empLname");
+            emp.setHourlyRate(super.getDouble("hRate", rs));
+
+            //set skills
+            skill.setId(super.getInt("empSkillId", rs));
+            skills.add(skill);
+            //add list of skilld to emp
+            emp.setSkills(skills);
+
+            while (rs.next()) {
+                if (emp.getId() == super.getInt("empId", rs)) {
+                    rs.previous();
+                    while (rs.next() && (emp.getId() == super.getInt("empId", rs))) {
+                        //add other skills
+                        skill = TaskFactory.createInstance();
+                        skill.setId(super.getInt("empSkillId", rs));
+                        skills.add(skill);
+                        emp.setSkills(skills);
+                    }                   
+                    rs.previous();
+                } else {
+                    //add first emp to list of employees
+                    employees.add(emp);
+                    
+                    
+                    //new empl -> create instance and populate info
+                    //create new list of skills
+                    emp = EmployeeFactory.createInstance();
+                    emp.setId(super.getInt("empId", rs));
+                    emp.setFirstName(rs.getString("empFname"));
+                    emp.setLastName("empLname");
+                    emp.setHourlyRate(super.getDouble("hRate", rs));
+
+                    skill = TaskFactory.createInstance();
+                    skills = TaskFactory.createListInstance();
+
+                    //set skills
+                    skill.setId(super.getInt("empSkillId", rs));
+                    skills.add(skill);
+                    employees.add(emp);
+                }
+            }
+
+            team.setTeamMembers(employees);
+        }
+
+        return team;
     }
 
 }

@@ -188,7 +188,7 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setTasksList(List<ITask> tasks) {
-        if (tasks.size() < 1) {
+        if (tasks.isEmpty()) {
             super.addError(ErrorFactory.createInstance(1, "Tasks are required"));
         } else {
              this.tasks = tasks;
@@ -223,7 +223,7 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setDescription(String description) {
-        if (description.trim().isEmpty()) {
+        if ("".equals(description.trim())) {
             super.addError(ErrorFactory.createInstance(2, "Description is required"));
         } else {
             this.description = description;
@@ -238,7 +238,7 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setClientName(String clientName) {
-        if (clientName.trim().isEmpty()) {
+        if ("".equals(clientName.trim())) {
             super.addError(ErrorFactory.createInstance(3, "Client name is required"));
         } else {
             this.clientName = clientName;

@@ -70,11 +70,7 @@
                                             <div class="row ">
                                                 <div class="col-md-9 py-1">
                                                     <select class="form-control" name="task" 
-                                                            id="listTasks">
-                                                        <option value="1">Task 1</option>
-                                                        <option value="2">Task 2</option>
-                                                        <option value="3">Task 3</option>
-                                                        <option value="4">Task 4</option>
+                                                            id="listTasks">                                                        
                                                         <c:forEach items="${jvm.tasks}" var="task">
                                                             <option value="${task.id}">${task.name}</option>
                                                         </c:forEach>
@@ -111,7 +107,7 @@
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" name="emergency" 
-                                                       type="checkbox" value="${jvm.job.isEmergency}">
+                                                       type="checkbox"  value="${jvm.job.isEmergency}">
                                                 <label class="form-check-label" for="defaultCheck1">
                                                     Emergency
                                                 </label>

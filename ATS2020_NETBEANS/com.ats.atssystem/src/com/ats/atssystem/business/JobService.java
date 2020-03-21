@@ -35,21 +35,30 @@ public class JobService implements IJobService {
      */
     @Override
     public boolean isValid(IJob job) {
-        //--UNCOMMENT--------
 
-        if (!job.getIsEmergency()) {
-            validateSkillset(job);
-        } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
-            job.addError(ErrorFactory
-                    .createInstance(2, "Selected team is available only for emergency calls. "
-                            + "Please select different team"));
-        }
-        //VALIDATE TIME
-//        } else if (job.getIsEmergency()) {
-//            validateEmergencyJobTime(job);
+        //IF model is not valid ->>> other validations will crash
+        if (job.getErrors().size() > 0) {
+            return job.getErrors().isEmpty();
+        } else {
+            if (!job.getIsEmergency()) {
+                validateSkillset(job);
+            } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
+                job.addError(ErrorFactory
+                        .createInstance(2, "Selected team is available only for emergency calls. "
+                                + "Please select different team"));
+            }
+
+            //VALIDATE TIME ----- NOT WORKING
+//        if (!isJobWithinBusinessHours(job)) {
+//            job.addError(ErrorFactory
+//                    .createInstance(3, "Please select different time. Bussiness hrs are 8am-5pm Mon - Fri, "
+//                            + "except for emergency jobs"));
 //        }
+            validateEmergencyJobTime(job);
 
-        return job.getErrors().isEmpty();
+            return job.getErrors().isEmpty();
+        }
+
     }
 
     /**
@@ -89,19 +98,18 @@ public class JobService implements IJobService {
         LocalTime bookingTime = bookingDate.toLocalTime();
 
         //YOU COULD DO IT EASIER ==>
-        if (!job.getIsEmergency() && bookingTime.isAfter(LocalTime.of(17, 0))) {
-            job.addError(ErrorFactory
-                    .createInstance(6, "Only emergency calls can be scheduled off-hours"));
-        }
-
+//        if (!job.getIsEmergency() && bookingTime.isAfter(LocalTime.of(17, 0))) {
+//            job.addError(ErrorFactory
+//                    .createInstance(6, "Only emergency calls can be scheduled off-hours"));
+//        }
         //I COMMENTED OUT IT 
         //THIS VALIDATION ALLOWS TO BOOK JOB START AT 16 and JOB END at 14 :-)
-//        if (!(job.getIsEmergency()
-//                && (bookingTime.isAfter(LocalTime.of(16, 59)))
-//                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
-//            job.addError(ErrorFactory
-//                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
-//        }
+        if (!(job.getIsEmergency()
+                && (bookingTime.isAfter(LocalTime.of(16, 59)))
+                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
+            job.addError(ErrorFactory
+                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
+        }
     }
 
     @Override
@@ -157,6 +165,8 @@ public class JobService implements IJobService {
 
             //Validate DAY 
             DayOfWeek startDOW = job.getStart().getDayOfWeek();
+
+            //EROR over here. WE DO not have job end time yet----------------------
             DayOfWeek endDOW = job.getEnd().getDayOfWeek();
 
             if (startDOW == DayOfWeek.SATURDAY
@@ -182,8 +192,8 @@ public class JobService implements IJobService {
     @Override
     public IJob addJob(IJob job) {
 
-        repo.addJob(job);
-
+        int newJobId = repo.addJob(job);
+        job.setId(newJobId);
         return job;
 
     }

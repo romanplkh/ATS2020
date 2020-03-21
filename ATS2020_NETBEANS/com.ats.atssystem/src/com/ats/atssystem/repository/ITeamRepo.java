@@ -6,8 +6,7 @@
 package com.ats.atssystem.repository;
 
 import com.ats.atssystem.models.ITeam;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 /**
  *
@@ -28,4 +27,5 @@ public interface ITeamRepo {
 
     ITeam getMembersOnTeamToValidate(int idMember_1, int idMember_2);
 
+    ITeam getTeam(int id);
 }
