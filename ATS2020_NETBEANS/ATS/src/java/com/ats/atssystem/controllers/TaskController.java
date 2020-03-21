@@ -5,19 +5,14 @@ import com.ats.atssystem.business.TaskServiceFactory;
 import com.ats.atssystem.controllers.CommonController;
 import com.ats.atssystem.models.ErrorViewModel;
 import com.ats.atssystem.models.ITask;
-import com.ats.atssystem.models.Task;
 import com.ats.atssystem.models.TaskFactory;
-import com.ats.atssystem.repository.ITaskRepo;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Olena Stepanova

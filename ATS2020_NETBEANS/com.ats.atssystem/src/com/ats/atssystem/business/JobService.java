@@ -5,14 +5,12 @@
  */
 package com.ats.atssystem.business;
 
-import com.ats.atssystem.models.EmployeeFactory;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TaskFactory;
-import com.ats.atssystem.models.TeamFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
 import java.time.DayOfWeek;
@@ -38,11 +36,17 @@ public class JobService implements IJobService {
     @Override
     public boolean isValid(IJob job) {
         //--UNCOMMENT--------
-        //validateEmergencyJobTime(job);
-//        if (!job.getIsEmergency()) {
-//            validateSkillset(job);
-//        } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
-//            job.addError(ErrorFactory.createInstance(2, "Selected team is available only for emergency calls. Please select different team"));
+
+        if (!job.getIsEmergency()) {
+            validateSkillset(job);
+        } else if (this.isTeamOnEmergencyCall(job) && job.getIsEmergency() == false) {
+            job.addError(ErrorFactory
+                    .createInstance(2, "Selected team is available only for emergency calls. "
+                            + "Please select different team"));
+        }
+        //VALIDATE TIME
+//        } else if (job.getIsEmergency()) {
+//            validateEmergencyJobTime(job);
 //        }
 
         return job.getErrors().isEmpty();
@@ -87,7 +91,7 @@ public class JobService implements IJobService {
         //YOU COULD DO IT EASIER ==>
         if (!job.getIsEmergency() && bookingTime.isAfter(LocalTime.of(17, 0))) {
             job.addError(ErrorFactory
-                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
+                    .createInstance(6, "Only emergency calls can be scheduled off-hours"));
         }
 
         //I COMMENTED OUT IT 
@@ -103,27 +107,28 @@ public class JobService implements IJobService {
     @Override
     public void validateSkillset(IJob job) {
         //Team skillset should correspond to selected tasks
-
         List<ITask> jobSkillset = job.getTasksList();
 
-        List<IEmployee> employees = job.getTeam().getTeamMembers();
+        if (jobSkillset.size() > 0) {
+            List<IEmployee> employees = job.getTeam().getTeamMembers();
 
-        List<ITask> empSkillset = TaskFactory.createListInstance();
+            List<ITask> empSkillset = TaskFactory.createListInstance();
 
-        for (IEmployee e : employees) {
-            empSkillset.addAll(e.getSkills());
-        }
-
-        int count = 0;
-        for (ITask skill : jobSkillset) {
-            if (!empSkillset.contains(skill)) {
-                count++;
+            for (IEmployee e : employees) {
+                empSkillset.addAll(e.getSkills());
             }
-        }
 
-        if (count > 0) {
-            job.addError(ErrorFactory
-                    .createInstance(3, "There is no matching skillset to perform this job"));
+            int count = 0;
+            for (ITask skill : jobSkillset) {
+                if (!empSkillset.contains(skill)) {
+                    count++;
+                }
+            }
+
+            if (count > 0) {
+                job.addError(ErrorFactory
+                        .createInstance(5, "There is no matching skillset to perform this job"));
+            }
         }
 
     }

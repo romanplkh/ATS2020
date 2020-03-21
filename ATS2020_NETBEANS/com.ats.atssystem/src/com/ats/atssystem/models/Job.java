@@ -5,17 +5,11 @@
  */
 package com.ats.atssystem.models;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
@@ -94,9 +88,6 @@ public class Job extends Base implements Serializable, IJob {
 
     }
 
-    ;
-
-
     public void calculateTasksCost() {
 
         IEmployee emp1 = team.getTeamMembers().get(0);
@@ -108,27 +99,8 @@ public class Job extends Base implements Serializable, IJob {
         int index1 = 0;
         int index2 = 0;
 
-        //TODO: second getmEmpSkillsID
-//        List<Integer> emp1Skills = new ArrayList<>();
-//
-//        emp1.getSkills().forEach(sk -> {
-//            emp1Skills.add(sk.getId());
-//        });
         //FILL MAP WITH EMP_ID - TASK values
         for (ITask t : tasks) {
-
-//            if (emp1Skills.contains(t.getId())) {
-//                jobTasksEmployeeSet.add(Pair.with(emp1, t));
-//            }
-//
-//            if (index2 < emp2.getSkills().size()) {
-//                if (emp2.getSkills().get(index2).getId() == t.getId()) {
-//                    jobTasksEmployeeSet.add(Pair.with(emp2, t));
-//                }
-//            }
-//
-//            index1++;
-//            index2++;
             //ADD TASK IF EMP HAS SKILLS
             if (emp1.getSkills().contains(t)) {
                 jobTasksEmployeeSet.add(Pair.with(emp1, t));
@@ -140,7 +112,6 @@ public class Job extends Base implements Serializable, IJob {
         }
 
         //FILTER TASKS BY EMPLOYEE
-        //HashMap<Integer, ITask> jobTaskSetFiltered = new HashMap<>();
         List<Pair<IEmployee, ITask>> jobTaskSetFiltered = new ArrayList<>();
 
         for (Pair<IEmployee, ITask> entry : jobTasksEmployeeSet) {
@@ -163,6 +134,7 @@ public class Job extends Base implements Serializable, IJob {
         //GET TOTAL JOB DURATION
         this.calculateDuration(jobTaskSetFiltered);
 
+        //Calculate COST and REVENUE FOR EACH TASK IN THIS JOB
         List<Triplet<Integer, Double, Double>> taskCostRevenueInfo = new ArrayList<>();
 
         for (Pair<IEmployee, ITask> entry : jobTaskSetFiltered) {
@@ -173,10 +145,8 @@ public class Job extends Base implements Serializable, IJob {
             int curEmpId = entry.getValue0().getId();
 
             double dur = task.getDuration();
-            
+
             if (emp1.getId() == curEmpId) {
-                
-               
                 cost = emp1.getHourlyRate() * (dur / 60);
             } else {
                 cost = emp2.getHourlyRate() * (dur / 60);
@@ -196,14 +166,11 @@ public class Job extends Base implements Serializable, IJob {
 
     }
 
-    public boolean isIsOnSite() {
-        return isOnSite;
-    }
-
-    public void setIsOnSite(boolean isOnSite) {
-        this.isOnSite = isOnSite;
-    }
-
+    //------FOR TOTAL BILLABLE JOB COST FUNC------
+//    @Override
+//    public double calculateBillableCost() {
+//        return this.revenue + (this.revenue * 0.15);
+//    }
     @Override
     public ITeam getTeam() {
         return team;
@@ -221,7 +188,12 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setTasksList(List<ITask> tasks) {
-        this.tasks = tasks;
+        if (tasks.size() < 1) {
+            super.addError(ErrorFactory.createInstance(1, "Tasks are required"));
+        } else {
+             this.tasks = tasks;
+        }
+       
     }
 
     @Override
@@ -251,7 +223,12 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setDescription(String description) {
-        this.description = description;
+        if (description.trim().isEmpty()) {
+            super.addError(ErrorFactory.createInstance(2, "Description is required"));
+        } else {
+            this.description = description;
+        }
+
     }
 
     @Override
@@ -261,7 +238,12 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setClientName(String clientName) {
-        this.clientName = clientName;
+        if (clientName.trim().isEmpty()) {
+            super.addError(ErrorFactory.createInstance(3, "Client name is required"));
+        } else {
+            this.clientName = clientName;
+        }
+
     }
 
     @Override
@@ -271,7 +253,12 @@ public class Job extends Base implements Serializable, IJob {
 
     @Override
     public void setStart(LocalDateTime start) {
-        this.start = start;
+        if (start == null) {
+            super.addError(ErrorFactory.createInstance(4, "Start time and date is required"));
+        } else {
+            this.start = start;
+        }
+
     }
 
     @Override
@@ -314,43 +301,6 @@ public class Job extends Base implements Serializable, IJob {
         this.isEmergency = isEmergency;
     }
 
-    private void buildTaskIdsString() {
-        //this.tasks.forEach(t -> this.tasksIds += t.getId() + ",");
-    }
-
-//    private void buildCostValuesString(){
-//        
-//    }
-    private double calculateCost(int duration, double empRate) {
-        return (duration / 60) * empRate;
-
-//        double result = this.team.getTeamMembers()
-//                .stream()
-//                .reduce(0.0, (subtotal, employee)
-//                        -> subtotal + employee.getHourlyRate(), Double::sum)
-//                / (this.calculateTotalTasksDuration() / 60);
-//
-//        this.cost = result;
-    }
-
-    private double calculateRevenue(double cost) {
-        int incrementRate = 3;
-        if (isEmergency) {
-            incrementRate = 4;
-        }
-
-        return cost * incrementRate;
-    }
-
-    //It is a utility method, This is why interface does not have it
-    private int calculateTotalTasksDuration() {
-        return this.tasks.stream().reduce(0, (calculatedTime, task) -> calculatedTime + task.getDuration(), Integer::sum);
-    }
-
-//    @Override
-//    public double calculateBillableCost() {
-//        return this.revenue + (this.revenue * 0.15);
-//    }
     @Override
     public List<Triplet<Integer, Double, Double>> getTasksCost() {
         return this.tasksCost;
@@ -359,6 +309,16 @@ public class Job extends Base implements Serializable, IJob {
     @Override
     public void setTasksCost(List<Triplet<Integer, Double, Double>> list) {
         this.tasksCost = list;
+    }
+
+    @Override
+    public boolean getIsOnSite() {
+        return this.isOnSite;
+    }
+
+    @Override
+    public void setIsOnSite(boolean isOnSite) {
+        this.isOnSite = isOnSite;
     }
 
 }
