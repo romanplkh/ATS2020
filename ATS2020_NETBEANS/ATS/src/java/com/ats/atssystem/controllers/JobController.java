@@ -8,10 +8,15 @@ package com.ats.atssystem.controllers;
 import com.ats.atssystem.business.IJobService;
 import com.ats.atssystem.business.JobService;
 import com.ats.atssystem.business.JobServiceFactory;
+import com.ats.atssystem.business.TaskServiceFactory;
+import com.ats.atssystem.business.TeamServiceFactory;
 import com.ats.atssystem.models.ErrorViewModel;
 import com.ats.atssystem.models.IJob;
+import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.JobFactory;
+import com.ats.atssystem.models.JobViewModel;
+import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.models.TeamFactory;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,8 +35,7 @@ public class JobController extends CommonController {
 
     private static String JOB_DETAILS_VIEW = "/job-details.jsp";
     private static String JOBS_VIEW = "/jobs.jsp";
-//  ---------  NEED TO CHANGE AFTER  --------------------
-    private static String JOB_MAINT_VIEW = "/dashboard.jsp";
+    private static String JOB_MAINT_VIEW = "/job.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,8 +45,6 @@ public class JobController extends CommonController {
 
         if (pathInfo == null) {
             //show all jobs
-
-          
 
             String currentDate = LocalDate.now().toString();
             //GET DATE
@@ -61,10 +63,7 @@ public class JobController extends CommonController {
             super.setView(request, JOBS_VIEW);
         } else {
             //job/:id/[details]
-            
-             service.addJob(JobFactory.createInstance());
-
-            String[] pathParts = super.getUrlParts(pathInfo);
+            String[] pathParts = pathInfo.split("/");
             //job id
             int jobId = super.getInteger(pathParts[1]);
 
@@ -91,6 +90,9 @@ public class JobController extends CommonController {
 
             } else {
                 //create job page
+                JobViewModel jvm = new JobViewModel();
+                request.setAttribute("jvm", jvm);
+                super.setView(request, JOB_MAINT_VIEW);
             }
 
         }
@@ -123,11 +125,26 @@ public class JobController extends CommonController {
                                 new ErrorViewModel(String.format("Job you are trying to delete does not exist")));
                     }
                     break;
+
+                case "create":
+                    job = populateJobModel(request);
+                    JobViewModel jvm = new JobViewModel();
+
+                    if (!jobService.isValid(job)) {
+                        jvm.setJob(job);
+                        jvm.setTasks(TaskServiceFactory.createInstance().getAllTasks());
+                        // ------SET TEAMS HERE BACK
+                        request.setAttribute("jvm", jvm);
+                        super.setView(request, JOB_MAINT_VIEW);
+                    } else {
+                        jobService.addJob(job);
+                    }
             }
 
         } catch (Exception e) {
             super.setView(request, JOB_DETAILS_VIEW);
-            request.setAttribute("vmError", new ErrorViewModel("Something bad happened when attempting to delete the job"));
+            request.setAttribute("vmError",
+                    new ErrorViewModel("Something bad happened when attempting to delete the job"));
         }
 
         if (!jobService.isValid(job)) {
@@ -135,10 +152,47 @@ public class JobController extends CommonController {
             super.setView(request, JOB_DETAILS_VIEW);
             super.getView().forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/dashboard");
+            response.sendRedirect(request.getContextPath() + "/jobs");
 
         }
 
+    }
+
+    private IJob populateJobModel(HttpServletRequest request) {
+        IJob job = JobFactory.createInstance();
+        job.setClientName(super.getValue(request, "client"));
+        job.setDescription(super.getValue(request, "description"));
+
+        if (!super.getValue(request, "startDate").isEmpty()) {
+            job.setStart(LocalDateTime.parse(super.getValue(request, "startDate")));
+        }
+
+        //set emergency and onsite
+        if (super.getValue(request, "isEmergency") != null) {
+            job.setIsEmergency(Boolean.valueOf(super.getValue(request, "isEmergency")));
+        }
+        if (super.getValue(request, "isOnSite") != null) {
+            job.setIsOnSite(Boolean.valueOf(super.getValue(request, "isOnSite")));
+        }
+        job.setTeamId(super.getInteger(request, "team"));
+
+        //set tasks
+        ITask task = null;
+        List<ITask> tasks = TaskFactory.createListInstance();
+
+        String skills = super.getValue(request, "tasksToAdd");
+        if (!skills.isEmpty()) {
+            String skillsArr[] = skills.split(",");
+            for (int i = 0; i < skillsArr.length; i++) {
+                int taskId = Integer.parseInt(skillsArr[i]);
+                task = TaskServiceFactory.createInstance().getTask(taskId);
+                tasks.add(task);
+
+            }
+        }
+        job.setTasksList(tasks);
+
+        return job;
     }
 
 }

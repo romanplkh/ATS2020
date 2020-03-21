@@ -427,7 +427,7 @@ DROP procedure IF EXISTS `spInsertJob`;
 DELIMITER ;
 -- INSERT JOB NEW WITH SEPARATED COST AND REVENUE
 DELIMITER $$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
 IN client_param VARCHAR(255), 
 start_param DATETIME, 
 end_param DATETIME, 
@@ -435,6 +435,7 @@ team_id_param INT(11),
 cost_param VARCHAR(255), 
 revenue_param VARCHAR(255), 
 tasks_param VARCHAR(255), OUT id_OUT_param INT)
+
 BEGIN
 DECLARE numTasks int;
 DECLARE task_id INT;
@@ -573,7 +574,9 @@ DELIMITER ;
 -- DELETE EMPLOYEE 
 
 -- 0 - deleted
+DELIMITER //
 DROP procedure IF EXISTS `spRemoveEmployee`;
+DELIMITER ;
 
 DELIMITER $$
 
@@ -600,9 +603,9 @@ DELIMITER ;
   WHERE FIND_IN_SET(product_type, param);
 
 */
-
+DELIMITER //
 DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
-
+DELIMITER ;
 
 -- FLAG FOR MERGE
 DELIMITER $$
@@ -669,13 +672,19 @@ OUT affected_out INT)
 //
 DELIMITER ;
 
+DELIMITER //
+DROP PROCEDURE IF EXISTS spTeamIsAvailable;
+// DELIMITER ;
+
+DELIMITER //
 CREATE PROCEDURE `spTeamIsAvailable` (
 IN teamId_param INT, start_param DATETIME, end_param DATETIME)
 	BEGIN
 		SELECT * FROM jobs
 		WHERE teamId = teamId_param AND (start_param <= end AND end_param >= start);
 	END;
-
+//
+DELIMITER ;
 
 
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
@@ -771,7 +780,9 @@ DELIMITER ;
 
 
 -- DELETE JOB
+DELIMITER //
 DROP procedure IF EXISTS `spDeleteJob`;
+// DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `spDeleteJob` (IN jobId_param INT, OUT rows_affected_param INT)
@@ -793,11 +804,11 @@ DELIMITER ;
 
 -- IS AVAILABEL 
 -- 0 - is available
-USE `atsnovember`;
+DELIMITER $$
 DROP procedure IF EXISTS `spTeamIsAvailable`;
+// DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spTeamIsAvailable` (
 IN teamId_param INT, start_param DATETIME, end_param DATETIME)
 	BEGIN
@@ -809,14 +820,14 @@ DELIMITER ;
 
 
 
---IS EMERGENCY
+-- IS EMERGENCY
 
 -- 1 - is onEmergencyCall
-USE `atsnovember`;
+DELIMITER $$
 DROP procedure IF EXISTS `TeamIsOnEmergency`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `TeamIsOnEmergency` (IN teamId_param INT)
 BEGIN
 	SELECT COUNT(*) FROM teams WHERE isOnCall = true AND id = teamId_param;
@@ -828,6 +839,6 @@ DELIMITER ;
 
 
 
-2020-03-16 10:00:00	2020-03-16 11:00:00
-2020-03-16 10:00:00	2020-03-16 10:45:00
-2020-03-16 12:00:00	2020-03-16 14:00:00
+-- 2020-03-16 10:00:00	2020-03-16 11:00:00
+-- 2020-03-16 10:00:00	2020-03-16 10:45:00
+-- 2020-03-16 12:00:00	2020-03-16 14:00:00

@@ -16,8 +16,34 @@
     <body>
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
         <main>
-            <div class="container my-5" id="errorJs">
+            <div class="container my-5" >
 
+
+
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h1 class="text-center display-4">Create Job</h1>
+                    </div>
+                </div>
+
+                <div id="errorJs"></div>
+
+                <c:if test="${jvm.job.errors.size() > 0}">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <c:forEach items="${jvm.job.errors}" var="errVm">
+                                    <p class="m-0 font-weight-bold">${errVm.description}</p>
+                                </c:forEach>
+                                <button type="button" class="close" 
+                                        data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
 
                 <c:choose>
                     <c:when test="${error.errors != null}">
@@ -30,20 +56,21 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <h1 class="text-center">Create Job</h1>
                         <form method="post">
                             <div class="row mt-5">
                                 <div class="col-md-6">
                                     <h3 class="text-center">Job Details</h1>
                                         <div class="form-group">
                                             <label>Client</label>
-                                            <input type="text" class="form-control" name="client" value="${jvm.client}">
+                                            <input type="text" class="form-control" name="client" 
+                                                   value="${jvm.job.clientName}">
                                         </div>
                                         <div class="form-group">
                                             <label>Task</label>
                                             <div class="row ">
                                                 <div class="col-md-9 py-1">
-                                                    <select class="form-control" name="task" id="listTasks">
+                                                    <select class="form-control" name="task" 
+                                                            id="listTasks">
                                                         <option value="1">Task 1</option>
                                                         <option value="2">Task 2</option>
                                                         <option value="3">Task 3</option>
@@ -53,7 +80,8 @@
                                                         </c:forEach>
                                                     </select>
                                                 </div>
-                                                <div class="col-md-3 py-1"><button id="addTask" class="btn btn-primary btn-block">Add</button></div>
+                                                <div class="col-md-3 py-1">
+                                                    <button id="addTask" class="btn btn-link">Add</button></div>
                                             </div>
                                         </div>
 
@@ -61,7 +89,7 @@
                                         <div class="form-group">
                                             <label>Team</label>
                                             <select class="form-control" name="team">
-                                                <option>Team 1</option>
+                                                <option value="1">Team 1</option>
                                                 <c:forEach items="${jvm.teams}" var="team">
                                                     <option value="${team.id}">${team.name}</option>
                                                 </c:forEach>
@@ -70,34 +98,45 @@
 
                                         <div class="form-group">
                                             <label>Job Start Date</label>
-                                            <input type="datetime-local"  class="form-control" name="startDate" value="${jvm.startDate}">
+                                            <input type="datetime-local"  class="form-control" 
+                                                   name="startDate" value="${jvm.job.start}">
                                         </div>
 
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" name="description" rows="3" style="resize: none">${jvm.description}
-                                            </textarea>
+                                            <textarea class="form-control" 
+                                                      name="description" rows="3" style="resize: none">${jvm.job.description}</textarea>
                                         </div>
 
                                         <div class="form-group">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" name="emergency" 
+                                                       type="checkbox" value="${jvm.job.isEmergency}">
                                                 <label class="form-check-label" for="defaultCheck1">
                                                     Emergency
+                                                </label>
+                                                <input class="form-check-input ml-4" name="onSite" 
+                                                       type="checkbox" value="${jvm.job.isOnSite}">
+                                                <label class="form-check-label" for="defaultCheck2">
+                                                    On site
                                                 </label>
                                             </div>
                                         </div>
 
                                         <c:choose>
                                             <c:when test="${0 == 0}">
-                                                <input type="submit" value="Create" class="btn btn-success btn-lg" name="action">
+                                                <input type="submit" value="Create" 
+                                                       class="btn btn-success btn-lg" name="action">
                                             </c:when>
                                             <c:otherwise>
-                                                <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action"/>
-                                                <input class="btn btn-warning btn-lg" type="submit" value="Update" name="action"/>
+                                                <input class="btn btn-danger btn-lg" 
+                                                       type="submit" value="Delete" name="action"/>
+                                                <input class="btn btn-warning btn-lg" 
+                                                       type="submit" value="Update" name="action"/>
                                             </c:otherwise>
                                         </c:choose>
-                                        <a href="${pageContext.request.contextPath}/employees" class="btn btn-secondary btn-lg">Cancel</a>
+                                        <a href="${pageContext.request.contextPath}/employees" 
+                                           class="btn btn-secondary btn-lg">Cancel</a>
                                 </div>
                                 <div class="col-md-6">
                                     <h3 class="text-center">Required Tasks</h1>
@@ -106,138 +145,147 @@
                                         <ul id="requiredTasks" class="list-group px-4">
 
                                         </ul>
+                                        <input type="hidden" name="tasksToAdd" value="">
 
-
-
-
-
+                                        </div>
+                                        </div>
+                                        </form>
+                                    </c:otherwise>
+                                </c:choose>
                                 </div>
-                            </div>
-                        </form>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </main>
+                                </main>
 
 
 
-        <%@include file="WEB-INF/jspf/footer.jspf" %>
+                                <%@include file="WEB-INF/jspf/footer.jspf" %>
 
-        <script>
-
-
-            const btnAddTask = document.querySelector("#addTask").addEventListener("click", (ev) => {
-                ev.preventDefault();
-                addTask();
-            })
-
-            const ul = document.querySelector("#requiredTasks");
-            const listTasks = document.querySelector("#listTasks")
-            const errorJs = document.querySelector("#errorJs");
-            const taskListPlaceHolder = document.querySelector("#taskListPlaceHolder");
-
-            let listOfTaskIds = [];
+                                <script>
 
 
-            const hideElement = (selector) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.display = "none";
-                }
+                                    const btnAddTask = document.querySelector("#addTask").addEventListener("click", (ev) => {
+                                        ev.preventDefault();
+                                        addTask();
+                                    })
 
-            }
+                                    const ul = document.querySelector("#requiredTasks");
+                                    const listTasks = document.querySelector("#listTasks")
+                                    const errorJs = document.querySelector("#errorJs");
+                                    const taskListPlaceHolder = document.querySelector("#taskListPlaceHolder");
 
-            const showElement = (selector) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.display = "block";
-                }
-            }
-
-            const hideErrorMessage = () => {
-                if (document.querySelector("#error-alert")) {
-                    errorJs.removeChild(document.querySelector("#error-alert"))
-                }
-
-            }
-
-            const addTask = () => {
-                const taskValue = parseInt(listTasks.value);
-                const taskText = listTasks.options[listTasks.selectedIndex].text;
-
-                if (listOfTaskIds.indexOf(taskValue) == -1) {
-                    hideErrorMessage();
-                    const li = document.createElement("li");
-                    const span = document.createElement("span");
-                    const input = document.createElement("input");
-
-                    span.addEventListener("click", () => {
-                        span.parentNode.remove();
-                        listOfTaskIds = listOfTaskIds.filter(el => el != input.value);
-
-                        if (listOfTaskIds.length == 0) {
-                            showElement("#taskListPlaceHolder")
-                        }
-                    })
-
-                    li.classList.add("list-group-item");
-                    li.classList.add("list-group-item-action");
-                    li.classList.add("active");
-                    li.classList.add("my-1");
-                    li.classList.add("d-flex");
-                    li.classList.add("justify-content-between");
-                    li.classList.add("align-items-center");
-                    li.appendChild(document.createTextNode(taskText));
-
-                    span.appendChild(document.createTextNode("X"));
-                    span.classList.add("text-danger");
-                    span.style.cursor = "pointer";
-                    li.appendChild(span)
+                                    let listOfTaskIds = [];
 
 
-                    input.setAttribute("name", "requiredTask");
-                    input.setAttribute("type", "hidden");
-                    input.setAttribute("value", taskValue);
+                                    //REF TO INPUT WHERE TO RECORD ALL TASKS TO ADD
+                                    const tasksToAdd = document.querySelector("input[name='tasksToAdd']");
 
 
-                    li.appendChild(input);
+                                    const hideElement = (selector) => {
+                                        const element = document.querySelector(selector);
+                                        if (element) {
+                                            element.style.display = "none";
+                                        }
 
-                    ul.appendChild(li);
+                                    }
 
-                    hideElement("#taskListPlaceHolder")
-                    listOfTaskIds.push(taskValue)
+                                    const showElement = (selector) => {
+                                        const element = document.querySelector(selector);
+                                        if (element) {
+                                            element.style.display = "block";
+                                        }
+                                    }
+
+                                    const hideErrorMessage = () => {
+                                        if (document.querySelector("#error-alert")) {
+                                            errorJs.removeChild(document.querySelector("#error-alert"))
+                                        }
+
+                                    }
+
+                                    const addTask = () => {
+                                        const taskValue = parseInt(listTasks.value);
+                                        const taskText = listTasks.options[listTasks.selectedIndex].text;
+
+                                        if (listOfTaskIds.indexOf(taskValue) == -1) {
+                                            hideErrorMessage();
+                                            const li = document.createElement("li");
+                                            const span = document.createElement("span");
+                                            const input = document.createElement("input");
+
+                                            span.addEventListener("click", () => {
+                                                span.parentNode.remove();
+                                                listOfTaskIds = listOfTaskIds.filter(el => el != input.value);
+
+                                                if (listOfTaskIds.length == 0) {
+                                                    showElement("#taskListPlaceHolder")
+                                                }
+                                            })
+
+                                            li.classList.add("list-group-item");
+                                            li.classList.add("list-group-item-action");
+                                            li.classList.add("active");
+                                            li.classList.add("my-1");
+                                            li.classList.add("d-flex");
+                                            li.classList.add("justify-content-between");
+                                            li.classList.add("align-items-center");
+                                            li.appendChild(document.createTextNode(taskText));
+
+                                            span.appendChild(document.createTextNode("X"));
+                                            span.classList.add("text-danger");
+                                            span.style.cursor = "pointer";
+                                            li.appendChild(span)
 
 
+                                            input.setAttribute("name", "requiredTask");
+                                            input.setAttribute("type", "hidden");
+                                            input.setAttribute("value", taskValue);
 
 
-                } else {
+                                            li.appendChild(input);
+
+                                            ul.appendChild(li);
+
+                                            hideElement("#taskListPlaceHolder")
+                                            listOfTaskIds.push(taskValue)
 
 
-                    const alertMessage = `
-                        <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        This task already exist in a list of required task
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                         <span aria-hidden="true">&times;</span>
-                        </button>
-                            </div>
-                        `
+                                            const taskId = parseInt(document.querySelector("#requiredTasks")
+                                                    .lastElementChild.lastElementChild.value);
+
+                                            if (tasksToAdd.value == "") {
+                                                tasksToAdd.value = taskId;
+                                            } else {
+                                                tasksToAdd.value += "," + taskId;
+                                            }
 
 
-                    errorJs.insertAdjacentHTML("afterbegin", alertMessage)
-                }
+                                        } else {
 
 
+                                            const alertMessage = `
+                                                <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                This task already exist in a list of required tasks
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                 <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                    </div>
+                                                `
 
 
-            }
-
-
-
-
+                                            errorJs.insertAdjacentHTML("afterbegin", alertMessage)
+                                        }
 
 
 
 
-        </script>
-    </body>
-</html>
+                                    }
+
+
+
+
+
+
+
+
+                                </script>
+                                </body>
+                                </html>

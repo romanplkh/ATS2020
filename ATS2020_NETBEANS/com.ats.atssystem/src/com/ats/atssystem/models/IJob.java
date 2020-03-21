@@ -5,7 +5,6 @@
  */
 package com.ats.atssystem.models;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -51,6 +50,11 @@ public interface IJob extends IBase {
 
     public void setIsEmergency(boolean value);
 
+    
+    public void setIsOnSite(boolean value);
+    
+    public  boolean getIsOnSite();
+    
     public ITeam getTeam();
 
     public void setTeam(ITeam team);
@@ -59,6 +63,7 @@ public interface IJob extends IBase {
 
     public void calculateTasksCost();
 
+    //----UNCOMMENT WHEN NEEDED
 //    public double calculateBillableCost();
 
     public LocalTime getStartTime();
