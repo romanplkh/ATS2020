@@ -836,6 +836,34 @@ END$$
 DELIMITER ;
 
 
+DELIMITER $$
+DROP procedure IF EXISTS `spGetTeamWithEmployeesDetails`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetTeamWithEmployeesDetails(
+	IN idParam INT )
+BEGIN
+	SELECT CONCAT(teams.id) as teamId, 
+		CONCAT(employees.id) as empId,
+        CONCAT(employees.firstName) as empFname,
+        CONCAT(employees.lastName) as empLname,
+        CONCAT(employees.hourlyRate) as hRate,
+        CONCAT(employeetasks.taskId) as empSkillId
+    FROM teams 
+    INNER JOIN teammembers 
+    ON teams.id = teammembers.teamId
+    INNER JOIN employees 
+    ON employees.id = teammembers.employeeId
+    INNER JOIN employeetasks
+    ON employees.id = employeetasks.employeeId
+	WHERE teams.id = idParam
+	ORDER BY employees.id ASC;
+    
+END$$
+ DELIMITER ;
+
+
 
 
 

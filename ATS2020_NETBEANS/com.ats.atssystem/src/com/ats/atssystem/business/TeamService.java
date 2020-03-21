@@ -14,6 +14,7 @@ import java.util.List;
 /**
  *
  * @author Roman Pelikh
+ * @author Olena Stepanova
  */
 public class TeamService implements ITeamService {
 
@@ -42,6 +43,12 @@ public class TeamService implements ITeamService {
 
         return team;
 
+    }
+
+    @Override
+    public ITeam getTeamDetails(int id) {
+       repo = TeamRepoFactory.createInstance();
+       return repo.getTeam(id);
     }
 
 }

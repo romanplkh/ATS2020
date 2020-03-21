@@ -216,6 +216,8 @@ public class JobRepo extends BaseRepo implements IJobRepo {
                 } else {
                     rs.previous();
                 }
+            } else {
+                rs.previous();
             }
 
             team.setJobs(jobs);

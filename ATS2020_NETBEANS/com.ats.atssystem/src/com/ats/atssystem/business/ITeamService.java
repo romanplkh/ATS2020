@@ -25,5 +25,7 @@ public interface ITeamService {
     boolean isValid(ITeam team);
 
     ITeam validateMembersInTeam(int idMember_1, int idMember_2);
+    
+    ITeam getTeamDetails(int id);
 
 }
