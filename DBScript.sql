@@ -680,7 +680,7 @@ DELIMITER //
 CREATE PROCEDURE `spTeamIsAvailable` (
 IN teamId_param INT, start_param DATETIME, end_param DATETIME)
 	BEGIN
-		SELECT * FROM jobs
+		SELECT COUNT(*) FROM jobs
 		WHERE teamId = teamId_param AND (start_param <= end AND end_param >= start);
 	END;
 //
@@ -862,6 +862,22 @@ BEGIN
     
 END$$
  DELIMITER ;
+
+
+
+-- Get Teams Lookup
+USE `atsnovember`;
+DROP procedure IF EXISTS `spTeamLookup`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spTeamLookup`()
+BEGIN
+SELECT id, Name, isOnCall FROM teams WHERE isDeleted = false;
+
+END$$
+
+DELIMITER ;
 
 
 

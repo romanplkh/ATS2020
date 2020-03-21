@@ -40,7 +40,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?)";
     private final String SPROC_GET_SCHEDULED_JOBS = "CALL spGetJobsSchedule(?)";
-    private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?);";
+    private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?, ?);";
     private final String SP_TEAM_IS_ON_EMERGENCY = "CALL TeamIsOnEmergency(?);";
 
     //Dependancy of Dataaccess layer

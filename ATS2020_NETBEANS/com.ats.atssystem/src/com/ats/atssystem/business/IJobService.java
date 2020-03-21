@@ -78,9 +78,9 @@ public interface IJobService {
      * Validates if team is available for job and not overbooked
      *
      * @param job job to validate team in
-     * @return Job with errors or Empty
+     * @return boolean whether team is available or not
      */
-    public IJob isTeamAvailableToBook(IJob job);
+    public boolean isTeamAvailableToBook(IJob job);
 
     /**
      * Validates if team is onEmergencyCall

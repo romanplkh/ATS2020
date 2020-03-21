@@ -31,6 +31,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
+    private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -115,6 +116,30 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ITeam> getTeamsLookup() {
+        List<ITeam> team = null;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        try {
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_TEAMS_LOOKUP, params);
+            team = populateTeamsLookup(rs);
+
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
+
+        return team;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITeam getTeam(int id) {
         ITeam team = TeamFactory.createInstance();
@@ -171,13 +196,12 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
                         skill.setId(super.getInt("empSkillId", rs));
                         skills.add(skill);
                         emp.setSkills(skills);
-                    }                   
+                    }
                     rs.previous();
                 } else {
                     //add first emp to list of employees
                     employees.add(emp);
-                    
-                    
+
                     //new empl -> create instance and populate info
                     //create new list of skills
                     emp = EmployeeFactory.createInstance();
@@ -200,6 +224,41 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         }
 
         return team;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    private List<ITeam> populateTeamsLookup(CachedRowSet rs) throws SQLException {
+
+        List<ITeam> teams = null;
+
+        ITeam team = null;
+
+        try {
+
+            if (rs.next()) {
+                teams = TeamFactory.createListInstance();
+                rs.previous();
+
+                while (rs.next()) {
+                    team = TeamFactory.createInstance();
+                    team.setId(super.getInt("id", rs));
+                    team.setName(rs.getString("Name"));
+                    team.setIsOnCall(rs.getBoolean("isOnCall"));
+                    teams.add(team);
+
+                }
+
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+        }
+
+        return teams;
+
     }
 
 }
