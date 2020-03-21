@@ -20,12 +20,6 @@
 
 
 
-        td {
-            padding: 15px;
-            height: 80px;
-            border-bottom: 1px solid #fff;
-            width: 20px;
-        }
 
 
 
@@ -46,7 +40,7 @@
             border-collapse: separate;
             border-spacing: 0 1em;
             padding: 12px;
-            text-align: left;
+            text-align: center;
         }
 
         .hh{
@@ -119,6 +113,7 @@
                                                                 </td>
                                                             </c:otherwise>
                                                         </c:choose>
+                                                        <!--<td></td>-->
                                                     </c:forEach>
                                                 </tr>
 
@@ -131,6 +126,8 @@
                                                 <td>${team.name}</td>
                                                 <!--FIRST COL TEAM NAME-->
 
+
+
                                                 <!--ALL JOBS TEAM-->
                                                 <c:set var="tJobs" value="${ team.jobs }" />
                                                 <!--NUM OF JOBS-->
@@ -140,23 +137,15 @@
 
                                                 <c:forEach var="h" begin="8" end="17">
 
-                                                    <c:if  test="${h < 17}">
-                                                        <c:forEach var="min" begin="0" end="45" step="15">
+                                                    <c:forEach var="min" begin="0" end="45" step="15">
+                                                        <c:if test="${h < 17 || (h == 17 && min == 0)}">
                                                             <c:choose>
-                                                                <c:when test="${cJCount < jSize}">
-
-
+                                                                <c:when test="${cJCount <  jSize}">
                                                                     <c:set var="start" value="${ tJobs.get(cJCount).startTime}" />
-
-                                                                    <!--J END-->
                                                                     <c:set var="end" value="${tJobs.get(cJCount).endTime}" />
-
-
-
-                                                                    <!--STORE CURRENT MINUTE-->
                                                                     <c:set var="mm" value="${min}" />
 
-                                                                    <!--TO AVOID CRUSHING ADD 0 FOR PARSING-->
+
                                                                     <c:if test="${min == 0}">
                                                                         <c:set var="mm" value="00"/>
                                                                     </c:if>
@@ -174,33 +163,57 @@
                                                                         <c:when test="${start.getHour() == h && start.getMinute() == min}">
                                                                             <td class="booked divider-l"></td>
                                                                         </c:when>
-                                                                        <c:when test="${currentTime >= startTime && currentTime <= endTime}">
+                                                                        <c:when test="${end.getHour() == h && end.getMinute() == min}">
+                                                                            <c:set var="cJCount" value="${cJCount + 1}"/>
                                                                             <c:choose>
-                                                                                <c:when test="${end.getMinute() == min && end.getHour() == h}">
-                                                                                    <td class="booked divider-r"></td>
-                                                                                    <c:set var="cJCount" value="${holder + 1}"/>
-                                                                                </c:when>
-                                                                                <c:otherwise>
+                                                                                <c:when test="${cJCount < jSize}">
+                                                                                    <c:set var="newJ" value="${tJobs.get(cJCount)}"/>
+                                                                                    <c:choose >
 
-                                                                                    <td class="booked"></td>
-                                                                                </c:otherwise>
+                                                                                        <c:when test="${newJ.startTime.getHour() == h && newJ.startTime.getMinute() == min}">
+                                                                                            <td class="booked divider-l"></td>
+                                                                                        </c:when>
+                                                                                        <c:otherwise>
+                                                                                            <td></td>
+                                                                                        </c:otherwise>
+                                                                                    </c:choose>
+                                                                                </c:when>
                                                                             </c:choose>
-                                                                        </c:when >
+                                                                        </c:when>
+                                                                        <c:when test="${currentTime > startTime && currentTime < endTime}">
+                                                                            <td class="booked"></td>
+                                                                        </c:when>
                                                                         <c:otherwise>
                                                                             <td></td>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <!--ADD TD-->
+                                                                    <!--NO JOB? ADD TD-->
                                                                     <td></td>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </c:forEach>
+                                                            <!--END MINUTES-->
+                                                        </c:if>
+                                                    </c:forEach>
 
-                                                    </c:if>
+
+                                                    <%--<c:choose>--%>
+                                                    <%--<c:when test="${currentTime > startTime && currentTime <= endTime}">--%>
+                                                    <%--<c:set var="cxClass" value="booked"/>--%>
+                                                    <%--<c:if test="${end.getHour() == h && end.getMinute() == min}">--%>
+                                                    <%--<c:set var="cxClass" value="booked divider-r"/>--%>
+                                                    <%--</c:if>--%>
+                                                    <!--<td class="${cxClass}"></td>-->
+                                                    <%--</c:when>--%>
+                                                    <%--<c:otherwise>--%>
+                                                    <!--<td></td>-->
+                                                    <%--</c:otherwise>--%>
+                                                    <%--</c:choose>--%>
+
+
                                                 </c:forEach>
-                                                <%--</c:forEach>--%>
+
                                             </tr>
                                         </c:forEach>
                                     </table>
