@@ -140,7 +140,7 @@
                                                     </span><input type="hidden" value="${skill.id}">
                                                 </li>
                                             </c:forEach>
-                                        </c:if>
+                                        </c:if>    
                                     </ul>
                                 </div>
                             </div>
@@ -184,10 +184,11 @@
 
 
             const updateBtn = document.querySelector("input[value='Update Skills']");
-
+            const addBtn = document.querySelector("input[value='Add Skills']");
 
             //On load set disabled
             setEnabled(updateBtn, false)
+            setEnabled(addBtn, false)
 
 
             //REF TO INPUT WHERE TO RECORD ALL SKILLS TO REMOVE
@@ -280,6 +281,11 @@
                     setEnabled(updateBtn, true)
 
                 }
+                if (addBtn && addBtn.hasAttribute("disabled")) {
+                    setEnabled(addBtn, true)
+
+                }
+
 
 
 

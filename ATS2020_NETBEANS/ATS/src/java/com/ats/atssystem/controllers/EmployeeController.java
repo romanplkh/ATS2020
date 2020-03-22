@@ -35,7 +35,7 @@ public class EmployeeController extends CommonController {
         IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
 
         if (pathInfo == null) {
-                       
+
             //Show all employees
             String search = super.getValue(request, "search");
 
@@ -175,7 +175,7 @@ public class EmployeeController extends CommonController {
                             }
 
                         } else if ("addDelete".equals(skillsManagementActionEquals(request))) {
-                            
+
                             String skillsToDelete = super.getValue(request, "skillsToDelete");
                             String skillsToAdd = super.getValue(request, "skillsToAdd");
 
@@ -210,6 +210,7 @@ public class EmployeeController extends CommonController {
                     if (skillsManagementActionEquals(request) == "add") {
                         //TRY Add SKILLS
                         String skills = super.getValue(request, "skillsToAdd");
+
                         int result = employeeService
                                 .addEmployeeSkill(empId, skills);
 
@@ -229,7 +230,7 @@ public class EmployeeController extends CommonController {
 
         } catch (Exception e) {
             super.setView(request, EMPLOYEE_MAINT_VIEW);
-            request.setAttribute("vmError", 
+            request.setAttribute("vmError",
                     new ErrorViewModel("Something bad happened when attempting to maintain employee"));
         }
 

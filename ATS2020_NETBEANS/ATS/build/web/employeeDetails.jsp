@@ -80,8 +80,9 @@
                                         <c:forEach items="${emp.skills}" var="skill">
                                             <li class="list-group-item text-muted">${skill.name}</li>
                                             </c:forEach>
-
-
+                                        </c:if>
+                                        <c:if test="${emp.skills.size() == 0}">
+                                        <p class="text-muted">No skills added</p>
                                     </c:if>
                                 </ul>
                             </div>
