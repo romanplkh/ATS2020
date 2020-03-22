@@ -208,6 +208,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
                     rs.previous();
                     while (rs.next() && team.getName().equalsIgnoreCase(rs.getString("team"))) {
                         job = JobFactory.createInstance();
+                        job.setId(super.getInt("id", rs));
                         job.setStartTime(super.getLocalTime("start_time", rs));
                         job.setEndTime(super.getLocalTime("end_time", rs));
                         jobs.add(job);
