@@ -11,9 +11,8 @@ import java.util.List;
 
 /**
  * @author Roman Pelikh
+ * @author Olena Stepanova
  */
-
-
 public class EmployeeService implements IEmployeeService {
 
     //Repo depenancy
@@ -60,8 +59,48 @@ public class EmployeeService implements IEmployeeService {
      * {@inheritDoc}
      */
     @Override
-    public int deleteEmployee(int id) {
-        return 0;
+    public IEmployee deleteEmployee(IEmployee emp) {
+
+        repo = EmployeeRepoFactory.createInstance();
+
+        if (repo.deleteEmployee(emp.getId()) != 0) {
+
+            emp.addError(ErrorFactory.createInstance(1, "Could not delete employee"));
+
+        }
+
+        return emp;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int deleteEmployeeSkill(int id, String skillIds) {
+        repo = EmployeeRepoFactory.createInstance();
+        return repo.deleteEmployeeSkill(id, skillIds);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int addEmployeeSkill(int id, String skillIds) {
+        repo = EmployeeRepoFactory.createInstance();
+        return repo.addSkillsToEmployee(id, skillIds);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int updateEmployeeSkills(int id, String skillsDelete, String skillsAdd) {
+        repo = EmployeeRepoFactory.createInstance();
+        return repo.updateEmployeeSkills(id, skillsDelete, skillsAdd);
+
     }
 
     /**
@@ -111,4 +150,19 @@ public class EmployeeService implements IEmployeeService {
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<IEmployee> getEmployees(String searchCriteria) {
+
+        repo = EmployeeRepoFactory.createInstance();
+
+        List<IEmployee> employees = EmployeeFactory.createListInstance();
+
+        employees = repo.retrieveEmployees(searchCriteria);
+
+        return employees;
+
+    }
 }

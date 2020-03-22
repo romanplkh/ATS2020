@@ -78,4 +78,24 @@ public class TaskService implements ITaskService {
                     .createInstance(5, "Duration should be minimum 30 minutes long"));
         }
     }
+
+    /**
+     * {@inheritDoc } 
+     */
+    @Override
+    public ITask deleteTask(ITask task) {
+        int code = repo.deleteTask(task.getId());
+                
+        if(code == -1){
+            task.addError(ErrorFactory
+                    .createInstance(1, "Task cannot be deleted. Employee has it"));
+        }else if(code == -2){
+            task.addError(ErrorFactory
+            .createInstance(2, "Task cannot be deleted because it has assosiated job"));
+        }
+        
+        return task;
+        
+        
+    }
 }

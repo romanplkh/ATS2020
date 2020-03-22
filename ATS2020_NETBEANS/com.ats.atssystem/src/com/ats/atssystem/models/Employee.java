@@ -6,15 +6,13 @@ package com.ats.atssystem.models;
  * and open the template in the editor.
  */
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * @author Roman Pelikh
  */
-public class Employee extends Base implements IEmployee {
+public class Employee extends Base implements IEmployee, Serializable {
 
     private int id;
     private String firstName;
@@ -22,11 +20,12 @@ public class Employee extends Base implements IEmployee {
     private String sin;
     private double hourlyRate;
     private boolean isDeleted;
-
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
     private String fullName;
+
+    private List<ITask> skills = TaskFactory.createListInstance();
 
     public Employee() {
     }
@@ -37,6 +36,16 @@ public class Employee extends Base implements IEmployee {
         this.setSin(sin);
         this.setHourlyRate(hourlyRate);
 
+    }
+
+    @Override
+    public List<ITask> getSkills() {
+        return skills;
+    }
+
+    @Override
+    public void setSkills(List<ITask> skills) {
+        this.skills = skills;
     }
 
     @Override

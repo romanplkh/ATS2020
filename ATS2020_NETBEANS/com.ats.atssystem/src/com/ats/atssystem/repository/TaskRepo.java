@@ -17,6 +17,7 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
     private final String SP_ADD_NEW_TASK = "CALL spCreateTask(?,?,?,?,?)";
     private final String SP_GET_TASK_DETAILS = "CALL spGetTasks(?)";
     private final String SP_GET_ALL_TASKS = "CALL spGetTasks(?)";
+    private final String SP_DELETE_TASK = "CALL spDeleteTask(?,?)";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -153,5 +154,36 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
         }
 
         return tasksList;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public int deleteTask(int taskId) {
+        
+        int statusCode = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(taskId));
+       
+        //For OUT code status
+        params.add(ParameterFactory.createInstance(statusCode, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = this.dataaccess.executeNonQuery(SP_DELETE_TASK, params);
+
+        try {
+            if (retVal != null) {
+                statusCode = (int) retVal.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return statusCode;
     }
 }

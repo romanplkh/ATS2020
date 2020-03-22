@@ -8,7 +8,7 @@ package com.ats.atssystem.business;
  * TaskServiceFactory Class responsible for creating an instance of
  * TaskService class
  */
-public class TaskServiceFactory {
+public abstract class TaskServiceFactory {
 
     /**
      * Creates an instance of TaskService class

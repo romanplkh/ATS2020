@@ -42,4 +42,11 @@ public interface ITaskService {
      * @return boolean true or false if model is not valid
      */
     boolean isValid(ITask task);
+    
+    /**
+     * Enables delete operation of task
+     * @param task task to delete
+     * @return task object
+     */
+    ITask deleteTask(ITask task);
 }

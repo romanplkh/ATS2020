@@ -13,7 +13,8 @@ import java.util.List;
  * @author Olena Stepanova
  */
 /**
- * ITeamRepo class provides methods to work with database and perform necessary manipulations with team object
+ * ITeamRepo class provides methods to work with database and perform necessary
+ * manipulations with team object
  */
 public interface ITeamRepo {
 
@@ -25,6 +26,27 @@ public interface ITeamRepo {
      */
     int addTeam(ITeam team);
 
+    /**
+     * Validates that selected members for team are different persons
+     *
+     * @param idMember_1 member of team
+     * @param idMember_2 member of team
+     * @return Team Object with validation errors
+     */
     ITeam getMembersOnTeamToValidate(int idMember_1, int idMember_2);
 
+    /**
+     * Retrieves a team from data base
+     *
+     * @param id team id to retrieve
+     * @return Team Object filled with data
+     */
+    ITeam getTeam(int id);
+
+    /**
+     * Gets list of teams for drop down menus
+     *
+     * @return List of object Team
+     */
+    public List<ITeam> getTeamsLookup();
 }
