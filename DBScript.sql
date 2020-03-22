@@ -227,6 +227,16 @@ INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt
 VALUES ('Network Security', '240', 'Network Security', now());
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
 VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Rack mount server install', '30', 'Rack mount server install', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Red Hat Linux', '120', 'Install Red Hat Linux', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Cat5e cabling', '60', 'Install Cat5e cabling', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Switch Installation', '60', 'Switch Installation', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Cisco Switch', '60', 'Install Cisco Switch', '2020-03-22');
 
 
 -- CREATE TEAM ------
@@ -419,7 +429,7 @@ CREATE TABLE IF NOT EXISTS `employeetasks` (
 END
 
 
----- DELETE BELOW IF WORKING
+-- DELETE BELOW IF WORKING
 
 
 DELIMITER //
@@ -672,19 +682,7 @@ OUT affected_out INT)
 //
 DELIMITER ;
 
-DELIMITER //
-DROP PROCEDURE IF EXISTS spTeamIsAvailable;
-// DELIMITER ;
 
-DELIMITER //
-CREATE PROCEDURE `spTeamIsAvailable` (
-IN teamId_param INT, start_param DATETIME, end_param DATETIME)
-	BEGIN
-		SELECT COUNT(*) FROM jobs
-		WHERE teamId = teamId_param AND (start_param <= end AND end_param >= start);
-	END;
-//
-DELIMITER ;
 
 
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
@@ -699,6 +697,18 @@ INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Amanda', 'Sallivan', '508-889-343','85.00', now());
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Phoebe', 'Smith', '332-453-345','45.00', now());
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Alexa', 'Perry', '345-234-989', '30', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Gordon', 'Short', '989-345-344', '45', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Anna', 'Lee', '230-900-898', '67.50', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Leonard', 'Carr', '443-098-332', '50.50', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Dorothy', 'MacDonald', '788-099-337', '36.00', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Nathan', 'Paige', '348-667-454', '43', b'0', '2020-03-22');
 
 
 -- SEARCH EMPLOYEE
@@ -806,7 +816,7 @@ DELIMITER ;
 -- 0 - is available
 DELIMITER $$
 DROP procedure IF EXISTS `spTeamIsAvailable`;
-// DELIMITER ;
+$$ DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `spTeamIsAvailable` (
@@ -866,11 +876,11 @@ END$$
 
 
 -- Get Teams Lookup
-USE `atsnovember`;
+DELIMITER $$
 DROP procedure IF EXISTS `spTeamLookup`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spTeamLookup`()
 BEGIN
 SELECT id, Name, isOnCall FROM teams WHERE isDeleted = false;

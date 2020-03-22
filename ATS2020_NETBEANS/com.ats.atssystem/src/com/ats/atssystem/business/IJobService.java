@@ -65,7 +65,7 @@ public interface IJobService {
      *
      * @param job job to validate
      */
-    void validateEmergencyJobTime(IJob job);
+    //void validateEmergencyJobTime(IJob job);
 
     /**
      * Validate that team skill set corresponds to job tasks

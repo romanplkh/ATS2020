@@ -11,6 +11,7 @@ import com.ats.atssystem.business.IEmployeeService;
 import com.ats.atssystem.business.ITeamService;
 import com.ats.atssystem.business.TeamServiceFactory;
 import com.ats.atssystem.models.EmployeeFactory;
+import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.ErrorViewModel;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.ITeam;
@@ -105,10 +106,18 @@ public class TeamController extends CommonController {
                         } else {
 
                             busRulesAreValid = true;
-                            teamService.createTeam(team);
-                            //TODO CHANGE WITH NEXT ITERATION CASES
-                            super.setView(request, "/employees.jsp");
+                            team = teamService.createTeam(team);
 
+                            if (team.getId() == 0) {
+                                team.addError(ErrorFactory.createInstance(1, "Something went wrong"
+                                        + " during team creation"));
+                                request.setAttribute("team", team);
+                                super.setView(request, TEAM_MAINT_VIEW);
+                            } else {
+
+                                //TODO CHANGE WITH NEXT ITERATION CASES
+                                super.setView(request, "/employees.jsp");
+                            }
                         }
 
                     }
@@ -130,7 +139,7 @@ public class TeamController extends CommonController {
         if (!teamService.isValid(team) || !busRulesAreValid) {
             super.getView().forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/team");
+            response.sendRedirect(request.getContextPath() + "/dashboard");
         }
 
     }

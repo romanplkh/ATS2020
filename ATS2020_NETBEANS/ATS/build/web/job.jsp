@@ -86,7 +86,8 @@
                                             <label>Team</label>
                                             <select class="form-control" name="team">
                                                 <c:forEach items="${jvm.teams}" var="team">
-                                                    <option value="${team.id}">${team.name}</option>
+                                                    <option value="${team.id}" 
+                                                            ${team.id == jvm.job.team.id ? "selected": ""} >${team.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -106,11 +107,13 @@
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" name="emergency" 
-                                                       type="checkbox" >
+                                                       type="checkbox"
+                                                       ${jvm.job.isEmergency ? "checked" : ""}>
                                                 <label class="form-check-label" for="defaultCheck1">
                                                     Emergency
                                                 </label>
                                                 <input class="form-check-input ml-4" name="onSite" 
+                                                       ${jvm.job.isOnSite ? "checked" : ""}
                                                        type="checkbox">
                                                 <label class="form-check-label" for="defaultCheck2">
                                                     On site

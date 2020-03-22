@@ -28,7 +28,7 @@ import javax.sql.rowset.CachedRowSet;
  */
 public class TeamRepo extends BaseRepo implements ITeamRepo {
 
-    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?);";
+    private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
     private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";

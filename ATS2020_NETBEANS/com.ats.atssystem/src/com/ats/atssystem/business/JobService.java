@@ -101,6 +101,7 @@ public class JobService implements IJobService {
     }
 
     //TO TELL YOU
+    /*
     @Override
     public void validateEmergencyJobTime(IJob job) {
         // emergency calls are only off-hours - 
@@ -124,6 +125,7 @@ public class JobService implements IJobService {
                     .createInstance(2, "Only emergency calls can be scheduled off-hours"));
         }
     }
+*/
 
     @Override
     public void validateSkillset(IJob job) {

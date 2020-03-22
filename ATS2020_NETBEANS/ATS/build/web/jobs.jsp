@@ -62,7 +62,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col">
-                        <h1 class="text-left my-5">Job Schedule</h1>
+                        <h1 class="text-left my-5 display-4">Job Schedule</h1>
                         <div class="row justify-content-start">
                             <div class="col-md-3">
                                 <form method="get">
@@ -73,7 +73,7 @@
                                                 <button class="btn btn-outline-primary" type="submit">Search</button>
                                             </div>
                                         </div>
-                                        <small class="form-text text-muted">Find by Date.</small>
+                                        <small class="form-text text-muted">Search by date</small>
                                     </div>
 
                                 </form>
@@ -221,43 +221,48 @@
                                 </c:forEach>
                             </table>
                         </div>
-                        <div class="container-fluid mt-5">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="card mb-3">
-                                        <h3 class="card-header text-danger">Team On Call</h3>
-                                        <c:forEach items="${teams}" var="t">
-                                            <c:if test="${t.isOnCall}">
-                                                <div class="card-body">
-                                                    <h4 class="card-title">Team: ${t.name}</h4>
-                                                </div>    
 
-                                                <ul class="list-group list-group-flush">
-                                                    <c:forEach items="${t.jobs}" var="job">
-                                                        <c:set var="startJob" value="${ job.startTime}" />
-                                                        <c:set var="endJob" value="${job.endTime}" />
+                    </c:when>
+                    <c:otherwise>
+                        <h1 class="text-center text-success my-auto">No jobs scheduled for ${searchDate}</h1>
+                    </c:otherwise>     
+                </c:choose>
+                            
+                <div class="container-fluid mt-5">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-3 p-3">
+                                <h3 class="card-header text-danger mb-3">Team On Call</h3>
+                                <h4>No team on call now</h4>
+                                <p>No emergency jobs scheduled</p>
+
+                                <c:forEach items="${teams}" var="t">
+                                    <c:if test="${t.isOnCall}">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Team: ${t.name}</h4>
+                                        </div>    
+
+                                        <ul class="list-group list-group-flush">
+                                            <c:forEach items="${t.jobs}" var="job">
+                                                <c:set var="startJob" value="${ job.startTime}" />
+                                                <c:set var="endJob" value="${job.endTime}" />
 
 
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                            <span>Client: </span> ${job.clientName}
-                                                            Time: <span class="badge badge-primary badge-pill">${startJob} - ${endJob} </span>
-                                                        </li>
-                                                    </c:forEach>
-                                                </ul>
-                                            </c:if>
-                                        </c:forEach>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>Client: </span> ${job.clientName}
+                                                    Time: <span class="badge badge-primary badge-pill">${startJob} - ${endJob} </span>
+                                                </li>
+                                            </c:forEach>
+                                        </ul>
+                                    </c:if>
+                                </c:forEach>
 
-                                    </div>
-
-                                </div>
                             </div>
 
                         </div>
-                    </c:when>
-                    <c:otherwise>
-                        <h1 class="text-center text-success my-auto">No Jobs For  ${searchDate} found</h1>
-                    </c:otherwise>
-                </c:choose>
+                    </div>
+
+                </div>
             </div>
 
 
