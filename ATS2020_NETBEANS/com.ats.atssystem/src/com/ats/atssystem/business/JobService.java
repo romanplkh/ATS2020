@@ -55,12 +55,16 @@ public class JobService implements IJobService {
                         .createInstance(2, "Selected team is already scheduled for a job during this hours. "
                                 + "Please select diferent date or time"));
             }
+            if(job.getStart().isBefore(LocalDateTime.now())){
+                job.addError(ErrorFactory
+                        .createInstance(2, "Jobs cannot be scheduled in the past"));
+            }
 
             //2. Validate job within business hours if it is not emergency
             //4. Emergency only off hours
             if (!job.getIsEmergency() && !isJobWithinBusinessHours(job)) {
                 job.addError(ErrorFactory
-                        .createInstance(2, "Non emergency job can be scheduled only within business hours"));
+                        .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
             }
 
             // 3. I can book onCall Team for Emergency calls
@@ -173,6 +177,7 @@ public class JobService implements IJobService {
         boolean isValid = true;
         if (!job.getIsEmergency()) {
 
+            
             //Validate DAY 
             DayOfWeek startDOW = job.getStart().getDayOfWeek();
 
@@ -193,7 +198,7 @@ public class JobService implements IJobService {
                     || job.getEnd().getHour() > 17) {
                 isValid = false;
             }
-
+            
         }
 
         return isValid;

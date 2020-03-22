@@ -168,7 +168,6 @@
                                     //REF TO INPUT WHERE TO RECORD ALL TASKS TO ADD
                                     const tasksToAdd = document.querySelector("input[name='tasksToAdd']");
 
-
                                     const hideElement = (selector) => {
                                         const element = document.querySelector(selector);
                                         if (element) {
