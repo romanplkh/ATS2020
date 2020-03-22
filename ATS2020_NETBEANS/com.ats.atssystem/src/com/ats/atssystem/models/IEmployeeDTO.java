@@ -5,6 +5,8 @@
  */
 package com.ats.atssystem.models;
 
+import java.util.List;
+
 /**
  *
  * @author Roman Pelikh
@@ -21,5 +23,9 @@ public interface IEmployeeDTO {
     ITeam getTeam();
 
     void setTeam(ITeam team);
+
+    List<ITask> getSkills();
+
+    void setSkills(List<ITask> skills);
 
 }

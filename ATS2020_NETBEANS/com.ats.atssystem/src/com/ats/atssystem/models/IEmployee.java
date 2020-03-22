@@ -3,6 +3,7 @@ package com.ats.atssystem.models;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Roman Pelikh
@@ -11,6 +12,10 @@ import java.util.Date;
  * IEmployee interface. Defines properties of the Employee
  */
 public interface IEmployee extends IBase {
+
+    List<ITask> getSkills();
+
+    void setSkills(List<ITask> skills);
 
     int getId();
 

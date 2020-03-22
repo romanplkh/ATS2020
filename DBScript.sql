@@ -38,10 +38,19 @@ CREATE TABLE IF NOT EXISTS teams (
     deletedAt datetime DEFAULT NULL
 )ENGINE=InnoDB;
 
+CREATE TABLE `employeetasks` (
+    `employeeId` INT  NOT NULL,
+    `taskId` INT NOT NULL,
+    PRIMARY KEY (`employeeId`, `taskId`),
+    CONSTRAINT `Constr_employeetasks_employees_fk`
+        FOREIGN KEY `employeeId_fk` (`employeeId`) REFERENCES `employees` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `Constr_employeetasks_tasks_fk`
+        FOREIGN KEY `taskId_fk` (`taskId`) REFERENCES `tasks` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB CHARACTER SET ascii COLLATE ascii_general_ci;
 
--- -----------------------------------------------------
--- Table `atsnovember`.`teammembers`
--- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `atsnovember`.`teammembers` (
   `EmployeeId` INT(11) NOT NULL,
   `TeamId` INT(11) NOT NULL,
@@ -119,30 +128,48 @@ END$$
 
 
 
-DELIMITER //
+-- GET EMPLOYEE DETAILS
+USE `atsnovember`;
 DROP procedure IF EXISTS `spGetEmployeeDetails`;
-// DELIMITER ;
 
 DELIMITER $$
 USE `atsnovember`$$
-CREATE PROCEDURE `spGetEmployeeDetails` (IN id_param INT)
+CREATE PROCEDURE `spGetEmployeeDetails`(IN id_param INT)
 BEGIN
 
-SELECT * FROM employees 
-LEFT JOIN teammembers on employees.id = teammembers.EmployeeId 
+SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, teams.Name, CONCAT(tasks.name) AS TaskName  FROM employees e
+LEFT JOIN teammembers on e.id = teammembers.EmployeeId 
 LEFT JOIN teams on teams.id = teammembers.TeamId 
-WHERE employees.id = id_param;
+LEFT JOIN employeetasks ON employeetasks.employeeId = e.id
+LEFT JOIN tasks on employeetasks.taskId = tasks.id
+WHERE e.id = id_param;
 
 END$$
 
+DELIMITER ;
 
 
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
-INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+
+
+-- GET EMPLOYEE WITH SKILLS
+
+DROP procedure IF EXISTS `spGetEmployeeWithSkills`;
+
+DELIMITER $$
+
+CREATE PROCEDURE `spGetEmployeeWithSkills` (IN empId_param INT)
+BEGIN
+SELECT e.id, e.firstName, e.lastName, e.sin, e.hourlyRate, e.isDeleted, e.createdAt, e.updatedAt, e.deletedAt, CONCAT(tasks.id) AS skillId, name  FROM employees e
+LEFT JOIN employeetasks ON employeetasks.employeeId = e.id
+LEFT JOIN tasks on employeetasks.taskId = tasks.id
+WHERE e.id = empId_param;
+END$$
+
+DELIMITER ;
+
+
+
+
 
 
 -- Get a LIST of TASKS procedure or
@@ -200,9 +227,19 @@ INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt
 VALUES ('Network Security', '240', 'Network Security', now());
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
 VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Rack mount server install', '30', 'Rack mount server install', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Red Hat Linux', '120', 'Install Red Hat Linux', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Cat5e cabling', '60', 'Install Cat5e cabling', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Switch Installation', '60', 'Switch Installation', '2020-03-22');
+INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
+VALUES ('Install Cisco Switch', '60', 'Install Cisco Switch', '2020-03-22');
 
 
--- TEAMS
+-- CREATE TEAM ------
 DELIMITER //
 DROP PROCEDURE IF EXISTS spCreateTeam;
 // DELIMITER ;
@@ -253,6 +290,609 @@ END
 //
 DELIMITER ;
 
+CREATE TABLE IF NOT EXISTS `atsnovember`.`jobs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(255) NOT NULL,
+  `clientName` VARCHAR(100) NOT NULL,
+  `start` DATETIME NOT NULL,
+  `end` DATETIME NOT NULL,
+  `teamId` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id` (`id` ASC),
+  INDEX `teamId_idx` (`teamId` ASC),
+  CONSTRAINT `teamId`
+    FOREIGN KEY (`teamId`)
+    REFERENCES `atsnovember`.`teams` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE);
+
+CREATE TABLE IF NOT EXISTS `atsnovember`.`jobstasks` (
+  `taskId` INT NOT NULL,
+  `jobId` INT NOT NULL,
+  `operatingCost` DECIMAL(13,2) NOT NULL,
+  `operatingRevenue` DECIMAL(13,2) NOT NULL,
+  PRIMARY KEY (`taskId`, `jobId`),
+  INDEX `jobId_idx` (`jobId` ASC),
+  CONSTRAINT `taskId`
+    FOREIGN KEY (`taskId`)
+    REFERENCES `atsnovember`.`tasks` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `jobId`
+    FOREIGN KEY (`jobId`)
+    REFERENCES `atsnovember`.`jobs` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE);
+
+-- DELETE TASK -------
+DELIMITER //
+DROP PROCEDURE IF EXISTS spDeleteTask;
+// DELIMITER ;
+
+-- RETURN CODES:
+-- 0 - deleted
+-- -1 - an employee has a skill
+-- -2 - the job has this task assigned
+
+DELIMITER //
+CREATE PROCEDURE spDeleteTask ( 
+	IN taskId_param int,
+	OUT code int)
+BEGIN
+	IF (SELECT COUNT(*) 
+ 		FROM employeetasks 
+        WHERE taskId = taskId_param > 0)		
+		THEN SET code = -1;
+    
+	ELSEIF (SELECT COUNT(*) 
+			FROM jobstasks
+            WHERE taskId = taskId_param > 0)
+		THEN SET code = -2;
+    
+    ELSE
+		DELETE FROM tasks
+		WHERE id = taskId_param;
+		SET code = 0;
+    END IF;
+    
+END 
+//
+DELIMITER ;
+
+CREATE TABLE IF NOT EXISTS `employeetasks` (
+  `employeeId` int(11) NOT NULL,
+  `taskId` int(11) NOT NULL,
+  PRIMARY KEY (`employeeId`,`taskId`),
+  KEY `employeeId_idx` (`employeeId`),
+  CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) 
+  REFERENCES `employees` (`id`) 
+  ON DELETE NO ACTION 
+  ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 
+-- INSERT JOB OLD WHERE TOTAL COST AND REVENUE ARE INSERTED--------
+-- DELIMITER //
+-- DROP procedure IF EXISTS `spInsertJob`;
+-- DELIMITER ;
+
+-- DELIMITER $$
+-- CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+-- IN client_param VARCHAR(255), 
+-- start_param DATETIME, 
+-- end_param DATETIME, 
+-- team_id_param INT(11), 
+-- cost_param DOUBLE, 
+-- revenue_param DOUBLE, 
+-- tasks_param VARCHAR(255), OUT id_OUT INT)
+
+-- BEGIN
+-- DECLARE numTasks int;
+-- DECLARE task_id INT;
+-- DECLARE loopCount int;
+
+-- START TRANSACTION;
+
+-- INSERT INTO jobs (description, clientName, start, end, teamId)
+-- VALUES (desc_param, client_param, start_param, end_param, team_id_param);
+
+--  SET id_out = LAST_INSERT_ID();
+
+--  -- Remove space
+-- SET tasks_param = REPLACE(tasks_param, ' ', '');
+-- -- Get number of values without commas
+--  SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
+
+--  SET loopCount = 1;
+--         WHILE loopCount <= numTasks + 1 DO
+--             -- get number id
+--             SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
+            
+-- 				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
+-- 				VALUES (task_id, id_out, cost_param, revenue_param);
+                
+--             /* Remove last used id with comma from input string */
+--             SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
+--             SET loopCount = loopCount + 1;
+
+--         END WHILE;
+
+--  COMMIT;
+ 
+-- END$$
+-- DELIMITER ;
+
+
+
+
+END
+
+
+-- DELETE BELOW IF WORKING
+
+
+DELIMITER //
+DROP procedure IF EXISTS `spInsertJob`;
+DELIMITER ;
+-- INSERT JOB NEW WITH SEPARATED COST AND REVENUE
+DELIMITER $$
+CREATE PROCEDURE `spInsertJob`(IN desc_param VARCHAR(255), 
+IN client_param VARCHAR(255), 
+start_param DATETIME, 
+end_param DATETIME, 
+team_id_param INT(11), 
+cost_param VARCHAR(255), 
+revenue_param VARCHAR(255), 
+tasks_param VARCHAR(255), OUT id_OUT_param INT)
+
+BEGIN
+DECLARE numTasks int;
+DECLARE task_id INT;
+DECLARE cost_value DOUBLE;
+DECLARE revenue_value DOUBLE;
+DECLARE loopCount int;
+DECLARE id_out INT;
+
+START TRANSACTION;
+
+INSERT INTO jobs (description, clientName, start, end, teamId)
+VALUES (desc_param, client_param, start_param, end_param, team_id_param);
+
+SET id_out = LAST_INSERT_ID();
+SET id_OUT_param = id_out;
+
+
+ -- Remove space
+ SET tasks_param = REPLACE(tasks_param, ' ', '');
+
+-- Get number of values without commas
+ SET numTasks = LENGTH(tasks_param) - LENGTH(REPLACE(tasks_param, ',', ''));
+ 
+ 
+ SET loopCount = 1;
+        WHILE loopCount <= numTasks + 1 DO
+            -- get task id
+            SET task_id = SUBSTRING_INDEX(tasks_param, ',', 1);
+            -- get cost value
+            
+            SET cost_value = SUBSTRING_INDEX(cost_param, ',', 1);
+            -- if(length(SUBSTRING_INDEX(cost_value, '.', -1))  = 1) THEN
+				-- SET cost_value  = REPLACE(cost_value, CONCAT('.', '0'), '');
+			-- end if;
+                
+            -- get revenue value
+            SET revenue_value = SUBSTRING_INDEX(revenue_param, ',', 1);
+        -- if(length(SUBSTRING_INDEX(revenue_value, '.', -1))  = 1) THEN
+		-- SET revenue_value  = REPLACE(revenue_value, CONCAT('.', '0'), '');
+		-- end if;
+            
+				INSERT INTO jobstasks (taskId, jobId, operatingCost, operatingRevenue)
+				VALUES (task_id, id_out, cost_value, revenue_value);
+                
+            /* Remove last used id with comma from input string */
+            SET tasks_param = REPLACE(tasks_param, CONCAT(task_id, ','), ''); 
+            SET cost_param = replace(cost_param, CONCAT(cost_value, ','), '');
+            SET revenue_param = replace(revenue_param, CONCAT(revenue_value, ','), '');
+            
+            SET loopCount = loopCount + 1;
+        END WHILE;
+    
+
+
+ COMMIT; 
+END$$
+DELIMITER ;
+
+-- GET JOB DETAILS ------
+DELIMITER //
+DROP PROCEDURE IF EXISTS spGetJobDetails;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spGetJobDetails(
+	IN jobId_param INT
+)
+BEGIN
+
+	SELECT jobs.id, jobs.description, clientName, 
+		   start, end, 
+           CONCAT(teams.Name) AS team, 
+           CONCAT(tasks.name) AS task
+	FROM jobs
+    INNER JOIN teams
+    ON jobs.teamId = teams.id
+    INNER JOIN jobstasks
+    ON jobs.id = jobstasks.jobId
+    INNER JOIN tasks
+    ON jobstasks.taskId = tasks.id
+    WHERE jobs.id = jobId_param;
+END //
+
+DELIMITER ;
+
+-- ASSIGN TASKS TO EMPLOYEE --------
+DELIMITER //
+DROP PROCEDURE IF EXISTS spAddTaskToEmployee;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spAddTaskToEmployee(
+	IN employeeId_param INT,
+	IN taskIdArray_param VARCHAR(255),
+    OUT rows_aff INT
+)
+BEGIN
+
+DECLARE numTasks int;
+DECLARE task_id INT;
+DECLARE loopCount int;
+DECLARE rowsAffected INT;
+
+ START TRANSACTION;
+    
+ SET taskIdArray_param = REPLACE(taskIdArray_param, ' ', '');   
+ -- Get number of values without commas
+ SET numTasks = LENGTH(taskIdArray_param) - LENGTH(REPLACE(taskIdArray_param, ',', ''));
+
+	BEGIN 
+		SET loopCount = 1;
+        WHILE loopCount <= numTasks + 1 DO
+            -- get number id
+            SET task_id = SUBSTRING_INDEX(taskIdArray_param, ',', 1);
+            
+				INSERT INTO employeetasks (employeeId, taskId)
+				VALUES (employeeId_param, task_id);
+                
+            /* Remove last used id with comma from input string */
+            SET taskIdArray_param = REPLACE(taskIdArray_param, CONCAT(task_id, ','), ''); 
+            SET loopCount = loopCount + 1;
+
+        END WHILE;
+        SET rowsAffected = (SELECT row_count());
+		IF (rowsAffected > 0) THEN 
+		SET rows_aff = 1;
+		END IF;
+	END;	
+    
+    COMMIT;
+	
+END; //
+DELIMITER ;
+
+
+-- DELETE EMPLOYEE 
+
+-- 0 - deleted
+DELIMITER //
+DROP procedure IF EXISTS `spRemoveEmployee`;
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE `spRemoveEmployee`(IN id_param INT, OUT result INT)
+BEGIN 
+    IF ((SELECT COUNT(*) FROM teammembers WHERE EmployeeId = id_param) > 0)
+		THEN UPDATE employees SET isDeleted = true, deletedAt = now() WHERE id = id_param;
+     SET result = 0;
+	ELSE 
+		DELETE FROM employees WHERE id = id_param;
+     SET result = 0;
+	END IF;   
+END$$
+
+DELIMITER ;
+
+
+-- DELETE SKILL FROM EMPLOYEE
+
+/*
+ NOT RUBUST BUT ALSO DO THE TRICK
+  SELECT product_id, product_price
+  FROM product
+  WHERE FIND_IN_SET(product_type, param);
+
+*/
+DELIMITER //
+DROP procedure IF EXISTS `spRemoveEmployeeSkill`;
+DELIMITER ;
+
+-- FLAG FOR MERGE
+DELIMITER $$
+CREATE PROCEDURE `spRemoveEmployeeSkill`(
+IN id_param INT, 
+IN idsSkill_param VARCHAR(255), 
+OUT affected_out INT)
+BEGIN
+
+DECLARE numSkills INT;
+DECLARE loopCount INT;
+DECLARE curSkillId INT;
+DECLARE rowsAffected INT;
+
+START TRANSACTION;
+SET rowsAffected = 0;
+SET affected_out = 0;
+SET numSkills = LENGTH(idsSkill_param) - LENGTH(REPLACE(idsSkill_param, ',', ''));
+
+ SET loopCount = 1;
+	 WHILE loopCount <= numSkills + 1 DO
+     SET curSkillId = SUBSTRING_INDEX(idsSkill_param, ',', 1);
+     DELETE FROM employeetasks WHERE employeeId = id_param AND taskId = curSkillId;
+     SET idsSkill_param = REPLACE(idsSkill_param, CONCAT(curSkillId, ','), '');
+     SET loopCount = loopCount + 1;
+     END WHILE;
+     
+     SET rowsAffected = (SELECT row_count());
+     IF (rowsAffected > 0) THEN 
+		SET affected_out = 1;
+	END IF;
+COMMIT;
+END$$
+
+DELIMITER ;
+
+-- UPDATE SKILLS EMPLOYEE
+DELIMITER //
+DROP PROCEDURE IF EXISTS spUpdateEmployeeSkills;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spUpdateEmployeeSkills(
+IN empId_param INT, 
+IN skillsDelete_param VARCHAR(255), 
+IN skillsAdd_param VARCHAR(255), 
+OUT affected_out INT)
+	BEGIN
+		START TRANSACTION;
+			BEGIN
+				CALL spRemoveEmployeeSkill(empId_param, skillsDelete_param, @numDeleted);
+				SELECT @numDeleted;
+		
+				CALL spAddTaskToEmployee(empId_param, skillsAdd_param, @numAdded);
+                SELECT @numAdded;
+                
+                 IF (@numDeleted > 0 AND @numAdded > 0) THEN 
+					SET affected_out = 1;
+				END IF;
+        
+        COMMIT;
+        END;
+	END;
+//
+DELIMITER ;
+
+
+
+
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Sam', 'Donovan', '423-133-289','60.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Amanda', 'Sallivan', '508-889-343','85.00', now());
+INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
+VALUES ('Phoebe', 'Smith', '332-453-345','45.00', now());
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Alexa', 'Perry', '345-234-989', '30', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Gordon', 'Short', '989-345-344', '45', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Anna', 'Lee', '230-900-898', '67.50', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Leonard', 'Carr', '443-098-332', '50.50', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Dorothy', 'MacDonald', '788-099-337', '36.00', b'0', '2020-03-22');
+INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
+VALUES ('Nathan', 'Paige', '348-667-454', '43', b'0', '2020-03-22');
+
+
+-- SEARCH EMPLOYEE
+DELIMITER //
+DROP PROCEDURE IF EXISTS spSearchEmployees;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spSearchEmployees(
+IN search_param varchar(255))
+	BEGIN
+		SELECT * 
+		FROM employees
+		WHERE (lastName LIKE CONCAT('%',search_param,'%'))
+		OR (sin = search_param);
+	END;
+  
+//
+DELIMITER ;
+
+
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', '1');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('1', '2');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '1');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', '3');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '3');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '2');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('3', '4');
+
+
+INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`) 
+VALUES ('November', b'0', b'0', '2020-03-03');
+INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`, `updatedAt`) 
+VALUES ('December', b'0', b'0', '2020-03-01', '2020-03-02');
+
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('1', '1');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('2', '1');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('3', '2');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('4', '2');
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Configure Router', 'Advatek Systems', '2020-03-16 10:00', '2020-03-16 11:00', '2');
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Design Network', 'Dovico', '2020-03-16 10:00', '2020-03-16 10:45', '1');
+INSERT INTO `atsnovember`.`jobs` (`id`, `description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('3', 'Mobile hardware repair', 'Samsung Inc', '2020-03-16 12:00', '2020-03-16 14:00:00', '1');
+
+
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('1', '2', '31.50', '94.50');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('2', '1', '60', '180');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('4', '3', '78.00', '234.00');
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS spGetJobsSchedule;
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE `spGetJobsSchedule`(
+IN date_param VARCHAR(255)
+)
+BEGIN
+	SELECT jobs.id, CONCAT(date_format(start, '%H:%i:%s')) as start_time, 
+		CONCAT(date_format(end, '%H:%i:%s')) as end_time,  
+		CONCAT(teams.name) as team
+	FROM jobs
+	INNER JOIN teams
+	ON jobs.teamId = teams.id
+	WHERE date_format(start, '%Y-%m-%d') = date_param 
+	GROUP BY start, teams.name
+    ORDER BY team DESC, start_time;
+END;
+//
+DELIMITER ;
+
+
+
+-- DELETE JOB
+DELIMITER //
+DROP procedure IF EXISTS `spDeleteJob`;
+// DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spDeleteJob` (IN jobId_param INT, OUT rows_affected_param INT)
+BEGIN
+	START TRANSACTION;
+		DELETE FROM jobstasks 
+        WHERE jobId IN (jobId_param);
+        
+		SET rows_affected_param = (SELECT row_count());
+		DELETE FROM jobs WHERE id = jobId_param;
+
+		SET rows_affected_param = rows_affected_param  + (SELECT row_count());
+	COMMIT;
+END$$
+
+DELIMITER ;
+
+
+
+-- IS AVAILABEL 
+-- 0 - is available
+DELIMITER $$
+DROP procedure IF EXISTS `spTeamIsAvailable`;
+$$ DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spTeamIsAvailable` (
+IN teamId_param INT, start_param DATETIME, end_param DATETIME)
+	BEGIN
+		SELECT COUNT(*) FROM jobs
+		WHERE teamId = teamId_param AND (start_param < end AND end_param >= start);
+	END;$$
+
+DELIMITER ;
+
+
+
+-- IS EMERGENCY
+
+-- 1 - is onEmergencyCall
+DELIMITER $$
+DROP procedure IF EXISTS `TeamIsOnEmergency`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `TeamIsOnEmergency` (IN teamId_param INT)
+BEGIN
+	SELECT COUNT(*) FROM teams WHERE isOnCall = true AND id = teamId_param;
+END$$
+
+DELIMITER ;
+
+
+DELIMITER $$
+DROP procedure IF EXISTS `spGetTeamWithEmployeesDetails`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetTeamWithEmployeesDetails(
+	IN idParam INT )
+BEGIN
+	SELECT CONCAT(teams.id) as teamId, 
+		CONCAT(employees.id) as empId,
+        CONCAT(employees.firstName) as empFname,
+        CONCAT(employees.lastName) as empLname,
+        CONCAT(employees.hourlyRate) as hRate,
+        CONCAT(employeetasks.taskId) as empSkillId
+    FROM teams 
+    INNER JOIN teammembers 
+    ON teams.id = teammembers.teamId
+    INNER JOIN employees 
+    ON employees.id = teammembers.employeeId
+    INNER JOIN employeetasks
+    ON employees.id = employeetasks.employeeId
+	WHERE teams.id = idParam
+	ORDER BY employees.id ASC;
+    
+END$$
+ DELIMITER ;
+
+
+
+-- Get Teams Lookup
+DELIMITER $$
+DROP procedure IF EXISTS `spTeamLookup`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spTeamLookup`()
+BEGIN
+SELECT id, Name, isOnCall FROM teams WHERE isDeleted = false;
+
+END$$
+
+DELIMITER ;
+
+
+
+
+
+-- 2020-03-16 10:00:00	2020-03-16 11:00:00
+-- 2020-03-16 10:00:00	2020-03-16 10:45:00
+-- 2020-03-16 12:00:00	2020-03-16 14:00:00

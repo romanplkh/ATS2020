@@ -34,5 +34,11 @@ public interface ITask extends IBase {
     public LocalDateTime getUpdatedAt();
 
     public void setUpdatedAt(LocalDateTime updatedAt);
+    
+    public double getCost();
+    
+    public double getRevenue();
+    
+
 
 }

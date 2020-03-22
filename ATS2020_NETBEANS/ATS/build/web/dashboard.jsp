@@ -7,26 +7,26 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
-    <title>Dashboard</title>
-    <%@include file="WEB-INF/jspf/header.jspf" %>
-</head>
 
-<body>
-<%@include file="WEB-INF/jspf/navigation.jspf" %>
-<main class="py-5">
+    <head>
+        <title>Dashboard</title>
+        <%@include file="WEB-INF/jspf/header.jspf" %>
+    </head>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col">
-                <p>DASHBOARD!!</p>
-                <h2 class="display-4">Merge</h2>
+    <body>
+        <%@include file="WEB-INF/jspf/navigation.jspf" %>
+        <main class="py-5">
+
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col">
+
+                        <h2 class="display-4">Welcome to ATS!</h2>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </main>
+        <%@include file="WEB-INF/jspf/footer.jspf" %>
+    </body>
 
-
-</main>
-<%@include file="WEB-INF/jspf/footer.jspf" %>
-</body>
 </html>

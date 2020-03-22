@@ -2,6 +2,7 @@ package com.ats.atssystem.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author Olena Stepanova
@@ -13,14 +14,23 @@ public class Task extends Base implements ITask, Serializable {
     private String description;
     private int duration;
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
+    private double cost;
+    private double revenue;
 
     public Task() {
     }
-    
-        public Task(int id, String name, String description, int duration) {
 
+    public Task(String name, String description, int duration) {
+
+        setName(name);
+        setDescription(description);
+        setDuration(duration);
+    }
+
+    public Task(int id, String name, String description, int duration) {
+
+        setId(id);
         setName(name);
         setDescription(description);
         setDuration(duration);
@@ -105,6 +115,37 @@ public class Task extends Base implements ITask, Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public double getCost() {
+        return this.cost;
+    }
+
+    @Override
+    public double getRevenue() {
+        return this.revenue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Task)) {
+            return false;
+        }
+
+        Task t = (Task) o;
+
+        return this.getId() == t.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

@@ -49,12 +49,16 @@
         <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employees</url-pattern>
     </servlet-mapping>
+    
+       
 
     <!--EMPLOYEE MAINTENANCE-->
     <servlet-mapping>
         <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employee/*</url-pattern>
     </servlet-mapping>
+    
+    
     
     <!--    TEAM SERVLET-->
     <servlet>
@@ -68,6 +72,25 @@
         <servlet-name>TeamController</servlet-name>
         <url-pattern>/team/*</url-pattern>
     </servlet-mapping>
+    
+    <!--JOB SERVLET-->
+    <servlet>
+        <servlet-name>JobController</servlet-name>
+        <servlet-class>com.ats.atssystem.controllers.JobController</servlet-class>
+    </servlet>
+    <!--JOB MAINTENANCE-->
+    <servlet-mapping>
+        <servlet-name>JobController</servlet-name>
+        <url-pattern>/job/*</url-pattern>
+    </servlet-mapping>
+    
+    
+    <!--ALL JOBS-->
+    <servlet-mapping>
+        <servlet-name>JobController</servlet-name>
+        <url-pattern>/jobs</url-pattern>
+    </servlet-mapping>
+  
     
     
 </web-app>

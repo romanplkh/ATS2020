@@ -10,15 +10,17 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <html>
+
     <head>
         <title>Employee Details</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
+
     <body>
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
 
         <main>
-            <c:set var="emp" value="${empDetails}"/>
+            <c:set var="emp" value="${empDetails}" />
             <div class="container my-5">
                 <h1 class="display-4 text-center mb-5">Employee Information</h1>
 
@@ -46,7 +48,9 @@
                                             SIN: </span>&nbsp; ${emp.employee.sin}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Hourly Rate: </span> <fmt:formatNumber value="${emp.employee.hourlyRate}" type="currency" currencySymbol="$"/>
+                                            Hourly Rate: </span>
+                                        <fmt:formatNumber value="${emp.employee.hourlyRate}" type="currency"
+                                            currencySymbol="$" />
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
                                             Deleted:</span>&nbsp; ${emp.employee.isDeleted ? "Yes":"No"}
@@ -55,10 +59,12 @@
                                             Created At:</span>&nbsp; ${emp.employee.createdAt}
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Updated At:</span>&nbsp;${emp.employee.updatedAt != null ? emp.employee.updatedAt : "Not applicable" }
+                                            Updated At:</span>&nbsp;${emp.employee.updatedAt != null ?
+                                        emp.employee.updatedAt : "Not applicable" }
                                     </li>
                                     <li class="list-group-item"><span class="font-weight-bold">
-                                            Deleted At:</span>&nbsp; ${emp.employee.deletedAt != null ? emp.employee.deletedAt : "Not applicable" }
+                                            Deleted At:</span>&nbsp; ${emp.employee.deletedAt != null ?
+                                        emp.employee.deletedAt : "Not applicable" }
                                     </li>
                                 </ul>
                             </div>
@@ -68,7 +74,8 @@
                         <div class="card" style="width: 100%">
                             <div class="card-body">
                                 <h3 class="card-title">Current Team</h3>
-                                <h1 class="card-subtitle mb-2 text-success display-4">${emp.team.name != null ? emp.team.name : "No Team"}</h1>
+                                <h1 class="card-subtitle mb-2 text-success display-4">${emp.team.name != null ?
+                                    emp.team.name : "No Team"}</h1>
                             </div>
                         </div>
 
@@ -76,9 +83,14 @@
                             <div class="card-body">
                                 <h3 class="card-title">Skills</h3>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item text-muted">Router configuration</li>
-                                    <li class="list-group-item text-muted">Linux Server configuration</li>
-                                    <li class="list-group-item text-muted">Windows configuration</li>
+                                    <c:if test="${emp.skills.size() > 0}">
+                                        <c:forEach items="${emp.skills}" var="skill">
+                                            <li class="list-group-item text-muted">${skill.name}</li>
+                                        </c:forEach>
+                                    </c:if>
+                                    <c:if test="${emp.skills.size() == 0}">
+                                        <p class="text-muted">No skills added</p>
+                                    </c:if>
                                 </ul>
                             </div>
                         </div>
@@ -92,4 +104,3 @@
 
         <%@include file="WEB-INF/jspf/footer.jspf" %>
     </body>
-
