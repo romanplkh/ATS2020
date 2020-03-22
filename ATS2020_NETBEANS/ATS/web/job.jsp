@@ -134,6 +134,22 @@
                                         <p id="taskListPlaceHolder">No tasks added</p>
                                         <ul id="requiredTasks" class="list-group px-4">
 
+                                            <c:if test="${jvm.job.tasksList.size() > 0}">
+
+                                                <c:forEach items="${jvm.job.tasksList}" var="task">
+                                                    <li class="list-group-item list-group-item-action active my-1
+                                                        d-flex justify-content-between align-items-center ">
+                                                        ${task.name}
+                                                        <span class="text-danger employeeSkillRemove"
+                                                              style="cursor: pointer;">
+                                                            X
+                                                        </span><input type="hidden" value="${task.id}">
+                                                    </li>
+                                                </c:forEach>
+
+
+                                            </c:if>    
+
                                         </ul>
                                         <input type="hidden" name="tasksToAdd" value="">
 
@@ -151,6 +167,8 @@
 
                                 <script>
 
+                                    //ARRAY YO HOLD VALUES FROM FAILURE POST
+
 
                                     const btnAddTask = document.querySelector("#addTask").addEventListener("click", (ev) => {
                                         ev.preventDefault();
@@ -162,26 +180,83 @@
                                     const errorJs = document.querySelector("#errorJs");
                                     const taskListPlaceHolder = document.querySelector("#taskListPlaceHolder");
 
+
+                                    //ARRAY OF TASKS FROM FAILURE POST
                                     let listOfTaskIds = [];
+
 
 
                                     //REF TO INPUT WHERE TO RECORD ALL TASKS TO ADD
                                     const tasksToAdd = document.querySelector("input[name='tasksToAdd']");
 
-                                    const hideElement = (selector) => {
-                                        const element = document.querySelector(selector);
-                                        if (element) {
-                                            element.style.display = "none";
+
+                                    //DATA FROM DB
+                                    const empSkills = document.querySelectorAll(".employeeSkillRemove");
+
+
+                                    //LOOP THROUGH SKILLS FETCHED FORM FAILURE POST
+                                    Array.from(empSkills).forEach(el => {
+
+                                        //GET TASK ID
+                                        const taskId = parseInt(el.parentNode.lastElementChild.value);
+
+                                        //FILL ARRAY WITH EMPLOYEE SKILLS FROM DB WHEN HE HAS ONES
+                                        listOfTaskIds.push(parseInt(el.nextSibling.value));
+
+                                        if (!tasksToAdd.value) {
+                                            tasksToAdd.value += taskId;
+                                        } else {
+                                            tasksToAdd.value += "," + taskId;
                                         }
 
-                                    }
 
-                                    const showElement = (selector) => {
-                                        const element = document.querySelector(selector);
-                                        if (element) {
-                                            element.style.display = "block";
+                                        //ATTACH LISTENERS ON LIST ELEMENTS FROM DB
+                                        el.addEventListener("click", (ev) => {
+                                            removeSkill(el)
+                                        })
+
+                                        //SHOW/HIDE MESSAGE IF NO TASKS
+                                        if (listOfTaskIds.length == 0) {
+                                            showElement("#taskListPlaceHolder")
+                                        } else {
+                                            hideElement("#taskListPlaceHolder")
+                                        }
+                                    })
+
+                                    function removeSkill(el) {
+
+                                        //GET ID OF TASK TO REMOVE
+                                        const taskId = parseInt(el.parentNode.lastElementChild.value);
+                                        //DELETE SKILL FROM LIST
+                                        listOfTaskIds = listOfTaskIds.filter(el => el != taskId)
+
+
+                                        //CLEAR ALL TASKS TO ADD SO WE CAN REPOPULATE IT
+                                        tasksToAdd.value = "";
+
+                                        //REPOPULATE IDs TO ADD
+                                        listOfTaskIds.forEach(el => {
+                                            if (!tasksToAdd.value) {
+                                                tasksToAdd.value += el;
+                                            } else {
+                                                tasksToAdd.value += "," + el;
+                                            }
+                                        })
+
+
+                                        //REMOVE FROM UI
+                                        el.parentNode.remove();
+
+                                        //SHOW/HIDE MESSAGE IF NO TASKS
+                                        if (listOfTaskIds.length == 0) {
+                                            showElement("#taskListPlaceHolder")
+                                        } else {
+                                            hideElement("#taskListPlaceHolder")
                                         }
                                     }
+
+
+
 
                                     const hideErrorMessage = () => {
                                         if (document.querySelector("#error-alert")) {
@@ -191,7 +266,11 @@
                                     }
 
                                     const addTask = () => {
+
+                                        //ID FROM DROPDOWN
                                         const taskValue = parseInt(listTasks.value);
+
+                                        //TEXT FROM DROPDOWN
                                         const taskText = listTasks.options[listTasks.selectedIndex].text;
 
                                         if (listOfTaskIds.indexOf(taskValue) == -1) {
@@ -202,6 +281,7 @@
 
                                             span.addEventListener("click", () => {
                                                 span.parentNode.remove();
+                                                removeSkill(span)
                                                 listOfTaskIds = listOfTaskIds.filter(el => el != input.value);
 
                                                 if (listOfTaskIds.length == 0) {
@@ -267,6 +347,25 @@
 
 
                                     }
+
+                                    function hideElement(selector) {
+                                        const element = document.querySelector(selector);
+                                        if (element) {
+                                            element.style.display = "none";
+                                        }
+
+                                    }
+
+                                    function showElement(selector) {
+                                        const element = document.querySelector(selector);
+                                        if (element) {
+                                            element.style.display = "block";
+                                        }
+                                    }
+
+
+
+
 
 
 
