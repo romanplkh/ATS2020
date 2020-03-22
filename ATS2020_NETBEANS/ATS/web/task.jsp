@@ -12,10 +12,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
+
     <head>
         <title>Task</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
+
     <body>
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
         <main>
@@ -48,7 +50,7 @@
                                 <ul class="list-unstyled mb-0">
                                     <c:forEach items="${task.getErrors()}" var="err">
                                         <li>${err.description}</li>
-                                        </c:forEach>
+                                    </c:forEach>
                                 </ul>
                             </div>
                         </c:if>
@@ -65,23 +67,19 @@
 
                             <div class="form-group">
                                 <label>Name</label>
-                                <input type="text" class="form-control"
-                                       value="${task.name}"
-                                       name="taskName">
+                                <input type="text" class="form-control" value="${task.name}" name="taskName">
                             </div>
 
                             <div class="form-group">
                                 <label>Description</label>
-                                <textarea name="taskDescription"
-                                          class="form-control"
-                                          cols="10" rows="6">${task.description}</textarea>
+                                <textarea name="taskDescription" class="form-control" cols="10"
+                                    rows="6">${task.description}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label>Duration</label>
                                 <input type="text" class="form-control"
-                                       value="${task.duration == 0 ? '' : task.duration}"
-                                       name="taskDuration">
+                                    value="${task.duration == 0 ? '' : task.duration}" name="taskDuration">
                                 <small class="form-text text-muted">Task duration in minutes</small>
                             </div>
 
@@ -95,7 +93,7 @@
                                 </c:otherwise>
                             </c:choose>
                             <a href="${pageContext.request.contextPath}/tasks"
-                               class="btn btn-secondary btn-lg">Cancel</a>
+                                class="btn btn-secondary btn-lg">Cancel</a>
                         </form>
 
                     </div>
@@ -104,4 +102,5 @@
         </main>
         <%@include file="WEB-INF/jspf/footer.jspf" %>
     </body>
+
 </html>

@@ -61,7 +61,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
         //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
         returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_EMPLOYEE, params);
-
         try {
             if (returnedValues != null) {
                 returnedId = Integer.parseInt(returnedValues.get(0).toString());
@@ -303,7 +302,6 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
             employee.setUpdatedAt(super.getDate("updatedAt", rs));
             employee.setDeletedAt(super.getDate("deletedAt", rs));
             employee.setIsDeleted(rs.getBoolean("isDeleted"));
-
             if (rs.getString("Name") != null) {
                 team.setName(rs.getString("Name"));
             } else {

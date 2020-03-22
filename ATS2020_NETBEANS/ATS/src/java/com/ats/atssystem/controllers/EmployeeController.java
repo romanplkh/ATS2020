@@ -121,7 +121,6 @@ public class EmployeeController extends CommonController {
                         super.setView(request, EMPLOYEE_MAINT_VIEW);
                     } else {
                         emp = employeeService.createEmployee(emp);
-
                     }
                     break;
                 case "update":
