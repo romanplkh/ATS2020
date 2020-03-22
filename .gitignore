@@ -21,3 +21,23 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/ATS/nbproject/private/
+/ATS/ATS-war/nbproject/private/
+/ATS/ATS-ejb/nbproject/private/
+/ats.models/nbproject/private/
+/com.ats.models/nbproject/private/
+/com.ats.models/build/
+/com.ats.models/dist/
+/com.ats.dataaccess/nbproject/private/
+/ATS/build/
+/ATS/dist/
+/com.ats.atssystem/nbproject/private/
+/ATS2020_IDEA/testsa/nbproject/private/
+/ATS2020_NETBEANS/com.atssystem.dataaccess/nbproject/private/
+/ATS2020_NETBEANS/com.ats.atssystem/nbproject/private/
+/ATS2020_NETBEANS/com.ats.dataaccess/nbproject/private/
+/ATS2020_NETBEANS/com.ats.dataaccess/build/
+/ATS2020_NETBEANS/com.ats.atssystem/build/
+/ATS2020_NETBEANS/com.ats.dataaccess/dist/
+/ATS2020_NETBEANS/com.ats.atssystem/dist/
+/ATS2020_NETBEANS/ATS/dist/
