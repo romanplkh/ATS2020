@@ -47,6 +47,7 @@
                                             <th>1 Member</th>
                                             <th>2 Member</th>
                                             <th></th>
+                                            <th>Team On Call</th>
 
                                         </tr>
                                     </thead>
@@ -60,7 +61,13 @@
                                                     </td>
                                                 </c:forEach>
                                                 <td><a href="team/${team.id}/details">Details</a></td>
+                                                <td>
+                                                    <c:if test="${team.isOnCall}">
+                                                        <span class="text-danger">On Call</span> 
+                                                    </c:if>
+                                                </td>
                                             </tr>
+
                                         </c:forEach>
                                     </tbody>
                                 </table>
