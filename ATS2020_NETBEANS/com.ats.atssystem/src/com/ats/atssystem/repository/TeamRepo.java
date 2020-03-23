@@ -32,6 +32,8 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
     private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";
+    private final String SP_DELETE_TEAM = "CALL spDeleteTeam(?,?)";
+    private final String SP_PLACE_TEAM_ON_CALL = "CALL spPlaceTeamOnCall(?,?)";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -258,6 +260,62 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         }
 
         return teams;
+
+    }
+
+    @Override
+    public int deleteTeam(int id) {
+        int rowAff = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(id));
+
+        //For OUT code status
+        params.add(ParameterFactory.createInstance(rowAff, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = this.dataaccess.executeNonQuery(SP_DELETE_TEAM, params);
+
+        try {
+            if (retVal != null) {
+                rowAff = (int) retVal.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rowAff;
+    }
+
+    @Override
+    public int placeTeamOnCall(int teamId) {
+
+        int code = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(teamId));
+
+        //For OUT code status
+        params.add(ParameterFactory.createInstance(code, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = this.dataaccess.executeNonQuery(SP_PLACE_TEAM_ON_CALL, params);
+
+        try {
+            if (retVal != null) {
+                code = (int) retVal.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return code;
 
     }
 

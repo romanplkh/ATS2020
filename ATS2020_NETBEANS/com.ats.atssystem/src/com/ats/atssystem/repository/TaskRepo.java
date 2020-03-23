@@ -18,6 +18,7 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
     private final String SP_GET_TASK_DETAILS = "CALL spGetTasks(?)";
     private final String SP_GET_ALL_TASKS = "CALL spGetTasks(?)";
     private final String SP_DELETE_TASK = "CALL spDeleteTask(?,?)";
+    private final String SP_UPDATE_TASK = "CALL spUpdateTask(?,?,?,?,?,?)";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -185,5 +186,38 @@ public class TaskRepo extends BaseRepo implements ITaskRepo {
         }
 
         return statusCode;
+    }
+
+    @Override
+    public int updateTask(ITask task) {
+        
+        int numRowsAff = 0;
+
+        List<Object> retVal;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(task.getId()));
+        params.add(ParameterFactory.createInstance(task.getName()));
+        params.add(ParameterFactory.createInstance(task.getDuration()));
+        params.add(ParameterFactory.createInstance(task.getDescription()));
+        params.add(ParameterFactory.createInstance(task.getUpdatedAt()));
+        
+       
+        //For OUT code status
+        params.add(ParameterFactory.createInstance(numRowsAff, IParameter.Direction.OUT, Types.INTEGER));
+
+        retVal = this.dataaccess.executeNonQuery(SP_UPDATE_TASK, params);
+
+        try {
+            if (retVal != null) {
+                numRowsAff = (int) retVal.get(0);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return numRowsAff;
     }
 }

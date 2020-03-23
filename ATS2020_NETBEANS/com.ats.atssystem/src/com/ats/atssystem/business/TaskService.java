@@ -88,7 +88,7 @@ public class TaskService implements ITaskService {
                 
         if(code == -1){
             task.addError(ErrorFactory
-                    .createInstance(1, "Task cannot be deleted. Employee has it"));
+                    .createInstance(1, "Task cannot be deleted because has been assigned to an employee"));
         }else if(code == -2){
             task.addError(ErrorFactory
             .createInstance(2, "Task cannot be deleted because it has assosiated job"));
@@ -97,5 +97,16 @@ public class TaskService implements ITaskService {
         return task;
         
         
+    }
+
+    @Override
+    public ITask updateTask(ITask task) {
+        int affRow = repo.updateTask(task);
+        if(affRow != 1){
+            task.addError(ErrorFactory
+                    .createInstance(1, "Something went wrong during task update"));
+        }
+        
+        return task;
     }
 }

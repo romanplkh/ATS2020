@@ -49,4 +49,11 @@ public interface ITaskService {
      * @return task object
      */
     ITask deleteTask(ITask task);
+    
+    /**
+     * Updates task info
+     * @param task task to update
+     * @return updated task
+     */
+    ITask updateTask(ITask task);
 }
