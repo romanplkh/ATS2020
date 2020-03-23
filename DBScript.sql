@@ -926,7 +926,7 @@ CREATE PROCEDURE `spGetAllTeams` ()
 BEGIN
 SELECT teams.name, 
 CONCAT(teams.id) AS teamId , 
-EmployeeId, firstName, lastName FROM teams 
+EmployeeId, firstName, lastName, isOnCall FROM teams 
 INNER JOIN teammembers ON teams.id = teammembers.TeamId 
 INNER JOIN employees ON employees.id = teammembers.EmployeeId
 ORDER BY teams.name ASC;
