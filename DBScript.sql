@@ -889,7 +889,129 @@ END$$
 
 DELIMITER ;
 
+-- UPDATE TASK
+DELIMITER //
+DROP procedure IF EXISTS spUpdateTask;
+DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE spUpdateTask(
+	IN taskId_param INT(11),
+	IN name_param VARCHAR(255),
+    IN duration_param INT(11),
+    IN description_param VARCHAR(255),
+    IN updated_param DATETIME,
+    OUT rowAff INT
+    )
+BEGIN
+	UPDATE tasks 
+    SET name = name_param, duration = duration_param,
+		description = description_param,
+        updatedAt = updated_param
+    WHERE id = taskId_param;
+    
+    SET rowAff = row_count();
+
+END; //
+
+DELIMITER ;
+
+
+-- DELETE TEAM
+DELIMITER //
+DROP procedure IF EXISTS spDeleteTeam;
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spDeleteTeam (
+IN teamId_param INT(11), 
+OUT rowAff INT(11)
+)
+BEGIN
+	DECLARE count INT;
+    
+    SET count = (SELECT COUNT(*) FROM jobs
+				 WHERE teamId = teamId_param);
+    
+	START TRANSACTION;
+    
+		IF count = 0 THEN
+			DELETE FROM teammembers
+			WHERE TeamId = teamId_param;
+        
+			DELETE FROM teams
+			WHERE id = teamId_param;
+            
+            SET rowAff = row_count();
+            
+        ELSEIF count > 0 THEN
+			UPDATE teams
+            SET isDeleted = b'1',
+            deletedAt = now()
+            WHERE id = teamId_param;
+            
+            SET rowAff = row_count();
+        END IF;
+	COMMIT;
+    
+END; //
+DELIMITER ;
+
+
+-- PLACE TEAM ON CALL
+DELIMITER //
+DROP procedure IF EXISTS spPlaceTeamOnCall;
+DELIMITER ;
+-- returns codes
+-- 1 - team onCall was switched
+-- 0 - requested team is deleted
+
+DELIMITER //
+CREATE PROCEDURE spPlaceTeamOnCall (
+IN teamId_param INT(11), 
+OUT code INT(11)
+)
+BEGIN
+	DECLARE currentTeamId INT;
+    DECLARE teamActive INT;
+    
+    SET currentTeamId = (SELECT id FROM teams
+				 WHERE isOnCall = b'1');
+                 
+    SET teamActive = (SELECT COUNT(*) FROM teams
+				WHERE isDeleted = b'1' AND id = teamId_param);             
+    
+	START TRANSACTION;
+    
+		IF currentTeamId <> NULL AND teamActive = 0 THEN
+			UPDATE teams
+            SET isOnCall = b'0',
+            updatedAt = now()
+            WHERE id = currentTeamId;
+            
+            UPDATE teams
+			SET isOnCall = b'1',
+            updatedAt = now()
+            WHERE id = teamId_param; 
+            
+            SET code = 1;
+            
+        ELSEIF currentTeamId IS NULL AND teamActive = 0 THEN
+			UPDATE teams
+			SET isOnCall = b'1',
+            updatedAt = now()
+            WHERE id = teamId_param;
+            
+            SET code = 1;
+            
+        ELSEIF teamActive = 1 THEN
+			SET code = 0;
+        END IF;
+        
+	COMMIT;
+    
+END; //
+DELIMITER ;
 
 
 

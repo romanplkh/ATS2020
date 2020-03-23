@@ -40,4 +40,11 @@ public interface ITaskRepo {
      * @return status code with SP execution result
      */
     int deleteTask(int taskId);
+    
+    /**
+     * Updates task in database
+     * @param task task to update
+     * @return number of rows affected
+     */
+    int updateTask(ITask task);
 }
