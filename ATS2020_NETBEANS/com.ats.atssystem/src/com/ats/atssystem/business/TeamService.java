@@ -72,6 +72,13 @@ public class TeamService implements ITeamService {
     }
 
     @Override
+    public List<ITeam> getAllTeamsWithMembers() {
+        repo = TeamRepoFactory.createInstance();
+        return repo.getAllTeamsWithMembers();
+
+    }
+
+    
     public ITeam deleteTeam(ITeam team) {
         int affRow = repo.deleteTeam(team.getId());
 

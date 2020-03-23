@@ -32,6 +32,8 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
     private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";
+    private final String SP_GET_ALL_TEAMS_WITH_MEMBERS = "CALL spGetAllTeams()";
+
     private final String SP_DELETE_TEAM = "CALL spDeleteTeam(?,?)";
     private final String SP_PLACE_TEAM_ON_CALL = "CALL spPlaceTeamOnCall(?,?)";
 
@@ -56,7 +58,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         params.add(ParameterFactory.createInstance(team.getTeamMembers().get(0).getId()));
         params.add(ParameterFactory.createInstance(team.getTeamMembers().get(1).getId()));
 
-        //For OUT team Id
+        // For OUT team Id
         params.add(ParameterFactory.createInstance(newTeamId, IParameter.Direction.OUT, Types.INTEGER));
 
         retVal = this.dataaccess.executeNonQuery(SP_ADD_NEW_TEAM, params);
@@ -104,17 +106,42 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
      */
     private ITeam populateEntityWithErrors(CachedRowSet rs) throws SQLException {
 
-//        List<ITeam> teams = TeamFactory.createListInstance();
+        // List<ITeam> teams = TeamFactory.createListInstance();
         ITeam team = TeamFactory.createInstance();
 
         while (rs.next()) {
             int existingMemberId = super.getInt("EmployeeId", rs);
             String memberName = rs.getString("FullName");
             String teamName = rs.getString("Name");
-            team.addError(ErrorFactory.createInstance(2, "Member " + memberName + " with id " + existingMemberId + " already a member in a team " + teamName));
+            team.addError(ErrorFactory.createInstance(2, "Member " + memberName + " with id " + existingMemberId
+                    + " already a member in a team " + teamName));
         }
 
         return team;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ITeam> getAllTeamsWithMembers() {
+
+        List<ITeam> teams = null;
+
+        try {
+
+            List<IParameter> parms = ParameterFactory.createListInstance();
+
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_ALL_TEAMS_WITH_MEMBERS, parms);
+
+            teams = populateTeamsWithMembers(rs);
+
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
+
+        return teams;
 
     }
 
@@ -183,17 +210,17 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
             emp.setLastName("empLname");
             emp.setHourlyRate(super.getDouble("hRate", rs));
 
-            //set skills
+            // set skills
             skill.setId(super.getInt("empSkillId", rs));
             skills.add(skill);
-            //add list of skilld to emp
+            // add list of skilld to emp
             emp.setSkills(skills);
 
             while (rs.next()) {
                 if (emp.getId() == super.getInt("empId", rs)) {
                     rs.previous();
                     while (rs.next() && (emp.getId() == super.getInt("empId", rs))) {
-                        //add other skills
+                        // add other skills
                         skill = TaskFactory.createInstance();
                         skill.setId(super.getInt("empSkillId", rs));
                         skills.add(skill);
@@ -201,11 +228,11 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
                     }
                     rs.previous();
                 } else {
-                    //add first emp to list of employees
+                    // add first emp to list of employees
                     employees.add(emp);
 
-                    //new empl -> create instance and populate info
-                    //create new list of skills
+                    // new empl -> create instance and populate info
+                    // create new list of skills
                     emp = EmployeeFactory.createInstance();
                     emp.setId(super.getInt("empId", rs));
                     emp.setFirstName(rs.getString("empFname"));
@@ -215,7 +242,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
                     skill = TaskFactory.createInstance();
                     skills = TaskFactory.createListInstance();
 
-                    //set skills
+                    // set skills
                     skill.setId(super.getInt("empSkillId", rs));
                     skills.add(skill);
                     employees.add(emp);
@@ -263,6 +290,53 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
     }
 
+    private List<ITeam> populateTeamsWithMembers(CachedRowSet rs) throws SQLException {
+        List<ITeam> teams = TeamFactory.createListInstance();
+        ITeam newTeam = null;
+        IEmployee emp = null;
+
+        try {
+
+            while (rs.next()) {
+                emp = EmployeeFactory.createInstance();
+                newTeam = TeamFactory.createInstance();
+
+                // SET VALUES FOR EMPLOYEE
+                emp.setId(super.getInt("EmployeeId", rs));
+                emp.setFirstName(rs.getString("firstName"));
+                emp.setLastName(rs.getString("lastName"));
+
+                // SET VALUES FOR TEAM
+                newTeam.setName(rs.getString("name"));
+                newTeam.setId(super.getInt("teamId", rs));
+                newTeam.setIsOnCall(rs.getBoolean("isOnCall"));
+
+                if (teams.size() == 0) {
+                    // Add first member to lsit
+                    newTeam.getTeamMembers().add(emp);
+                    teams.add(newTeam);
+                } else {
+                    ITeam lastTeam = teams.get(teams.size() - 1);
+                    if (lastTeam.getId() == newTeam.getId()) {
+                        // Add teammember to team
+                        lastTeam.getTeamMembers().add(emp);
+                    } else {
+                        // Create new team
+                        newTeam.getTeamMembers().add(emp);
+                        teams.add(newTeam);
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return teams;
+
+    }
+
     @Override
     public int deleteTeam(int id) {
         int rowAff = 0;
@@ -273,7 +347,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         params.add(ParameterFactory.createInstance(id));
 
-        //For OUT code status
+        // For OUT code status
         params.add(ParameterFactory.createInstance(rowAff, IParameter.Direction.OUT, Types.INTEGER));
 
         retVal = this.dataaccess.executeNonQuery(SP_DELETE_TEAM, params);
@@ -301,7 +375,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         params.add(ParameterFactory.createInstance(teamId));
 
-        //For OUT code status
+        // For OUT code status
         params.add(ParameterFactory.createInstance(code, IParameter.Direction.OUT, Types.INTEGER));
 
         retVal = this.dataaccess.executeNonQuery(SP_PLACE_TEAM_ON_CALL, params);

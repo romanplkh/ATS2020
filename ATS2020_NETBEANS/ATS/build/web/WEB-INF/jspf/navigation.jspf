@@ -32,6 +32,7 @@
                         Teams
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/teams">List of Teams</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Create Team</a>
                     </div>
                 </li>

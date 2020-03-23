@@ -25,13 +25,13 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
 
     private final String SPROC_INSERT_EMPLOYEE = "CALL spAddEmployee(?,?,?,?,?);";
     private final String SPROC_SELECT_EMPLOYEES = "CALL spGetEmployee(?);";
-//    private final String SPROC_SELECT_EMPLOYEE = "CALL spGetEmployee(?);";
     private final String SPROC_GET_EMPLOYEE_FULL_DETAILS = "CALL spGetEmployeeDetails(?);";
     private final String SPROC_GET_EMPLOYEE_WITH_SKILLS = "CALL spGetEmployeeWithSkills(?);";
     private final String SPROC_REMOVE_EMPLOYEE = "CALL spRemoveEmployee(?, ?);";
     private final String SPROC_REMOVE_EMPLOYEE_SKILL = "CALL spRemoveEmployeeSkill(?,?,?);";
     private final String SPROC_ADD_EMPLOYEE_SKILL = "CALL spAddTaskToEmployee(?,?,?)";
     private final String SPROC_UPDATE_EMPLOYEE_SKILLS = "CALL spUpdateEmployeeSkills(?,?,?,?)";
+    private final String SPROC_UPDATE_EMPLOYEE_DETAILS = "CALL spUpdateEmployeeDetails(?,?,?,?,?,?);";
     private final String SPROC_SEARCH_EMPLOYEES = "CALL spSearchEmployees(?)";
 
     //Dependancy of Dataaccess layer
@@ -80,6 +80,30 @@ public class EmployeeRepo extends BaseRepo implements IEmployeeRepo {
     public int updateEmployee(IEmployee employee) {
 
         int rowsAffected = 0;
+
+        List<Object> returnedValues;
+
+        List<IParameter> params = ParameterFactory.createListInstance();
+
+        params.add(ParameterFactory.createInstance(employee.getFirstName()));
+        params.add(ParameterFactory.createInstance(employee.getLastName()));
+        params.add(ParameterFactory.createInstance(employee.getSin()));
+        params.add(ParameterFactory.createInstance(employee.getHourlyRate()));
+        params.add(ParameterFactory.createInstance(employee.getId()));
+
+        returnedValues = dataAccess.executeNonQuery(SPROC_UPDATE_EMPLOYEE_DETAILS, params);
+        params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
+        
+        try {
+
+            if (returnedValues != null) {
+                rowsAffected = Integer.parseInt(returnedValues.get(0).toString());
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+        }
 
         return rowsAffected;
     }
