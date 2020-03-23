@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TeamFactory;
 import com.ats.atssystem.repository.ITeamRepo;
@@ -74,6 +75,32 @@ public class TeamService implements ITeamService {
     public List<ITeam> getAllTeamsWithMembers() {
         repo = TeamRepoFactory.createInstance();
         return repo.getAllTeamsWithMembers();
+
+    }
+
+    
+    public ITeam deleteTeam(ITeam team) {
+        int affRow = repo.deleteTeam(team.getId());
+
+        if (affRow != 1) {
+            team.addError(ErrorFactory
+                    .createInstance(1, "Something went wrong during team delete"));
+        }
+
+        return team;
+    }
+
+    @Override
+    public ITeam placeTeamOnCall(ITeam team) {
+        int code = repo.deleteTeam(team.getId());
+
+        if (code != 1) {
+            team.addError(ErrorFactory
+                    .createInstance(1, "Only active team can be placed on call"));
+        } 
+
+        return team;
+
     }
 
 }

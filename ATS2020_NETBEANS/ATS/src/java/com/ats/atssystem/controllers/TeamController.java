@@ -5,7 +5,7 @@
  */
 package com.ats.atssystem.controllers;
 
-import com.ats.atssystem.business.EmployeeService;
+
 import com.ats.atssystem.business.EmployeeServiceFactory;
 import com.ats.atssystem.business.IEmployeeService;
 import com.ats.atssystem.business.ITeamService;
@@ -85,6 +85,7 @@ public class TeamController extends CommonController {
         try {
             //Get action of button
             String action = super.getValue(request, "action").toLowerCase();
+            int teamId = super.getInteger(request, "teamId");
 
             switch (action) {
                 case "save":
@@ -135,12 +136,21 @@ public class TeamController extends CommonController {
                 case "update":
                     break;
                 case "delete":
+                    team = teamService.deleteTeam(teamService.getTeamDetails(teamId));
+
+                    if (team.getErrors().isEmpty()) {
+                        //super.setView(request, TEAMS_VIEW);
+                    } else {
+                        request.setAttribute("team", team);
+                        //super.setView(request, TEAM_DETAILS_VIEW);
+                    }
                     break;
 
             }
         } catch (Exception e) {
             super.setView(request, TEAM_MAINT_VIEW);
-            request.setAttribute("error", new ErrorViewModel("Something bad happened when attempting to maintain employee"));
+            request.setAttribute("error", 
+                    new ErrorViewModel("Something bad happened when attempting to maintain a team"));
         }
 
         if (!teamService.isValid(team) || !busRulesAreValid) {
