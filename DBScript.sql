@@ -890,6 +890,52 @@ END$$
 DELIMITER ;
 
 
+-- UPDATE EMPLOYEE
+USE `atsnovember`;
+DROP procedure IF EXISTS `spUpdateEmployeeDetails`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spUpdateEmployeeDetails` (IN fName_param VARCHAR(255), 
+IN lName_param VARCHAR(255), IN sin_param VARCHAR(11), 
+IN hRate_param DOUBLE, 
+IN empId_param INT(11), OUT rows_affected_param INT)
+BEGIN
+	UPDATE employees 
+    SET firstName = fName_param, 
+		lastName = lName_param, 
+		sin = sin_param, 
+		hourlyRate = hRate_param, 
+		updatedAt = now() 
+        WHERE employees.id = empId_param;
+        SET rows_affected_param = (SELECT row_count());
+        
+END;$$
+
+DELIMITER ;
+
+
+
+--GET ALL TEAMS TO DISPLAY TABLE
+USE `atsnovember`;
+DROP procedure IF EXISTS `spGetAllTeams`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spGetAllTeams` ()
+BEGIN
+SELECT teams.name, 
+CONCAT(teams.id) AS teamId , 
+EmployeeId, firstName, lastName FROM teams 
+INNER JOIN teammembers ON teams.id = teammembers.TeamId 
+INNER JOIN employees ON employees.id = teammembers.EmployeeId
+ORDER BY teams.name ASC;
+END$$
+
+DELIMITER ;
+
+
+
 
 
 

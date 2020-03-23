@@ -124,6 +124,16 @@ public class EmployeeController extends CommonController {
                     }
                     break;
                 case "update":
+                    emp = populateEmployeeModel(request);
+
+                    if (!employeeService.isValid(emp)) {
+                        request.setAttribute("employeeErrors", emp.getErrors());
+                        request.setAttribute("employee", emp);
+                        super.setView(request, EMPLOYEE_MAINT_VIEW);
+                    } else {
+                        emp = employeeService.updateEmployee(emp);
+                    }
+
                     break;
                 case "delete":
                     emp = employeeService.deleteEmployee(populateEmployeeModel(request));

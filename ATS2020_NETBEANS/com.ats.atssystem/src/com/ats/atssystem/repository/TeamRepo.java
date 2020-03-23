@@ -32,6 +32,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
     private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";
+    private final String SP_GET_ALL_TEAMS_WITH_MEMBERS = "CALL spGetAllTeams()";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -113,6 +114,24 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         }
 
         return team;
+
+    }
+
+    public List<ITeam> getAllTeamsWithMembers() {
+
+        List<ITeam> teams = null;
+
+        try {
+
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            parms.add(ParameterFactory.createInstance(null, IParameter.Direction.IN, Types.NULL));
+
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_ALL_TEAMS_WITH_MEMBERS, parms);
+
+            teams = populateTeamsWithMembers(rs);
+
+        } catch (Exception e) {
+        }
 
     }
 
@@ -258,6 +277,50 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         }
 
         return teams;
+
+    }
+
+    private List<ITeam> populateTeamsWithMembers(CachedRowSet rs) throws SQLException {
+        List<ITeam> teams = TeamFactory.createListInstance();
+        ITeam newTeam = null;
+        IEmployee emp = null;
+
+        try {
+
+            while (rs.next()) {
+                emp = EmployeeFactory.createInstance();
+                newTeam = TeamFactory.createInstance();
+
+                //SET VALUES FOR EMPLOYEE
+                emp.setId(super.getInt("EmployeeId", rs));
+                emp.setFirstName(rs.getString("firstName"));
+                emp.setLastName(rs.getString("lastName"));
+
+                //SET VALUES FOR TEAM
+                newTeam.setName(rs.getString("name"));
+                newTeam.setId(super.getInt("teamId", rs));
+
+                if (teams.size() == 0) {
+                    //Add half/team to lsit
+                    newTeam.getTeamMembers().add(emp);
+                    teams.add(newTeam);
+                } else {
+                    ITeam lastTeam = teams.get(teams.size() - 1);
+                    if (lastTeam.getId() == newTeam.getId()) {
+                        //Add teammember to team
+                        lastTeam.getTeamMembers().add(emp);
+                    } else {
+                        //Create new team
+                        newTeam.getTeamMembers().add(emp);
+                        teams.add(newTeam);
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 

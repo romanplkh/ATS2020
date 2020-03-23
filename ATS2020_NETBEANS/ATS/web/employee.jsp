@@ -66,8 +66,6 @@
                                                 name="action">
                                         </c:when>
                                         <c:otherwise>
-                                            <input class="btn btn-danger btn-lg" type="submit" value="Delete"
-                                                name="action" />
                                             <input class="btn btn-warning btn-lg" type="submit" value="Update"
                                                 name="action" />
                                         </c:otherwise>
