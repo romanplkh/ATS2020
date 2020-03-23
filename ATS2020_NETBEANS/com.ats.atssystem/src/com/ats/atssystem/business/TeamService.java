@@ -70,4 +70,10 @@ public class TeamService implements ITeamService {
         return repo.getTeamsLookup();
     }
 
+    @Override
+    public List<ITeam> getAllTeamsWithMembers() {
+        repo = TeamRepoFactory.createInstance();
+        return repo.getAllTeamsWithMembers();
+    }
+
 }

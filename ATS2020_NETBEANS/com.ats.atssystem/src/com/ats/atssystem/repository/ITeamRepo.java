@@ -44,6 +44,13 @@ public interface ITeamRepo {
     ITeam getTeam(int id);
 
     /**
+     * Gets all teams with members
+     *
+     * @return List<ITeam> populated list of teams
+     */
+    List<ITeam> getAllTeamsWithMembers();
+
+    /**
      * Gets list of teams for drop down menus
      *
      * @return List of object Team

@@ -117,6 +117,10 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<ITeam> getAllTeamsWithMembers() {
 
         List<ITeam> teams = null;
@@ -124,14 +128,16 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         try {
 
             List<IParameter> parms = ParameterFactory.createListInstance();
-            parms.add(ParameterFactory.createInstance(null, IParameter.Direction.IN, Types.NULL));
 
             CachedRowSet rs = this.dataaccess.executeFill(SP_GET_ALL_TEAMS_WITH_MEMBERS, parms);
 
             teams = populateTeamsWithMembers(rs);
 
         } catch (Exception e) {
+            System.out.print(e.getMessage());
         }
+
+        return teams;
 
     }
 
@@ -301,7 +307,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
                 newTeam.setId(super.getInt("teamId", rs));
 
                 if (teams.size() == 0) {
-                    //Add half/team to lsit
+                    //Add first member to lsit
                     newTeam.getTeamMembers().add(emp);
                     teams.add(newTeam);
                 } else {
@@ -321,6 +327,8 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        return teams;
 
     }
 

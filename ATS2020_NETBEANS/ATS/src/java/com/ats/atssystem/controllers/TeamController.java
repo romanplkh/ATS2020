@@ -30,11 +30,13 @@ import javax.servlet.http.HttpServletResponse;
 public class TeamController extends CommonController {
 
     private static final String TEAM_MAINT_VIEW = "/team.jsp";
+    private static final String TEAMS_VIEW = "/teams.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String pathInfo = request.getPathInfo();
+        ITeamService teamService = TeamServiceFactory.createInstance();
 
         if (pathInfo != null) {
 
@@ -61,7 +63,12 @@ public class TeamController extends CommonController {
             }
 
         } else {
-            //show all teams
+            //SHOW ALL TEAMS WITH TEAM MEMBERS
+            List<ITeam> teams = teamService.getAllTeamsWithMembers();
+
+            request.setAttribute("teams", teams);
+            super.setView(request, TEAMS_VIEW);
+
         }
 
         super.getView().forward(request, response);

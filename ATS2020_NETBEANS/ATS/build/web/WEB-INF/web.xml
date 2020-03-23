@@ -67,6 +67,12 @@
     </servlet>
     
     
+    <!--ALL TEAMS-->
+    <servlet-mapping>
+        <servlet-name>TeamController</servlet-name>
+        <url-pattern>/teams</url-pattern>
+    </servlet-mapping>
+    
     <!--TEAM MAINTENANCE-->
     <servlet-mapping>
         <servlet-name>TeamController</servlet-name>

@@ -22,9 +22,9 @@ public interface ITeamService {
      */
     ITeam createTeam(ITeam team);
 
-    
     /**
      * Validates presence of error messages in a Team object
+     *
      * @param team team to check errors
      * @return true if no errors, otherwise false
      */
@@ -46,6 +46,13 @@ public interface ITeamService {
      * @return Object Team filled with details
      */
     ITeam getTeamDetails(int id);
+
+    /**
+     * Gets all teams with members
+     *
+     * @return List<ITeam> populated list of teams
+     */
+    List<ITeam> getAllTeamsWithMembers();
 
     /**
      * Gets list of teams for drop down menus
