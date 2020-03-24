@@ -43,11 +43,11 @@
                                 <table class="table table-striped mt-5">
                                     <thead>
                                         <tr>
-                                            <th>Team Name</th>
-                                            <th>1 Member</th>
-                                            <th>2 Member</th>
+                                            <th>Name</th>
                                             <th></th>
-                                            <th>Team On Call</th>
+                                            <th>1st Member</th>
+                                            <th>2nd Member</th>
+                                            <th></th>
 
                                         </tr>
                                     </thead>
@@ -55,17 +55,18 @@
                                         <c:forEach items="${teams}" var="team">
                                             <tr>
                                                 <td>${team.name}</td>
+                                                <td>
+                                                    <c:if test="${team.isOnCall}">
+                                                        <span class="text-danger">On Call</span> 
+                                                    </c:if>
+                                                </td>
                                                 <c:forEach items="${team.teamMembers}" var="member">
                                                     <td>
                                                         <a href="employee/${member.id}/details">${member.fullName}</a>  
                                                     </td>
                                                 </c:forEach>
                                                 <td><a href="team/${team.id}/details">Details</a></td>
-                                                <td>
-                                                    <c:if test="${team.isOnCall}">
-                                                        <span class="text-danger">On Call</span> 
-                                                    </c:if>
-                                                </td>
+                                                
                                             </tr>
 
                                         </c:forEach>

@@ -1019,22 +1019,25 @@ IN teamId_param INT(11),
 OUT code INT(11)
 )
 BEGIN
-	DECLARE currentTeamId INT;
+	DECLARE currentOnCallTeamId INT;
     DECLARE teamActive INT;
     
-    SET currentTeamId = (SELECT id FROM teams
-				 WHERE isOnCall = b'1');
-                 
-    SET teamActive = (SELECT COUNT(*) FROM teams
-				WHERE isDeleted = b'1' AND id = teamId_param);             
     
 	START TRANSACTION;
     
-		IF currentTeamId <> NULL AND teamActive = 0 THEN
+    SET currentOnCallTeamId = (SELECT id FROM teams
+				 WHERE isOnCall = b'1');
+                 
+	-- 0 if team active
+    SET teamActive = (SELECT COUNT(*) FROM teams
+				WHERE (isDeleted = b'1' AND id = teamId_param));          
+                
+    
+		IF (currentOnCallTeamId IS NOT NULL AND teamActive = 0) THEN
 			UPDATE teams
             SET isOnCall = b'0',
             updatedAt = now()
-            WHERE id = currentTeamId;
+            WHERE id = currentOnCallTeamId;
             
             UPDATE teams
 			SET isOnCall = b'1',
@@ -1043,7 +1046,7 @@ BEGIN
             
             SET code = 1;
             
-        ELSEIF currentTeamId IS NULL AND teamActive = 0 THEN
+        ELSEIF (currentOnCallTeamId IS NULL AND teamActive = 0) THEN
 			UPDATE teams
 			SET isOnCall = b'1',
             updatedAt = now()
@@ -1063,12 +1066,12 @@ DELIMITER ;
 
 
 -- GET TEAM DETAILS
-USE `atsnovember`;
+DELIMITER //
 DROP procedure IF EXISTS `spGetTeamDetails`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `spGetTeamDetails`(IN teamId_param INT)
+CREATE PROCEDURE `spGetTeamDetails`(IN teamId_param INT)
 BEGIN
 
 SELECT teams.*, employees.firstName, employees.lastName, CONCAT(employees.id) AS employeeId 

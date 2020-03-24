@@ -93,9 +93,9 @@ public class TeamService implements ITeamService {
     @Override
     public ITeam placeTeamOnCall(ITeam team) {
         repo = TeamRepoFactory.createInstance();
-        int code = repo.deleteTeam(team.getId());
+        int code = repo.placeTeamOnCall(team.getId());
 
-        if (code != 1) {
+        if (code == 0) {
             team.addError(ErrorFactory
                     .createInstance(1, "Only active team can be placed on call"));
         }
