@@ -74,18 +74,20 @@ public class JobController extends CommonController {
                 String page = pathParts[2].toLowerCase();
                 job = service.getJobDetails(jobId);
 
-                if (job != null) {
-                    switch (page) {
-                        case "details":
+                switch (page) {
+                    case "details":
+                        super.setView(request, JOB_DETAILS_VIEW);
+                        if (job != null) {
                             request.setAttribute("job", job);
-                            super.setView(request, JOB_DETAILS_VIEW);
-                        case "delete":
+                        } else {
 
-                    }
-                } else {
-                    request.setAttribute("error",
-                            new ErrorViewModel(String.format("Requested job was not found")));
+                            request.setAttribute("error",
+                                    new ErrorViewModel(String.format("Requested job was not found")));
+                        }
+                        break;
 
+                    case "delete":
+                        break;
                 }
 
             } else {
@@ -98,7 +100,9 @@ public class JobController extends CommonController {
             }
 
         }
-        super.getView().forward(request, response);
+
+        super.getView()
+                .forward(request, response);
 
     }
 
@@ -214,9 +218,6 @@ public class JobController extends CommonController {
             }
         }
         job.setTasksList(tasks);
-        
-        
-  
 
         return job;
     }
