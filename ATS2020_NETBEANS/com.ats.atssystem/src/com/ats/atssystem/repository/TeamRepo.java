@@ -404,7 +404,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         params.add(ParameterFactory.createInstance(id));
 
-        // For OUT code status
+        // For OUT 
         params.add(ParameterFactory.createInstance(rowAff, IParameter.Direction.OUT, Types.INTEGER));
 
         retVal = this.dataaccess.executeNonQuery(SP_DELETE_TEAM, params);

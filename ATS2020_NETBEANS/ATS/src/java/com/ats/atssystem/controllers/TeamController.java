@@ -70,7 +70,8 @@ public class TeamController extends CommonController {
                     }
 
                 } else {
-                    request.setAttribute("vmError", new ErrorViewModel(String.format("Team ID: %s not found", id)));
+                    request.setAttribute("error",
+                            new ErrorViewModel("Requested team was not found"));
                     super.setView(request, TEAMS_DETAILS_VIEW);
                 }
             }
@@ -136,8 +137,7 @@ public class TeamController extends CommonController {
                                 super.setView(request, TEAM_MAINT_VIEW);
                             } else {
 
-                                //TODO CHANGE WITH NEXT ITERATION CASES
-                                super.setView(request, "/employees.jsp");
+                                super.setView(request, TEAMS_VIEW);
                             }
                         }
 
@@ -146,16 +146,26 @@ public class TeamController extends CommonController {
                     //3. Business rule that they do not exist in other teams
                     //4. Create team
                     break;
-                case "update":
-                    break;
-                case "delete":
-                    team = teamService.deleteTeam(teamService.getTeamDetails(teamId));
+                case "oncall":
+                    team = teamService.placeTeamOnCall(teamService.getTeamDetailsWithMembers(teamId));
 
                     if (team.getErrors().isEmpty()) {
-                        //super.setView(request, TEAMS_VIEW);
+                        super.setView(request, TEAMS_VIEW);
                     } else {
                         request.setAttribute("team", team);
-                        //super.setView(request, TEAM_DETAILS_VIEW);
+                        super.setView(request, TEAMS_DETAILS_VIEW);
+                    }
+
+                    break;
+                case "delete":
+
+                    team = teamService.deleteTeam(teamService.getTeamDetailsWithMembers(teamId));
+
+                    if (team.getErrors().isEmpty()) {
+                        super.setView(request, TEAMS_VIEW);
+                    } else {
+                        request.setAttribute("team", team);
+                        super.setView(request, TEAMS_DETAILS_VIEW);
                     }
                     break;
 
@@ -166,10 +176,11 @@ public class TeamController extends CommonController {
                     new ErrorViewModel("Something bad happened when attempting to maintain a team"));
         }
 
-        if (!teamService.isValid(team) || !busRulesAreValid) {
+        //if (!teamService.isValid(team) || !busRulesAreValid) {
+        if (team.getErrors().size() > 0) {
             super.getView().forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/dashboard");
+            response.sendRedirect(request.getContextPath() + "/teams");
         }
 
     }

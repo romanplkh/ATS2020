@@ -20,15 +20,29 @@
 
         <main>
             <div class="container my-5">
-                <h1 class="display-4 text-center mb-5">Employee Information</h1>
+                <h1 class="display-4 text-center mb-5">Team Information</h1>
 
                 <div class="row">
 
                     <c:if test="${error.errors != null}">
-                        <div class="alert alert-danger" role="alert">
-                            <c:forEach items="${error.errors}" var="err">
-                                <p>${err}</p>
-                            </c:forEach>
+                        <div class="col-12">
+                            <div class="alert alert-dismissible alert-light" role="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <c:forEach items="${error.errors}" var="err">
+                                    ${err}
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                    
+                    <c:if test="${team.getErrors().size() > 0}">
+                        <div class="col-12">
+                            <div class="alert alert-dismissible alert-danger" role="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <c:forEach items="${team.getErrors()}" var="err">
+                                    ${err.description}
+                                </c:forEach>
+                            </div>
                         </div>
                     </c:if>
 
@@ -62,7 +76,7 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 mt-md-0 mt-sm-4 ">
-                            <div class="card" style="width: 100%;">
+                            <div class="card mb-3" style="width: 100%;">
                                 <div class="card-body">
                                     <h3 class="card-title">Team Members</h3>
                                     <ul class="list-group list-group-flush">
@@ -77,6 +91,20 @@
                                     </ul>
                                 </div>
                             </div>
+                            
+                            <div class="pt-3">
+                                <form method="post">
+                                    <input type="hidden" name="teamId" value="${team.id}" />
+                                    <button class="btn btn-danger btn-lg" value="delete" name="action">Delete</button>
+                                </form>
+                            </div> 
+
+                            <div class="pt-3">
+                                <form method="post">
+                                    <input type="hidden" name="teamId" value="${team.id}" />
+                                    <button class="btn btn-secondary btn-lg" value="onCall" name="action">Place On Call</button>
+                                </form>
+                            </div>             
                         </div>
                     </c:if>
 
