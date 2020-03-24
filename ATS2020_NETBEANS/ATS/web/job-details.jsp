@@ -66,7 +66,7 @@
                                 </div>
 
                                 <form method="POST" class="mt-4">
-                                    <input type="hidden" name="jobId" value="job.id">
+                                    <input type="hidden" name="jobId" value="${job.id}">
                                     <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action"/>
                                 </form>
                             </div>
