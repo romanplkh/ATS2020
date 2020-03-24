@@ -198,6 +198,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             jobs = JobFactory.createListInstance();
 
             team.setName(rs.getString("team"));
+            team.setIsOnCall(rs.getBoolean("isOnCall"));
             job.setId(super.getInt("id", rs));
             job.setStartTime(super.getLocalTime("start_time", rs));
             job.setEndTime(super.getLocalTime("end_time", rs));
