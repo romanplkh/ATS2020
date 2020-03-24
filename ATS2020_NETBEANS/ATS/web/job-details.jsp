@@ -23,7 +23,7 @@
                 <h1 class="display-4 text-center mb-5">Job Details Information</h1>
 
 
-                <div class="row">
+                <div class="row">                 
                     <c:choose>
 
                         <c:when test="${error.errors != null}">

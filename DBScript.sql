@@ -776,7 +776,8 @@ IN date_param VARCHAR(255)
 BEGIN
 	SELECT jobs.id, CONCAT(date_format(start, '%H:%i:%s')) as start_time, 
 		CONCAT(date_format(end, '%H:%i:%s')) as end_time,  
-		CONCAT(teams.name) as team
+		CONCAT(teams.name) as team,
+        teams.isOnCall
 	FROM jobs
 	INNER JOIN teams
 	ON jobs.teamId = teams.id
@@ -959,11 +960,11 @@ DELIMITER ;
 
 
 -- UPDATE EMPLOYEE
-USE `atsnovember`;
+DELIMITER //
 DROP procedure IF EXISTS `spUpdateEmployeeDetails`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spUpdateEmployeeDetails` (IN fName_param VARCHAR(255), 
 IN lName_param VARCHAR(255), IN sin_param VARCHAR(11), 
 IN hRate_param DOUBLE, 
@@ -984,12 +985,12 @@ DELIMITER ;
 
 
 
---GET ALL TEAMS TO DISPLAY TABLE
-USE `atsnovember`;
+-- GET ALL TEAMS TO DISPLAY TABLE
+DELIMITER //
 DROP procedure IF EXISTS `spGetAllTeams`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spGetAllTeams` ()
 BEGIN
 SELECT teams.name, 
