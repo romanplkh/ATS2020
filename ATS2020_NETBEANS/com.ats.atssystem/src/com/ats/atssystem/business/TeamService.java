@@ -78,8 +78,8 @@ public class TeamService implements ITeamService {
 
     }
 
-    
     public ITeam deleteTeam(ITeam team) {
+        repo = TeamRepoFactory.createInstance();
         int affRow = repo.deleteTeam(team.getId());
 
         if (affRow != 1) {
@@ -92,12 +92,23 @@ public class TeamService implements ITeamService {
 
     @Override
     public ITeam placeTeamOnCall(ITeam team) {
+        repo = TeamRepoFactory.createInstance();
         int code = repo.deleteTeam(team.getId());
 
         if (code != 1) {
             team.addError(ErrorFactory
                     .createInstance(1, "Only active team can be placed on call"));
-        } 
+        }
+
+        return team;
+
+    }
+
+    @Override
+    public ITeam getTeamDetailsWithMembers(int teamId) {
+
+        repo = TeamRepoFactory.createInstance();
+        ITeam team = repo.getTeamDetails(teamId);
 
         return team;
 

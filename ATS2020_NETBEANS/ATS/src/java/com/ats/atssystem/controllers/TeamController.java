@@ -5,7 +5,6 @@
  */
 package com.ats.atssystem.controllers;
 
-
 import com.ats.atssystem.business.EmployeeServiceFactory;
 import com.ats.atssystem.business.IEmployeeService;
 import com.ats.atssystem.business.ITeamService;
@@ -31,6 +30,7 @@ public class TeamController extends CommonController {
 
     private static final String TEAM_MAINT_VIEW = "/team.jsp";
     private static final String TEAMS_VIEW = "/teams.jsp";
+    private static final String TEAMS_DETAILS_VIEW = "/teamDetails.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,26 +40,39 @@ public class TeamController extends CommonController {
 
         if (pathInfo != null) {
 
-            IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
-
-            List<IEmployee> employees = employeeService.getEmployees();
-
-            ITeam team = TeamFactory.createInstance();
-
             String[] pathParts = super.getUrlParts(pathInfo);
 
             int id = super.getInteger(pathParts[1]);
 
             //Create
             if (id == 0) {
+                IEmployeeService employeeService = EmployeeServiceFactory.createInstance();
+                List<IEmployee> employees = employeeService.getEmployees();
 
                 request.setAttribute("employees", employees);
-                request.setAttribute("team", team);
                 super.setView(request, TEAM_MAINT_VIEW);
 
-                //
+                //Details, Update, Delete
             } else {
 
+                // team/:id/[details]
+                //Details
+                String urlContext = pathParts[2];
+
+                ITeam teamDetails = teamService.getTeamDetailsWithMembers(id);
+                //
+                if (teamDetails != null) {
+                    switch (urlContext.toLowerCase()) {
+                        case "details":
+                            request.setAttribute("team", teamDetails);
+                            super.setView(request, TEAMS_DETAILS_VIEW);
+                            break;
+                    }
+
+                } else {
+                    request.setAttribute("vmError", new ErrorViewModel(String.format("Team ID: %s not found", id)));
+                    super.setView(request, TEAMS_DETAILS_VIEW);
+                }
             }
 
         } else {
@@ -149,7 +162,7 @@ public class TeamController extends CommonController {
             }
         } catch (Exception e) {
             super.setView(request, TEAM_MAINT_VIEW);
-            request.setAttribute("error", 
+            request.setAttribute("error",
                     new ErrorViewModel("Something bad happened when attempting to maintain a team"));
         }
 
