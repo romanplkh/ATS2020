@@ -31,9 +31,9 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_ADD_NEW_TEAM = "CALL spCreateTeam(?,?,?,?,?);";
     private final String SP_MEMBERS_SELECTED_AVAILABLE = "CALL spCheckMembersSelected(?, ?);";
     private final String SP_GET_TEAM_WITH_EMP_DETAILS = "CALL spGetTeamWithEmployeesDetails(?)";
+    private final String SP_GET_TEAM_DETAILS = "CALL spGetTeamDetails(?)";
     private final String SP_GET_TEAMS_LOOKUP = "CALL spTeamLookup()";
     private final String SP_GET_ALL_TEAMS_WITH_MEMBERS = "CALL spGetAllTeams()";
-
     private final String SP_DELETE_TEAM = "CALL spDeleteTeam(?,?)";
     private final String SP_PLACE_TEAM_ON_CALL = "CALL spPlaceTeamOnCall(?,?)";
 
@@ -290,6 +290,28 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITeam getTeamDetails(int teamId) {
+        ITeam team = TeamFactory.createInstance();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+
+            parms.add(ParameterFactory.createInstance(teamId, IParameter.Direction.IN, Types.INTEGER));
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_TEAM_DETAILS, parms);
+
+            team = loadTeamWithDetails(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return team;
+
+    }
+
     private List<ITeam> populateTeamsWithMembers(CachedRowSet rs) throws SQLException {
         List<ITeam> teams = TeamFactory.createListInstance();
         ITeam newTeam = null;
@@ -335,6 +357,41 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         return teams;
 
+    }
+
+    private ITeam loadTeamWithDetails(CachedRowSet rs) {
+        ITeam newTeam = null;
+
+        try {
+            while (rs.next()) {
+
+                if (newTeam == null) {
+                    newTeam = TeamFactory.createInstance();
+
+                    newTeam.setId(super.getInt("id", rs));
+                    newTeam.setName(rs.getString("Name"));
+                    newTeam.setIsOnCall(rs.getBoolean("isOnCall"));
+                    newTeam.setIsDeleted(rs.getBoolean("isDeleted"));
+                    newTeam.setCreatedAt(super.getDate("createdAt", rs));
+                    newTeam.setUpdatedAt(super.getDate("updatedAt", rs));
+                    newTeam.setDeletedAt(super.getDate("deletedAt", rs));
+                }
+
+                IEmployee emp = EmployeeFactory.createInstance();
+
+                emp.setFirstName(rs.getString("firstName"));
+                emp.setLastName(rs.getString("lastName"));
+                emp.setId(super.getInt("employeeId", rs));
+
+                newTeam.getTeamMembers().add(emp);
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return newTeam;
     }
 
     @Override

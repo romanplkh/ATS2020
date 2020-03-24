@@ -1061,6 +1061,30 @@ DELIMITER ;
 
 
 
+-- GET TEAM DETAILS
+USE `atsnovember`;
+DROP procedure IF EXISTS `spGetTeamDetails`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `spGetTeamDetails`(IN teamId_param INT)
+BEGIN
+
+SELECT teams.*, employees.firstName, employees.lastName, CONCAT(employees.id) AS employeeId 
+FROM teams
+INNER JOIN teammembers ON teammembers.TeamId = teams.id
+INNER JOIN employees ON teammembers.EmployeeId = employees.id
+WHERE TeamId = teamId_param;
+
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
 -- 2020-03-16 10:00:00	2020-03-16 11:00:00
 -- 2020-03-16 10:00:00	2020-03-16 10:45:00
 -- 2020-03-16 12:00:00	2020-03-16 14:00:00

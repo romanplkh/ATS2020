@@ -60,14 +60,23 @@ public interface ITeamService {
      * @return List of object Team
      */
     public List<ITeam> getTeamsLookup();
-    
+
     /**
-     * Deletes a team 
+     * Deletes a team
+     *
      * @param team team to delete
      * @return deleted team
      */
     public ITeam deleteTeam(ITeam team);
-    
-    public ITeam placeTeamOnCall(ITeam team); 
+
+    public ITeam placeTeamOnCall(ITeam team);
+
+    /**
+     * Gets team details with team members
+     *
+     * @param teamId id of team to get details about
+     * @return Object Team filled with data or null
+     */
+    public ITeam getTeamDetailsWithMembers(int teamId);
 
 }

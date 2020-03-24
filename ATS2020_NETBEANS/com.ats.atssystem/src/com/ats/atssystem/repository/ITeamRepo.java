@@ -56,18 +56,28 @@ public interface ITeamRepo {
      * @return List of object Team
      */
     public List<ITeam> getTeamsLookup();
-    
+
     /**
      * Deletes specified team from database
+     *
      * @param id team Id param
      * @return number of rows affected
      */
     public int deleteTeam(int id);
-    
+
     /**
      * Places team on call
+     *
      * @param teamId team id to place on call
      * @return code number of performed action
      */
     public int placeTeamOnCall(int teamId);
+
+    /**
+     * Gets team details with team members
+     *
+     * @param teamId id of team to get details about
+     * @return Object Team filled with data or null
+     */
+    ITeam getTeamDetails(int teamId);
 }
