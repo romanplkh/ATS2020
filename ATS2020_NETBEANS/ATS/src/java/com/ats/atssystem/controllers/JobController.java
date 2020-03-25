@@ -49,9 +49,9 @@ public class JobController extends CommonController {
         IJobService service = JobServiceFactory.createInstance();
         
         
-        IJobRepo repos = JobRepoFactory.createInstance();
+        //IJobRepo repos = JobRepoFactory.createInstance();
         
-        repos.getFinancialYearlyStats();
+        service.getFinancialStats();
         
 
         //SHOW JOBS SCHEDULE

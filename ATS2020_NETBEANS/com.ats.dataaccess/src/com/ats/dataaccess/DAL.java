@@ -97,6 +97,7 @@ public class DAL implements IDAL {
     @Override
     public CachedRowSet executeFill(String statement, List<IParameter> params) {
         CachedRowSet rowSet = null;
+        
 
         try {
             propertiesSetUp();

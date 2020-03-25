@@ -36,6 +36,7 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
     private final String SP_GET_ALL_TEAMS_WITH_MEMBERS = "CALL spGetAllTeams()";
     private final String SP_DELETE_TEAM = "CALL spDeleteTeam(?,?)";
     private final String SP_PLACE_TEAM_ON_CALL = "CALL spPlaceTeamOnCall(?,?)";
+    private final String SP_GET_TEAM_ON_CALL = "CALL spGetTeamOnCall()";
 
     private IDAL dataaccess = DALFactory.createInstance();
 
@@ -448,6 +449,22 @@ public class TeamRepo extends BaseRepo implements ITeamRepo {
 
         return code;
 
+    }
+
+    @Override
+    public ITeam getTeamOnCall() {
+        ITeam team = TeamFactory.createInstance();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            CachedRowSet rs = this.dataaccess.executeFill(SP_GET_TEAM_ON_CALL, parms);
+
+            team = loadTeamWithDetails(rs);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return team;
     }
 
 }

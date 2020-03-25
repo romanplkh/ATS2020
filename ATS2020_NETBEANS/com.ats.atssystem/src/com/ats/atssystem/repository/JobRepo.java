@@ -18,7 +18,6 @@ import com.ats.dataaccess.*;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
@@ -46,6 +45,11 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?, ?);";
     private final String SP_TEAM_IS_ON_EMERGENCY = "CALL TeamIsOnEmergency(?);";
     private final String SP_GET_YEARLY_FINANCIAL_STATS = "CALL spGetYearlyFinancialStats();";
+    private final String SP_GET_MONTHLY_JOB_COST = "CALL spGetMonthlyJobCost()";
+    private final String SP_GET_MONTHLY_JOB_REVENUE = "CALL spGetMonthlyJobRevenue()";
+    private final String SP_GET_YEARLY_JOB_COST = "CALL spGetYearlyJobCost()";
+    private final String SP_GET_YEARLY_JOB_REVENUE = "CALL spGetYearlyJobRevenue()";
+    private final String SP_GET_MONTHLY_NUM_OF_JOBS = "CALL spGetMonthlyNumOfJobs()";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
@@ -58,11 +62,36 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             List<IParameter> parms = ParameterFactory.createListInstance();
             CachedRowSet rs = this.dataAccess.executeFill(SP_GET_YEARLY_FINANCIAL_STATS, parms);
 
+            //set yearly stats
             Pair<List<IJob>, List<IJob>> jobs = populateYearlyFinances(rs);
 
             vm.setCurrentYear(jobs.getValue0());
             vm.setPreviousYear(jobs.getValue1());
-            
+
+            //set monthly cost and revenue
+            rs = this.dataAccess.executeFill(SP_GET_MONTHLY_JOB_COST, parms);
+            rs.first();
+            vm.setMonthlyCost(super.getDouble("monthlyCost", rs));
+
+            rs = this.dataAccess.executeFill(SP_GET_MONTHLY_JOB_REVENUE, parms);
+            rs.first();
+            vm.setMonthlyRevenue(super.getDouble("monthlyRevenue", rs));
+
+            //set yearly cost and revenue
+            rs = this.dataAccess.executeFill(SP_GET_YEARLY_JOB_COST, parms);
+            rs.first();
+            vm.setYearlyCost(rs.getDouble("yearlyCost"));
+
+            rs = this.dataAccess.executeFill(SP_GET_YEARLY_JOB_REVENUE, parms);
+            rs.first();
+            vm.setYearlyRevenue(rs.getDouble("yearlyRevenue"));
+
+            //set monthly jobs number
+            rs = this.dataAccess.executeFill(SP_GET_MONTHLY_NUM_OF_JOBS, parms);
+            rs.first();
+            vm.setJobsCountToday(rs.getInt("jobCount"));
+            //set current team on call --->> in service layer
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -94,7 +123,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         params.add(ParameterFactory.createInstance(revenueParams)); //revenue param
         params.add(ParameterFactory.createInstance(taskparams)); //task param
 
-//Get back id of inserted employee
+        //Get back id of inserted employee
         params.add(ParameterFactory.createInstance(returnedId, IParameter.Direction.OUT, Types.INTEGER));
         returnedValues = dataAccess.executeNonQuery(SPROC_INSERT_JOB, params);
         try {
