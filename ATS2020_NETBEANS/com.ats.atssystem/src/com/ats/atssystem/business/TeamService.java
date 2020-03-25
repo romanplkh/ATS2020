@@ -114,4 +114,9 @@ public class TeamService implements ITeamService {
 
     }
 
+    @Override
+    public ITeam getTeamOnCall() {
+       return TeamRepoFactory.createInstance().getTeamOnCall();
+    }
+
 }

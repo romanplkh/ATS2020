@@ -78,5 +78,10 @@ public interface ITeamService {
      * @return Object Team filled with data or null
      */
     public ITeam getTeamDetailsWithMembers(int teamId);
-
+    
+    /**
+     * Returns currently onCall team
+     * @return team object or null
+     */
+    public ITeam getTeamOnCall();
 }

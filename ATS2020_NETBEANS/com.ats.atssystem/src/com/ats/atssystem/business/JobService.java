@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.DashboardVM;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
@@ -13,6 +14,7 @@ import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
+import com.ats.atssystem.repository.TeamRepoFactory;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -158,7 +160,6 @@ public class JobService implements IJobService {
             //Validate DAY 
             DayOfWeek startDOW = job.getStart().getDayOfWeek();
 
-            
             DayOfWeek endDOW = job.getEnd().getDayOfWeek();
 
             if (startDOW == DayOfWeek.SATURDAY
@@ -188,6 +189,14 @@ public class JobService implements IJobService {
         job.setId(newJobId);
         return job;
 
+    }
+
+    @Override
+    public DashboardVM getFinancialStats() {
+        DashboardVM vm = repo.getFinancialYearlyStats();
+        vm.setTeamOnCall(TeamRepoFactory.createInstance().getTeamOnCall());
+
+        return vm;
     }
 
 }

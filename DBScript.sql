@@ -1066,6 +1066,7 @@ DELIMITER ;
 
 
 -- GET TEAM DETAILS
+DELIMITER $$
 DROP procedure IF EXISTS `spGetTeamDetails`;
 DELIMITER ;
 
@@ -1086,11 +1087,11 @@ DELIMITER ;
 
 
 -- FinancilaDate For Dashboard
-
+DELIMITER $$
 DROP procedure IF EXISTS `spGetYearlyFinancialStats`;
+DELIMITER ;
 
 DELIMITER $$
-USE `atsnovember`$$
 CREATE PROCEDURE `spGetYearlyFinancialStats` ()
 BEGIN
 SELECT  SUM(operatingCost) AS 'totalCost', 
@@ -1103,9 +1104,104 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+DROP procedure IF EXISTS spGetMonthlyJobCost;
+DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE spGetMonthlyJobCost()
+BEGIN
+	SELECT SUM(operatingCost) AS 'monthlyCost'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE month(jobs.start) = month(current_date());
+END$$
 
+DELIMITER ;
 
+DELIMITER $$
+DROP procedure IF EXISTS spGetMonthlyJobRevenue;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetMonthlyJobRevenue()
+BEGIN
+	SELECT SUM(operatingRevenue) + (SUM(operatingRevenue) * 0.15) AS 'monthlyRevenue'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE month(jobs.start) = month(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetYearlyJobCost;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetYearlyJobCost()
+BEGIN
+	SELECT SUM(operatingCost) AS 'yearlyCost'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE year(jobs.start) = year(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetYearlyJobRevenue;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetYearlyJobRevenue()
+BEGIN
+	SELECT SUM(operatingRevenue) + (SUM(operatingRevenue) * 0.15) AS 'yearlyRevenue'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE year(jobs.start) = year(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetMonthlyNumOfJobs;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetMonthlyNumOfJobs()
+BEGIN
+	SELECT COUNT(*) AS 'jobCount'
+FROM jobs 
+WHERE month(jobs.start) = month(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER //
+DROP procedure IF EXISTS spGetTeamOnCall;
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spGetTeamOnCall()
+BEGIN
+SELECT teams.*, 
+	employees.firstName, 
+	employees.lastName, 
+	CONCAT(employees.id) AS employeeId 
+FROM teams
+INNER JOIN teammembers
+ON teammembers.TeamId = teams.id
+INNER JOIN employees 
+ON teammembers.EmployeeId = employees.id
+WHERE teams.isOnCall = b'1';
+END; //
+
+DELIMITER ;
 
 -- 2020-03-16 10:00:00	2020-03-16 11:00:00
 -- 2020-03-16 10:00:00	2020-03-16 10:45:00
