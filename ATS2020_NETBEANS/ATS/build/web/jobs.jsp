@@ -14,6 +14,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file="WEB-INF/jspf/header.jspf" %>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
         <title>JSP Page</title>
     </head>
     <style>
@@ -238,7 +239,7 @@
                                 <c:forEach items="${teams}" var="t">
                                     <c:if test="${t.isOnCall}">
                                         <c:set var="count" value="${count + 1}" scope="page"/>
-                                         <h3>Team ${t.name}</h3>
+                                        <h3>Team ${t.name}</h3>
                                         <ul class="list-group list-group-flush">
                                             <c:if test="${t.jobs.size() == 0}">
                                                 <p class="text-muted">No emergency jobs scheduled</p>
@@ -246,10 +247,10 @@
                                             <c:forEach items="${t.jobs}" var="job">
                                                 <c:set var="startJob" value="${ job.startTime}" />
                                                 <c:set var="endJob" value="${job.endTime}" />
-                                               
+
                                                 <li class="list-group-item  justify-content-between">
-                                                     <span class="badge badge-primary badge-pill mr-5">${startJob} - ${endJob} </span>
-                                                     <a href="job/${job.id}/details" class="pl-5">Details</a>
+                                                    <span class="badge badge-primary badge-pill mr-5">${startJob} - ${endJob} </span>
+                                                    <a href="job/${job.id}/details" class="pl-5">Details</a>
                                                 </li>
                                             </c:forEach>
                                         </ul>
@@ -274,10 +275,60 @@
 
 
 
+            <canvas id="myChart"></canvas>
         </main>
 
 
 
         <%@include file="WEB-INF/jspf/footer.jspf" %>
+
+        <script>
+            
+            
+            
+            
+            const data = ${GSON}
+            
+            console.log(data)
+            
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                    }
+                }
+            });
+
+        </script>
     </body>
 </html>

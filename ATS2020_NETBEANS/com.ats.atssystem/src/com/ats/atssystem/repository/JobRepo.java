@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.repository;
 
+import com.ats.atssystem.models.DashboardVM;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.models.ITask;
 import com.ats.atssystem.models.ITeam;
@@ -18,8 +19,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 /**
@@ -42,9 +45,29 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     private final String SPROC_GET_SCHEDULED_JOBS = "CALL spGetJobsSchedule(?)";
     private final String SP_TEAM_IS_AVAILABLE = "CALL spTeamIsAvailable(?, ?, ?);";
     private final String SP_TEAM_IS_ON_EMERGENCY = "CALL TeamIsOnEmergency(?);";
+    private final String SP_GET_YEARLY_FINANCIAL_STATS = "CALL spGetYearlyFinancialStats();";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
+
+    public DashboardVM getFinancialYearlyStats() {
+
+        DashboardVM vm = new DashboardVM();
+
+        try {
+            List<IParameter> parms = ParameterFactory.createListInstance();
+            CachedRowSet rs = this.dataAccess.executeFill(SP_GET_YEARLY_FINANCIAL_STATS, parms);
+
+            Pair<List<IJob>, List<IJob>> jobs = populateYearlyFinances(rs);
+
+            vm.setCurrentYear(jobs.getValue0());
+            vm.setPreviousYear(jobs.getValue1());
+            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return vm;
+    }
 
     /**
      * {@inheritDoc }
@@ -320,6 +343,33 @@ public class JobRepo extends BaseRepo implements IJobRepo {
         }
 
         return retValue == 1;
+
+    }
+
+    private Pair<List<IJob>, List<IJob>> populateYearlyFinances(CachedRowSet rs) throws SQLException {
+        List<IJob> currentYear = new ArrayList<>();
+        List<IJob> previousYear = new ArrayList<>();
+        Pair<List<IJob>, List<IJob>> jobs = Pair.with(currentYear, previousYear);
+
+        IJob job = null;
+
+        while (rs.next()) {
+            LocalDateTime date = super.getLocalDate("start", rs);
+
+            job = JobFactory.createInstance();
+            job.setStart(date);
+            job.setTotalCost(super.getDouble("totalCost", rs));
+            job.setTotalRevenue(super.getDouble("totalRevenue", rs));
+
+            if (date.getYear() == LocalDateTime.now().getYear()) {
+                currentYear.add(job);
+            } else {
+                previousYear.add(job);
+            }
+
+        }
+
+        return jobs;
 
     }
 

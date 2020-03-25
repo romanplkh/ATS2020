@@ -12,6 +12,7 @@
 <html>
 
     <head>
+     
         <title>Employee Details</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
