@@ -19,6 +19,10 @@ import com.ats.atssystem.models.JobFactory;
 import com.ats.atssystem.models.JobViewModel;
 import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.models.TeamFactory;
+import com.ats.atssystem.repository.IJobRepo;
+import com.ats.atssystem.repository.JobRepo;
+import com.ats.atssystem.repository.JobRepoFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,6 +47,12 @@ public class JobController extends CommonController {
 
         String pathInfo = request.getPathInfo();
         IJobService service = JobServiceFactory.createInstance();
+        
+        
+        IJobRepo repos = JobRepoFactory.createInstance();
+        
+        repos.getFinancialYearlyStats();
+        
 
         //SHOW JOBS SCHEDULE
         if (pathInfo == null) {
@@ -56,6 +66,11 @@ public class JobController extends CommonController {
 
             List<ITeam> teams = service.getScheduledJobs(currentDate);
             request.setAttribute("teams", teams);
+            Gson gson = new Gson();
+
+            String teamsJSON = gson.toJson(teams);
+
+            request.setAttribute("GSON", teamsJSON);
 
             //Display date if not found for this date
             request.setAttribute("searchDate", currentDate);

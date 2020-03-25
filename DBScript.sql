@@ -1063,7 +1063,6 @@ DELIMITER ;
 
 
 -- GET TEAM DETAILS
-USE `atsnovember`;
 DROP procedure IF EXISTS `spGetTeamDetails`;
 
 DELIMITER $$
@@ -1081,6 +1080,25 @@ END$$
 
 DELIMITER ;
 
+
+
+-- FinancilaDate For Dashboard
+
+DROP procedure IF EXISTS `spGetYearlyFinancialStats`;
+
+DELIMITER $$
+USE `atsnovember`$$
+CREATE PROCEDURE `spGetYearlyFinancialStats` ()
+BEGIN
+SELECT  SUM(operatingCost) AS 'totalCost', 
+SUM(operatingRevenue) AS 'totalRevenue',
+jobs.start
+FROM jobs INNER JOIN jobstasks ON jobs.id = jobstasks.jobId
+GROUP BY MONTH(jobs.start), YEAR(jobs.start)
+ORDER BY jobs.start;
+END$$
+
+DELIMITER ;
 
 
 

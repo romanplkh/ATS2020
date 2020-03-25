@@ -50,11 +50,10 @@ public interface IJob extends IBase {
 
     public void setIsEmergency(boolean value);
 
-    
     public void setIsOnSite(boolean value);
-    
-    public  boolean getIsOnSite();
-    
+
+    public boolean getIsOnSite();
+
     public ITeam getTeam();
 
     public void setTeam(ITeam team);
@@ -64,7 +63,7 @@ public interface IJob extends IBase {
     public void calculateTasksCost();
 
     //----UNCOMMENT WHEN NEEDED
-//    public double calculateBillableCost();
+    public double calculateBillableCost(double value);
 
     public LocalTime getStartTime();
 
@@ -73,5 +72,13 @@ public interface IJob extends IBase {
     public LocalTime getEndTime();
 
     public void setEndTime(LocalTime endTime);
+
+    public double getTotalCost();
+
+    public void setTotalCost(double value);
+
+    public double getTotalRevenue();
+
+    public void setTotalRevenue(double value);
 
 }

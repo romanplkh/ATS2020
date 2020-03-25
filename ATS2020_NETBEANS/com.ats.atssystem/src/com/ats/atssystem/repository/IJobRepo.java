@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.repository;
 
+import com.ats.atssystem.models.DashboardVM;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.models.ITeam;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.List;
  * @author Olena Stepanova
  */
 /**
- * IJobeRepo class provides methods signatures to perform CRUD operations with employee object
+ * IJobeRepo class provides methods signatures to perform CRUD operations with
+ * employee object
  */
 public interface IJobRepo {
 
@@ -65,6 +67,7 @@ public interface IJobRepo {
      * @return boolean true if is on call, false otherwise
      */
     public boolean isTeamOnEmergencyCall(IJob job);
-    
+
+    public DashboardVM getFinancialYearlyStats();
 
 }
