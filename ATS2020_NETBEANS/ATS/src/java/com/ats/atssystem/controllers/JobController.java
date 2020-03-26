@@ -48,10 +48,7 @@ public class JobController extends CommonController {
         String pathInfo = request.getPathInfo();
         IJobService service = JobServiceFactory.createInstance();
         
-        
-        IJobRepo repos = JobRepoFactory.createInstance();
-        
-        repos.getFinancialYearlyStats();
+
         
 
         //SHOW JOBS SCHEDULE

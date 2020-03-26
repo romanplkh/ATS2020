@@ -14,7 +14,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file="WEB-INF/jspf/header.jspf" %>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+     
         <title>JSP Page</title>
     </head>
     <style>
