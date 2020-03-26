@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.DashboardVM;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
 import com.ats.atssystem.models.ITeam;
@@ -97,5 +98,12 @@ public interface IJobService {
      * @return boolean true if within hours, false otherwise
      */
     public boolean isJobWithinBusinessHours(IJob job);
+    
+    /**
+     * Gets the aggregated financial data and currently on call team
+     * for Dashboard
+     * @return DashboardVM object
+     */
+    public DashboardVM getFinancialStats();
 
 }

@@ -80,4 +80,10 @@ public interface ITeamRepo {
      * @return Object Team filled with data or null
      */
     ITeam getTeamDetails(int teamId);
+    
+    /**
+     * Returns currently on call team
+     * @return team object or null
+     */
+    ITeam getTeamOnCall();
 }
