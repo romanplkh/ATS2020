@@ -11,7 +11,7 @@
 <html>
 
     <head>
-        <title>Employee</title>
+        <title>Employees</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
 
@@ -66,8 +66,8 @@
                                             <tr>
                                                 <td>${employee.firstName}</td>
                                                 <td>${employee.lastName}</td>
-                                                <td><a href="employee/${employee.id}/update">Edit</a></td>
                                                 <td><a href="employee/${employee.id}/details">Details</a></td>
+                                                <td><a href="employee/${employee.id}/update">Edit</a></td>
                                                 <td><a href="employee/${employee.id}/skills">Manage Skills</a></td>
                                             </tr>
                                         </c:forEach>

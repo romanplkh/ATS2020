@@ -10,7 +10,7 @@
 <html>
 
     <head>
-        <title>Employee</title>
+        <title>Teams</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
 
@@ -44,7 +44,7 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th></th>
+                                            
                                             <th>1st Member</th>
                                             <th>2nd Member</th>
                                             <th></th>
@@ -54,12 +54,12 @@
                                     <tbody>
                                         <c:forEach items="${teams}" var="team">
                                             <tr>
-                                                <td>${team.name}</td>
-                                                <td>
-                                                    <c:if test="${team.isOnCall}">
-                                                        <span class="text-danger">On Call</span> 
+                                                <td>${team.name}  
+                                                <c:if test="${team.isOnCall}">
+                                                        <span class="badge badge-pill badge-danger ml-4">On Call</span> 
                                                     </c:if>
                                                 </td>
+                                                
                                                 <c:forEach items="${team.teamMembers}" var="member">
                                                     <td>
                                                         <a href="employee/${member.id}/details">${member.fullName}</a>  

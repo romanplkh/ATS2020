@@ -20,8 +20,8 @@
                         Employees
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employee/create">Create
-                            Employee</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employee/create">Add
+                            Employee Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/employees">List of Employees</a>
                     </div>
                 </li>
@@ -32,7 +32,7 @@
                         Teams
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Create Team</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Add New Team Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/teams">List of Teams</a>
                         
                     </div>
@@ -44,7 +44,7 @@
                         Tasks
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Create New Task</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Add New Task Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/tasks">List of Tasks</a>
                     </div>
                 </li>
@@ -55,7 +55,7 @@
                         Jobs
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/job/create">Create Job</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/job/create">Add New Job Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/jobs">Jobs Schedule</a>
                     </div>
                 </li>
