@@ -14,7 +14,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file="WEB-INF/jspf/header.jspf" %>
-     
+
         <title>Jobs Schedule</title>
     </head>
     <style>
@@ -85,7 +85,7 @@
                 </div>
 
                 <c:choose>
-                    <c:when test="${teams.size() > 0 && !teams.get(0).isOnCall}">
+                    <c:when test="${teams.size() > 0}">
                         <div>
                             <table >
                                 <c:forEach items="${teams}" var="team" varStatus="currTeam">
@@ -237,25 +237,21 @@
                                 <c:set var="count" value="0" scope="page" />
 
                                 <c:forEach items="${teams}" var="t">
-                                    <c:if test="${t.isOnCall}">
-                                        <c:set var="count" value="${count + 1}" scope="page"/>
-                                        <h3>Team ${t.name}</h3>
-                                        <ul class="list-group list-group-flush">
-                                            <c:if test="${t.jobs.size() == 0}">
-                                                <p class="text-muted">No emergency jobs scheduled</p>
-                                            </c:if>
-                                            <c:forEach items="${t.jobs}" var="job">
-                                                <c:set var="startJob" value="${ job.startTime}" />
-                                                <c:set var="endJob" value="${job.endTime}" />
+                                    <ul class="list-group list-group-flush">
+                                        <c:forEach items="${t.jobs}" var="job">
+                                            <c:set var="startJob" value="${ job.startTime}" />
+                                            <c:set var="endJob" value="${job.endTime}" />
 
+                                            <c:if test="${startJob.getHour() >= 17}">
                                                 <li class="list-group-item  justify-content-between">
                                                     <span class="badge badge-primary badge-pill mr-5">${startJob} - ${endJob} </span>
                                                     <a href="job/${job.id}/details" class="pl-5">Details</a>
                                                 </li>
-                                            </c:forEach>
-                                        </ul>
-                                    </c:if>
+                                                <c:set var="count" value="${count + 1}" scope="page"/>
+                                            </c:if>
 
+                                        </c:forEach>
+                                    </ul>
                                 </c:forEach>
                                 <c:if test="${count == 0}">
 
@@ -283,14 +279,14 @@
         <%@include file="WEB-INF/jspf/footer.jspf" %>
 
         <script>
-            
-            
-            
-            
+
+
+
+
             const data = ${GSON}
-            
+
             console.log(data)
-            
+
             var ctx = document.getElementById('myChart').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',

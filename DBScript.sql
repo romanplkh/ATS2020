@@ -776,8 +776,7 @@ IN date_param VARCHAR(255)
 BEGIN
 	SELECT jobs.id, CONCAT(date_format(start, '%H:%i:%s')) as start_time, 
 		CONCAT(date_format(end, '%H:%i:%s')) as end_time,  
-		CONCAT(teams.name) as team,
-        teams.isOnCall
+		CONCAT(teams.name) as team
 	FROM jobs
 	INNER JOIN teams
 	ON jobs.teamId = teams.id
