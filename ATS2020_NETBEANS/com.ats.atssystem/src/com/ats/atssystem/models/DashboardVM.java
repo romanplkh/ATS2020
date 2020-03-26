@@ -27,6 +27,7 @@ public class DashboardVM implements Serializable {
     public DashboardVM() {
         currentYear = new ArrayList<>();
         previousYear = new ArrayList<>();
+        teamOnCall = TeamFactory.createInstance();
     }
 
     public List<IJob> getCurrentYear() {
