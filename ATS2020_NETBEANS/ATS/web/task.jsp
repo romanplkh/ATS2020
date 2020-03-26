@@ -14,7 +14,7 @@
 <html>
 
     <head>
-        <title>Task</title>
+        <title>Task Record</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
 
