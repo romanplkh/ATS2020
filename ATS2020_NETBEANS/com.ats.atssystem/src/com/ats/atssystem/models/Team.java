@@ -138,7 +138,19 @@ public class Team extends Base implements Serializable, ITeam {
     public void setJobs(List<IJob> jobsList) {
         this.jobs = jobsList;
     }
-    
-    
+
+    @Override
+    public boolean isJobsAfterHours() {
+        boolean isAfterHours = false;
+
+        for (IJob j : this.getJobs()) {
+            if (j.getStartTime().getHour() >= 17) {
+                isAfterHours = true;
+            }
+        }
+
+        return isAfterHours;
+
+    }
 
 }
