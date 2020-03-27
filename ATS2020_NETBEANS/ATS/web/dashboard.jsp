@@ -20,46 +20,51 @@
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
         <main class="py-5">
 
+            <h2 class="display-4 text-center my-5">Welcome to ATS!</h2>
+
             <div class="container">
 
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="card border-primary mb-3 " style="max-width: 20rem; height: 16rem">
+                        <div class="card border-primary mb-3 " style="max-width: 20rem; min-height: 16rem">
                             <div class="card-header text-center font-weight-bold">Current Jobs</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
-                                <h2 class="card-title font-weight-bold">${cardData.jobsCountToday}</h2>
+                                <h1 class=" display-4 card-title text-success">${cardData.jobsCountToday}</h2>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 16rem">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
                             <div class="card-header text-center font-weight-bold">Team On Call</div>
                             <div class="card-body">
                                 <h2 class="card-title text-center">${cardData.teamOnCall.name}</h2>
                                 <ul class="list-group list-group-flush">
                                     <c:forEach items="${cardData.teamOnCall.teamMembers}" var="member">
-                                        <li class="list-group-item text-muted">${member.fullName}</li>
+                                        <li class="list-group-item text-muted text-center">${member.fullName}</li>
                                         </c:forEach>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 16rem">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
                             <div class="card-header text-center font-weight-bold">Monthly Finances</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <ul class="list-group list-group-flush"> 
-                                        <li class="list-group-item text-muted">Revenue: <fmt:formatNumber value="${cardData.monthlyRevenue}" type="currency" currencySymbol="$"/> </li>
-                                        <li class="list-group-item text-muted">Cost: <fmt:formatNumber value="${cardData.monthlyCost}" type="currency" currencySymbol="$"/> </li>
+                                    <span class="text-success display-4 font-weight-bold"><fmt:formatNumber value="${cardData.monthlyRevenue}" type="currency" currencySymbol="$"/></span> Revenue: 
+                                    <span class="text-success display-4 font-weight-bold"><fmt:formatNumber value="${cardData.monthlyCost}" type="currency" currencySymbol="$"/> </span>Cost: 
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 10rem">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
                             <div class="card-header text-center font-weight-bold">Yearly Finances</div>
-                            <div class="card-body">
-                                <h2 class="card-title text-center">${cardData.jobsCountToday}</h2>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <ul class="list-group list-group-flush"> 
+                                    <li class="list-group-item  text-center font-weight-bold">Revenue:  <span class="text-success font-weight-bold"><fmt:formatNumber value="${cardData.yearlyRevenue}" type="currency" currencySymbol="$"/></span>  </li>
+                                    <li class="list-group-item  text-center font-weight-bold">Cost:  <span class="text-success font-weight-bold"><fmt:formatNumber value="${cardData.yearlyCost}" type="currency" currencySymbol="$"/></span>  </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -71,7 +76,7 @@
                     <div class="row">
                         <div class="col">
 
-                            <h2 class="display-4">Welcome to ATS!</h2>
+
 
                             <div id="chartContainer" class="mt-5" style="height: 370px; width: 100%;"></div>
                         </div>
