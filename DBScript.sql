@@ -1149,7 +1149,9 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE month(jobs.start) = month(current_date());
+WHERE month(jobs.start) = month(current_date())
+AND day(jobs.start)  <= day(current_date())
+;
 END$$
 
 DELIMITER ;
@@ -1165,7 +1167,8 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE month(jobs.start) = month(current_date());
+WHERE month(jobs.start) = month(current_date())
+AND day(jobs.start)  <= day(current_date());
 END$$
 
 DELIMITER ;
@@ -1181,7 +1184,10 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE year(jobs.start) = year(current_date());
+WHERE year(jobs.start) = year(current_date())
+AND month(jobs.start) <= month(current_date())
+AND day(jobs.start)  <= day(current_date());
+
 END$$
 
 DELIMITER ;
@@ -1197,7 +1203,9 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE year(jobs.start) = year(current_date());
+WHERE year(jobs.start) = year(current_date())
+AND month(jobs.start) <= month(current_date())
+AND day(jobs.start)  <= day(current_date());
 END$$
 
 DELIMITER ;
