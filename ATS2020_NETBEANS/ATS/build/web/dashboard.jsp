@@ -25,7 +25,7 @@
             <div class="container-fluid">
 
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-lg-3">
                         <div class="card border-primary mb-3 " style="max-width: 20rem; height: 17rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Jobs Today</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-lg-3">
                         <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
                             <div class="card-header text-center" style="font-size: 1.2em">On Call Team</div>
                             <div class="card-body">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-lg-3">
                         <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Monthly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 col-lg-3">
                         <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Yearly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
