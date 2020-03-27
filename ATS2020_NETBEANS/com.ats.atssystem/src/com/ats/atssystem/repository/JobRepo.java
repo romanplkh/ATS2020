@@ -49,7 +49,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     private final String SP_GET_MONTHLY_JOB_REVENUE = "CALL spGetMonthlyJobRevenue()";
     private final String SP_GET_YEARLY_JOB_COST = "CALL spGetYearlyJobCost()";
     private final String SP_GET_YEARLY_JOB_REVENUE = "CALL spGetYearlyJobRevenue()";
-    private final String SP_GET_MONTHLY_NUM_OF_JOBS = "CALL spGetMonthlyNumOfJobs()";
+    private final String SP_GET_DAILY_NUM_OF_JOBS = "CALL spGetDailyNumOfJobs()";
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
@@ -86,8 +86,8 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             rs.first();
             vm.setYearlyRevenue(rs.getDouble("yearlyRevenue"));
 
-            //set monthly jobs number
-            rs = this.dataAccess.executeFill(SP_GET_MONTHLY_NUM_OF_JOBS, parms);
+            //set daily jobs number
+            rs = this.dataAccess.executeFill(SP_GET_DAILY_NUM_OF_JOBS, parms);
             rs.first();
             vm.setJobsCountToday(rs.getInt("jobCount"));
             //set current team on call --->> in service layer
