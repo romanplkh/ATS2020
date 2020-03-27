@@ -44,12 +44,14 @@ public interface ITeam extends IBase {
     Date getDeletedAt();
 
     void setDeletedAt(Date value);
-    
+
     List<IEmployee> getTeamMembers();
-    
+
     void setTeamMembers(List<IEmployee> employees);
 
     List<IJob> getJobs();
-    
+
     void setJobs(List<IJob> jobsList);
+
+    public boolean isJobsAfterHours();
 }
