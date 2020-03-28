@@ -1163,7 +1163,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE spGetMonthlyJobRevenue()
 BEGIN
-	SELECT SUM(operatingRevenue) + (SUM(operatingRevenue) * 0.15) AS 'monthlyRevenue'
+	SELECT SUM(operatingRevenue) AS 'monthlyRevenue'
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
@@ -1199,7 +1199,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE spGetYearlyJobRevenue()
 BEGIN
-	SELECT SUM(operatingRevenue) + (SUM(operatingRevenue) * 0.15) AS 'yearlyRevenue'
+	SELECT SUM(operatingRevenue) AS 'yearlyRevenue'
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
