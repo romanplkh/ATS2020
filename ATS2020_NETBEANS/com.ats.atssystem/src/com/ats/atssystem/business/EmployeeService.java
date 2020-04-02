@@ -17,9 +17,9 @@ public class EmployeeService implements IEmployeeService {
 
     //Repo depenancy
     private IEmployeeRepo repo;
-
+    
     EmployeeService() {
-
+        
     }
 
     /**
@@ -36,23 +36,31 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public IEmployee createEmployee(IEmployee employee) {
         repo = EmployeeRepoFactory.createInstance();
-
+        
         if (isValid(employee)) {
             employee.setId(repo.addEmployee(employee));
         } else {
             employee.addError(ErrorFactory.createInstance(11, "Employee was not valid to create"));
         }
-
+        
         return employee;
-
+        
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int updateEmployee(IEmployee employee) {
-        return 0;
+    public IEmployee updateEmployee(IEmployee employee) {
+        repo = EmployeeRepoFactory.createInstance();
+        int rowsAffected = repo.updateEmployee(employee);
+        
+        if (rowsAffected == 0) {
+            employee.addError(ErrorFactory.createInstance(1, "Something went wrong. Could not update employee"));
+        }
+        
+        return employee;
+        
     }
 
     /**
@@ -60,17 +68,17 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public IEmployee deleteEmployee(IEmployee emp) {
-
+        
         repo = EmployeeRepoFactory.createInstance();
-
+        
         if (repo.deleteEmployee(emp.getId()) != 0) {
-
+            
             emp.addError(ErrorFactory.createInstance(1, "Could not delete employee"));
-
+            
         }
-
+        
         return emp;
-
+        
     }
 
     /**
@@ -80,7 +88,7 @@ public class EmployeeService implements IEmployeeService {
     public int deleteEmployeeSkill(int id, String skillIds) {
         repo = EmployeeRepoFactory.createInstance();
         return repo.deleteEmployeeSkill(id, skillIds);
-
+        
     }
 
     /**
@@ -90,7 +98,7 @@ public class EmployeeService implements IEmployeeService {
     public int addEmployeeSkill(int id, String skillIds) {
         repo = EmployeeRepoFactory.createInstance();
         return repo.addSkillsToEmployee(id, skillIds);
-
+        
     }
 
     /**
@@ -100,7 +108,7 @@ public class EmployeeService implements IEmployeeService {
     public int updateEmployeeSkills(int id, String skillsDelete, String skillsAdd) {
         repo = EmployeeRepoFactory.createInstance();
         return repo.updateEmployeeSkills(id, skillsDelete, skillsAdd);
-
+        
     }
 
     /**
@@ -109,15 +117,15 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public IEmployee getEmployee(int id) {
         repo = EmployeeRepoFactory.createInstance();
-
+        
         IEmployee employee = repo.retrieveEmployee(id);
-
+        
         if (employee != null) {
-
+            
         }
-
+        
         return employee;
-
+        
     }
 
     /**
@@ -126,13 +134,13 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public List<IEmployee> getEmployees() {
         repo = EmployeeRepoFactory.createInstance();
-
+        
         List<IEmployee> employees = EmployeeFactory.createListInstance();
-
+        
         employees = repo.retrieveEmployees();
-
+        
         return employees;
-
+        
     }
 
     /**
@@ -141,13 +149,13 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public IEmployeeDTO getEmployeeDetails(int id) {
         repo = EmployeeRepoFactory.createInstance();
-
+        
         IEmployeeDTO employeeDetails = EmployeeDTOFactory.createInstance();
-
+        
         employeeDetails = repo.retrieveEmployeeDetails(id);
-
+        
         return employeeDetails;
-
+        
     }
 
     /**
@@ -155,14 +163,14 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public List<IEmployee> getEmployees(String searchCriteria) {
-
+        
         repo = EmployeeRepoFactory.createInstance();
-
+        
         List<IEmployee> employees = EmployeeFactory.createListInstance();
-
+        
         employees = repo.retrieveEmployees(searchCriteria);
-
+        
         return employees;
-
+        
     }
 }

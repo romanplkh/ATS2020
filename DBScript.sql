@@ -220,23 +220,23 @@ END //
 DELIMITER ;
 
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Design', '45', 'Design network infrastructure', '2020-03-01');
+VALUES ('Network Design', '45', 'Design network infrastructure', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Router Configuration', '60', 'Configure routers', '2020-03-01');
+VALUES ('Router Configuration', '60', 'Configure routers', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Network Security', '240', 'Network Security', now());
+VALUES ('Network Security', '240', 'Network Security', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`)
-VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', now());
+VALUES ('Mobile hardware build and repair', '120', 'Mobile hardware build and repair', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
-VALUES ('Rack mount server install', '30', 'Rack mount server install', '2020-03-22');
+VALUES ('Rack mount server install', '30', 'Rack mount server install', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
-VALUES ('Install Red Hat Linux', '120', 'Install Red Hat Linux', '2020-03-22');
+VALUES ('Install Red Hat Linux', '120', 'Install Red Hat Linux', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
-VALUES ('Install Cat5e cabling', '60', 'Install Cat5e cabling', '2020-03-22');
+VALUES ('Install Cat5e cabling', '60', 'Install Cat5e cabling', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
-VALUES ('Switch Installation', '60', 'Switch Installation', '2020-03-22');
+VALUES ('Switch Installation', '60', 'Switch Installation', '2019-12-01');
 INSERT INTO `atsnovember`.`tasks` (`name`, `duration`, `description`, `createdAt`) 
-VALUES ('Install Cisco Switch', '60', 'Install Cisco Switch', '2020-03-22');
+VALUES ('Install Cisco Switch', '60', 'Install Cisco Switch', '2019-12-01');
 
 
 -- CREATE TEAM ------
@@ -516,7 +516,7 @@ CREATE PROCEDURE spGetJobDetails(
 BEGIN
 
 	SELECT jobs.id, jobs.description, clientName, 
-		   start, end, 
+		   start, end, concat(jobstasks.operatingRevenue) as totalRevenue,  
            CONCAT(teams.Name) AS team, 
            CONCAT(tasks.name) AS task
 	FROM jobs
@@ -524,12 +524,14 @@ BEGIN
     ON jobs.teamId = teams.id
     INNER JOIN jobstasks
     ON jobs.id = jobstasks.jobId
-    INNER JOIN tasks
+    LEFT JOIN tasks
     ON jobstasks.taskId = tasks.id
     WHERE jobs.id = jobId_param;
 END //
 
 DELIMITER ;
+
+
 
 -- ASSIGN TASKS TO EMPLOYEE --------
 DELIMITER //
@@ -686,9 +688,9 @@ DELIMITER ;
 
 
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('John', 'Doe', '123-456-321','34.00','2020-02-01 21:57:37');
+VALUES ('John', 'Doe', '123-456-321','34.00','2019-12-01 21:57:37');
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
-VALUES ('Dave', 'Davidson', '743-832-123','42.00','2020-01-04 15:16:46');
+VALUES ('Dave', 'Davidson', '743-832-123','42.00','2019-12-01 15:16:46');
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Mike', 'Tomson', '444-555-333','44.00', now());
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
@@ -698,11 +700,11 @@ VALUES ('Amanda', 'Sallivan', '508-889-343','85.00', now());
 INSERT INTO employees (firstName, lastName, sin, hourlyRate, createdAt)
 VALUES ('Phoebe', 'Smith', '332-453-345','45.00', now());
 INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
-VALUES ('Alexa', 'Perry', '345-234-989', '30', b'0', '2020-03-22');
+VALUES ('Alexa', 'Perry', '345-234-989', '30', b'0', '2019-12-01');
 INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
-VALUES ('Gordon', 'Short', '989-345-344', '45', b'0', '2020-03-22');
+VALUES ('Gordon', 'Short', '989-345-344', '45', b'0', '2019-12-01');
 INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
-VALUES ('Anna', 'Lee', '230-900-898', '67.50', b'0', '2020-03-22');
+VALUES ('Anna', 'Lee', '230-900-898', '67.50', b'0', '2019-12-01');
 INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
 VALUES ('Leonard', 'Carr', '443-098-332', '50.50', b'0', '2020-03-22');
 INSERT INTO `atsnovember`.`employees` (`firstName`, `lastName`, `sin`, `hourlyRate`, `isDeleted`, `createdAt`) 
@@ -737,32 +739,67 @@ INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('2', 
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '3');
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('4', '2');
 INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('3', '4');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('5', '4');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('5', '5');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('6', '1');
+INSERT INTO `atsnovember`.`employeetasks` (`employeeId`, `taskId`) VALUES ('6', '6');
 
 
 INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`) 
-VALUES ('November', b'0', b'0', '2020-03-03');
+VALUES ('November', b'0', b'0', '2019-12-01');
 INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`, `updatedAt`) 
-VALUES ('December', b'0', b'0', '2020-03-01', '2020-03-02');
+VALUES ('December', b'0', b'0', '2019-12-01', '2020-12-02');
+INSERT INTO `atsnovember`.`teams` (`Name`, `isOnCall`, `isDeleted`, `createdAt`, `updatedAt`) 
+VALUES ('Bravo', b'1', b'0', '2020-03-01', '2020-03-24');
 
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('1', '1');
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('2', '1');
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('3', '2');
 INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('4', '2');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('5', '3');
+INSERT INTO `atsnovember`.`teammembers` (`EmployeeId`, `TeamId`) VALUES ('6', '3');
 
 INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
-VALUES ('Configure Router', 'Advatek Systems', '2020-03-16 10:00', '2020-03-16 11:00', '2');
+VALUES ('Configure routers', 'Advatek Systems', '2019-12-16 10:00', '2019-12-16 11:00', '2');
 INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
-VALUES ('Design Network', 'Dovico', '2020-03-16 10:00', '2020-03-16 10:45', '1');
-INSERT INTO `atsnovember`.`jobs` (`id`, `description`, `clientName`, `start`, `end`, `teamId`) 
-VALUES ('3', 'Mobile hardware repair', 'Samsung Inc', '2020-03-16 12:00', '2020-03-16 14:00:00', '1');
+VALUES ('Design network infrastructure', 'Dovico', '2019-12-16 10:00', '2019-12-16 10:45', '1');
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Re-configure routers', 'Advatek Systems', '2020-02-10 12:00', '2020-02-10 13:00', '2');
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Design network infrastructure', 'HR Inc', '2020-02-12 10:00', '2020-02-12 10:45', '1');
+
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Mobile hardware repair', 'Samsung Inc', '2020-03-16 12:00', '2020-03-16 14:00:00', '1');
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Configure Linux RedHat and design network', 'Tech Inc', '2020-03-10 10:00', '2020-03-10 12:45', '3');
+
+INSERT INTO `atsnovember`.`jobs` (`description`, `clientName`, `start`, `end`, `teamId`) 
+VALUES ('Design network', 'Tech Inc', '2020-03-27 20:00', '2020-03-27 20:45', '3');
 
 
 INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
 VALUES ('1', '2', '31.50', '94.50');
 INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
 VALUES ('2', '1', '60', '180');
+
 INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
-VALUES ('4', '3', '78.00', '234.00');
+VALUES ('1', '3', '31.50', '94.50');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('2', '4', '60', '180');
+
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('4', '5', '78.00', '234.00');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('6', '6', '300.50', '901.50');
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('1', '6', '50', '150');
+
+INSERT INTO `atsnovember`.`jobstasks` (`taskId`, `jobId`, `operatingCost`, `operatingRevenue`) 
+VALUES ('1', '7', '60', '240');
+
 
 
 DELIMITER //
@@ -889,9 +926,326 @@ END$$
 
 DELIMITER ;
 
+-- UPDATE TASK
+DELIMITER //
+DROP procedure IF EXISTS spUpdateTask;
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spUpdateTask(
+	IN taskId_param INT(11),
+	IN name_param VARCHAR(255),
+    IN duration_param INT(11),
+    IN description_param VARCHAR(255),
+    IN updated_param DATETIME,
+    OUT rowAff INT
+    )
+BEGIN
+	UPDATE tasks 
+    SET name = name_param, duration = duration_param,
+		description = description_param,
+        updatedAt = updated_param
+    WHERE id = taskId_param;
+    
+    SET rowAff = row_count();
+
+END; //
+
+DELIMITER ;
+
+
+-- DELETE TEAM
+DELIMITER //
+DROP procedure IF EXISTS spDeleteTeam;
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spDeleteTeam (
+IN teamId_param INT(11), 
+OUT rowAff INT(11)
+)
+BEGIN
+	DECLARE count INT;
+    
+    SET count = (SELECT COUNT(*) FROM jobs
+				 WHERE teamId = teamId_param);
+    
+	START TRANSACTION;
+    
+		IF count = 0 THEN
+			DELETE FROM teammembers
+			WHERE TeamId = teamId_param;
+        
+			DELETE FROM teams
+			WHERE id = teamId_param;
+            
+            SET rowAff = row_count();
+            
+        ELSEIF count > 0 THEN
+			UPDATE teams
+            SET isDeleted = b'1',
+            deletedAt = now()
+            WHERE id = teamId_param;
+            
+            SET rowAff = row_count();
+        END IF;
+	COMMIT;
+    
+END; //
+DELIMITER ;
+
+
+-- UPDATE EMPLOYEE
+DELIMITER //
+DROP procedure IF EXISTS `spUpdateEmployeeDetails`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spUpdateEmployeeDetails` (IN fName_param VARCHAR(255), 
+IN lName_param VARCHAR(255), IN sin_param VARCHAR(11), 
+IN hRate_param DOUBLE, 
+IN empId_param INT(11), OUT rows_affected_param INT)
+BEGIN
+	UPDATE employees 
+    SET firstName = fName_param, 
+		lastName = lName_param, 
+		sin = sin_param, 
+		hourlyRate = hRate_param, 
+		updatedAt = now() 
+        WHERE employees.id = empId_param;
+        SET rows_affected_param = (SELECT row_count());
+        
+END;$$
+
+DELIMITER ;
 
 
 
+-- GET ALL TEAMS TO DISPLAY TABLE
+DELIMITER //
+DROP procedure IF EXISTS `spGetAllTeams`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spGetAllTeams` ()
+BEGIN
+SELECT teams.name, 
+CONCAT(teams.id) AS teamId , 
+EmployeeId, firstName, lastName, isOnCall FROM teams 
+INNER JOIN teammembers ON teams.id = teammembers.TeamId 
+INNER JOIN employees ON employees.id = teammembers.EmployeeId
+ORDER BY teams.name ASC;
+END$$
+
+DELIMITER ;
+
+
+
+-- PLACE TEAM ON CALL
+DELIMITER //
+DROP procedure IF EXISTS spPlaceTeamOnCall;
+DELIMITER ;
+-- returns codes
+-- 1 - team onCall was switched
+-- 0 - requested team is deleted
+
+DELIMITER //
+CREATE PROCEDURE spPlaceTeamOnCall (
+IN teamId_param INT(11), 
+OUT code INT(11)
+)
+BEGIN
+	DECLARE currentOnCallTeamId INT;
+    DECLARE teamActive INT;
+    
+    
+	START TRANSACTION;
+    
+    SET currentOnCallTeamId = (SELECT id FROM teams
+				 WHERE isOnCall = b'1');
+                 
+	-- 0 if team active
+    SET teamActive = (SELECT COUNT(*) FROM teams
+				WHERE (isDeleted = b'1' AND id = teamId_param));          
+                
+    
+		IF (currentOnCallTeamId IS NOT NULL AND teamActive = 0) THEN
+			UPDATE teams
+            SET isOnCall = b'0',
+            updatedAt = now()
+            WHERE id = currentOnCallTeamId;
+            
+            UPDATE teams
+			SET isOnCall = b'1',
+            updatedAt = now()
+            WHERE id = teamId_param; 
+            
+            SET code = 1;
+            
+        ELSEIF (currentOnCallTeamId IS NULL AND teamActive = 0) THEN
+			UPDATE teams
+			SET isOnCall = b'1',
+            updatedAt = now()
+            WHERE id = teamId_param;
+            
+            SET code = 1;
+            
+        ELSEIF teamActive = 1 THEN
+			SET code = 0;
+        END IF;
+        
+	COMMIT;
+    
+END; //
+DELIMITER ;
+
+
+
+-- GET TEAM DETAILS
+DELIMITER $$
+DROP procedure IF EXISTS `spGetTeamDetails`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spGetTeamDetails`(IN teamId_param INT)
+BEGIN
+
+SELECT teams.*, employees.firstName, employees.lastName, CONCAT(employees.id) AS employeeId 
+FROM teams
+INNER JOIN teammembers ON teammembers.TeamId = teams.id
+INNER JOIN employees ON teammembers.EmployeeId = employees.id
+WHERE TeamId = teamId_param;
+
+END$$
+
+DELIMITER ;
+
+
+
+-- FinancilaDate For Dashboard
+DELIMITER $$
+DROP procedure IF EXISTS `spGetYearlyFinancialStats`;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `spGetYearlyFinancialStats` ()
+BEGIN
+SELECT  SUM(operatingCost) AS 'totalCost', 
+SUM(operatingRevenue) AS 'totalRevenue',
+jobs.start
+FROM jobs INNER JOIN jobstasks ON jobs.id = jobstasks.jobId
+WHERE jobs.start <= now()
+GROUP BY MONTH(jobs.start), YEAR(jobs.start)
+ORDER BY jobs.start;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetMonthlyJobCost;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetMonthlyJobCost()
+BEGIN
+	SELECT SUM(operatingCost) AS 'monthlyCost'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE month(jobs.start) = month(current_date())
+AND day(jobs.start)  <= day(current_date())
+;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetMonthlyJobRevenue;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetMonthlyJobRevenue()
+BEGIN
+	SELECT SUM(operatingRevenue) AS 'monthlyRevenue'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE month(jobs.start) = month(current_date())
+AND day(jobs.start)  <= day(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetYearlyJobCost;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetYearlyJobCost()
+BEGIN
+	SELECT SUM(operatingCost) AS 'yearlyCost'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE year(jobs.start) = year(now())
+AND jobs.start <= now();
+
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetYearlyJobRevenue;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetYearlyJobRevenue()
+BEGIN
+	SELECT SUM(operatingRevenue) AS 'yearlyRevenue'
+FROM jobs 
+INNER JOIN jobstasks 
+ON jobs.id = jobstasks.jobId
+WHERE year(jobs.start) = year(now())
+AND jobs.start <= now();
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+DROP procedure IF EXISTS spGetDailyNumOfJobs;
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spGetDailyNumOfJobs()
+BEGIN
+	SELECT COUNT(*) AS 'jobCount'
+FROM jobs 
+WHERE month(jobs.start) = month(current_date()) 
+AND day(jobs.start) = day(current_date());
+END$$
+
+DELIMITER ;
+
+DELIMITER //
+DROP procedure IF EXISTS spGetTeamOnCall;
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE spGetTeamOnCall()
+BEGIN
+SELECT teams.*, 
+	employees.firstName, 
+	employees.lastName, 
+	CONCAT(employees.id) AS employeeId 
+FROM teams
+INNER JOIN teammembers
+ON teammembers.TeamId = teams.id
+INNER JOIN employees 
+ON teammembers.EmployeeId = employees.id
+WHERE teams.isOnCall = b'1';
+END; //
+
+DELIMITER ;
 
 -- 2020-03-16 10:00:00	2020-03-16 11:00:00
 -- 2020-03-16 10:00:00	2020-03-16 10:45:00

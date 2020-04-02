@@ -22,9 +22,9 @@ public interface ITeamService {
      */
     ITeam createTeam(ITeam team);
 
-    
     /**
      * Validates presence of error messages in a Team object
+     *
      * @param team team to check errors
      * @return true if no errors, otherwise false
      */
@@ -48,10 +48,40 @@ public interface ITeamService {
     ITeam getTeamDetails(int id);
 
     /**
+     * Gets all teams with members
+     *
+     * @return List<ITeam> populated list of teams
+     */
+    List<ITeam> getAllTeamsWithMembers();
+
+    /**
      * Gets list of teams for drop down menus
      *
      * @return List of object Team
      */
     public List<ITeam> getTeamsLookup();
 
+    /**
+     * Deletes a team
+     *
+     * @param team team to delete
+     * @return deleted team
+     */
+    public ITeam deleteTeam(ITeam team);
+
+    public ITeam placeTeamOnCall(ITeam team);
+
+    /**
+     * Gets team details with team members
+     *
+     * @param teamId id of team to get details about
+     * @return Object Team filled with data or null
+     */
+    public ITeam getTeamDetailsWithMembers(int teamId);
+    
+    /**
+     * Returns currently onCall team
+     * @return team object or null
+     */
+    public ITeam getTeamOnCall();
 }

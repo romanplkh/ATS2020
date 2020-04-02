@@ -37,6 +37,27 @@ public class Job extends Base implements Serializable, IJob {
     private int totalJobDuration;
     private List<Triplet<Integer, Double, Double>> tasksCost;
 
+    private double totalCost;
+    private double totalRevenue; //BILLABLE
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+
+    public double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    
+    //BILLABLE
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = calculateBillableCost(totalRevenue);
+    }
+
     public Job() {
     }
 
@@ -112,6 +133,11 @@ public class Job extends Base implements Serializable, IJob {
             if (emp2.getSkills().contains(t)) {
                 jobTasksEmployeeSet.add(Pair.with(emp2, t));
             }
+
+            if (this.getIsEmergency() && !emp2.getSkills().contains(t) && !emp1.getSkills().contains(t)) {
+                jobTasksEmployeeSet.add(Pair.with(emp1, t));
+            }
+
         }
 
         //FILTER TASKS BY EMPLOYEE
@@ -181,10 +207,11 @@ public class Job extends Base implements Serializable, IJob {
     }
 
     //------FOR TOTAL BILLABLE JOB COST FUNC------
-//    @Override
-//    public double calculateBillableCost() {
-//        return this.revenue + (this.revenue * 0.15);
-//    }
+    @Override
+    public double calculateBillableCost(double value) {
+        return value + (value * 0.15);
+    }
+
     @Override
     public ITeam getTeam() {
         return team;

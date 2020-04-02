@@ -9,51 +9,53 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
+                <li class="nav-item" > 
                     <a class="nav-link" href="${pageContext.request.contextPath}/dashboard">Dashboard
                         <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#"
+                <li class="nav-item active dropdown">
+                    <a class="nav-link dropdown-toggle" href="emp"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Employees
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employee/create">Create
-                            Employee</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/employee/create">Add
+                            Employee Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/employees">List of Employees</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#"
+                    <a class="nav-link dropdown-toggle" href="team"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Teams
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Create Team</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/team/create">Add New Team Record</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/teams">List of Teams</a>
+
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#"
+                    <a class="nav-link dropdown-toggle" href="task"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Tasks
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Create New Task</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/task/create">Add New Task Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/tasks">List of Tasks</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#"
+                    <a class="nav-link dropdown-toggle" href="job"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Jobs
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/job/create">Create Job</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/job/create">Add New Job Record</a>
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/jobs">Jobs Schedule</a>
                     </div>
                 </li>
@@ -62,3 +64,25 @@
         </div>
     </div>
 </nav>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const navs = document.querySelectorAll(".nav-link");
+
+        Array.from(navs).forEach(el => {
+            const link = el.getAttribute("href");        
+
+            if (window.location.toString().includes(link)) {
+                console.log(el.parentElement.classList)
+                el.parentElement.classList.add("active");
+            }
+
+            if (!window.location.toString().includes(link)) {
+                el.parentElement.classList.remove("active")
+            }
+
+        })
+
+    })
+</script>

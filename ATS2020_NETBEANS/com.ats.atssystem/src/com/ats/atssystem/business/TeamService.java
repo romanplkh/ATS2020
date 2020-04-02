@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TeamFactory;
 import com.ats.atssystem.repository.ITeamRepo;
@@ -68,6 +69,54 @@ public class TeamService implements ITeamService {
     public List<ITeam> getTeamsLookup() {
         repo = TeamRepoFactory.createInstance();
         return repo.getTeamsLookup();
+    }
+
+    @Override
+    public List<ITeam> getAllTeamsWithMembers() {
+        repo = TeamRepoFactory.createInstance();
+        return repo.getAllTeamsWithMembers();
+
+    }
+
+    public ITeam deleteTeam(ITeam team) {
+        repo = TeamRepoFactory.createInstance();
+        int affRow = repo.deleteTeam(team.getId());
+
+        if (affRow != 1) {
+            team.addError(ErrorFactory
+                    .createInstance(1, "Something went wrong during team delete"));
+        }
+
+        return team;
+    }
+
+    @Override
+    public ITeam placeTeamOnCall(ITeam team) {
+        repo = TeamRepoFactory.createInstance();
+        int code = repo.placeTeamOnCall(team.getId());
+
+        if (code == 0) {
+            team.addError(ErrorFactory
+                    .createInstance(1, "Only active team can be placed on call"));
+        }
+
+        return team;
+
+    }
+
+    @Override
+    public ITeam getTeamDetailsWithMembers(int teamId) {
+
+        repo = TeamRepoFactory.createInstance();
+        ITeam team = repo.getTeamDetails(teamId);
+
+        return team;
+
+    }
+
+    @Override
+    public ITeam getTeamOnCall() {
+       return TeamRepoFactory.createInstance().getTeamOnCall();
     }
 
 }

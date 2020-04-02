@@ -5,6 +5,7 @@
  */
 package com.ats.atssystem.business;
 
+import com.ats.atssystem.models.DashboardVM;
 import com.ats.atssystem.models.ErrorFactory;
 import com.ats.atssystem.models.IEmployee;
 import com.ats.atssystem.models.IJob;
@@ -13,6 +14,7 @@ import com.ats.atssystem.models.ITeam;
 import com.ats.atssystem.models.TaskFactory;
 import com.ats.atssystem.repository.IJobRepo;
 import com.ats.atssystem.repository.JobRepoFactory;
+import com.ats.atssystem.repository.TeamRepoFactory;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -55,7 +57,7 @@ public class JobService implements IJobService {
                         .createInstance(2, "Selected team is already scheduled for a job during this hours. "
                                 + "Please select diferent date or time"));
             }
-            if(job.getStart().isBefore(LocalDateTime.now())){
+            if (job.getStart().isBefore(LocalDateTime.now())) {
                 job.addError(ErrorFactory
                         .createInstance(2, "Jobs cannot be scheduled in the past"));
             }
@@ -65,6 +67,11 @@ public class JobService implements IJobService {
             if (!job.getIsEmergency() && !isJobWithinBusinessHours(job)) {
                 job.addError(ErrorFactory
                         .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
+            }
+
+            if (isTeamOnEmergencyCall(job) && !isJobWithinBusinessHours(job)) {
+                job.addError(ErrorFactory
+                        .createInstance(2, "OnCall team can be booked only off-hours"));
             }
 
             // 3. I can book onCall Team for Emergency calls
@@ -103,33 +110,6 @@ public class JobService implements IJobService {
     public List<ITeam> getScheduledJobs(String date) {
         return repo.getScheduledJobs(date);
     }
-
-    //TO TELL YOU
-    /*
-    @Override
-    public void validateEmergencyJobTime(IJob job) {
-        // emergency calls are only off-hours - 
-        //if emergency checked time should be after 5 pm or before 8am
-
-        LocalDateTime bookingDate = job.getStart();
-
-        LocalTime bookingTime = bookingDate.toLocalTime();
-
-        //YOU COULD DO IT EASIER ==>
-//        if (!job.getIsEmergency() && bookingTime.isAfter(LocalTime.of(17, 0))) {
-//            job.addError(ErrorFactory
-//                    .createInstance(6, "Only emergency calls can be scheduled off-hours"));
-//        }
-        //I COMMENTED OUT IT 
-        //THIS VALIDATION ALLOWS TO BOOK JOB START AT 16 and JOB END at 14 :-)
-        if (!(job.getIsEmergency()
-                && (bookingTime.isAfter(LocalTime.of(16, 59)))
-                || (bookingTime.isBefore(LocalTime.of(8, 0))))) {
-            job.addError(ErrorFactory
-                    .createInstance(2, "Only emergency calls can be scheduled off-hours"));
-        }
-    }
-*/
 
     @Override
     public void validateSkillset(IJob job) {
@@ -177,11 +157,9 @@ public class JobService implements IJobService {
         boolean isValid = true;
         if (!job.getIsEmergency()) {
 
-            
             //Validate DAY 
             DayOfWeek startDOW = job.getStart().getDayOfWeek();
 
-            //EROR over here. WE DO not have job end time yet----------------------
             DayOfWeek endDOW = job.getEnd().getDayOfWeek();
 
             if (startDOW == DayOfWeek.SATURDAY
@@ -198,7 +176,7 @@ public class JobService implements IJobService {
                     || job.getEnd().getHour() > 17) {
                 isValid = false;
             }
-            
+
         }
 
         return isValid;
@@ -211,6 +189,14 @@ public class JobService implements IJobService {
         job.setId(newJobId);
         return job;
 
+    }
+
+    @Override
+    public DashboardVM getFinancialStats() {
+        DashboardVM vm = repo.getFinancialYearlyStats();
+        vm.setTeamOnCall(TeamRepoFactory.createInstance().getTeamOnCall());
+
+        return vm;
     }
 
 }

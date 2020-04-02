@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+   
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <!--    DASHBOARD-->
-    <servlet>
+<!--    <servlet>
         <servlet-name>Dashboard</servlet-name>
         <jsp-file>/dashboard.jsp</jsp-file>
+    </servlet>-->
+    <servlet>
+        <servlet-name>DashboardController</servlet-name>
+        <servlet-class>com.ats.atssystem.controllers.DashboardController</servlet-class>
     </servlet>
-   
-   
-    
-    
-    <servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>Dashboard</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>-->
+     <servlet-mapping>
+        <servlet-name>DashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
@@ -35,44 +40,36 @@
         <servlet-name>TaskController</servlet-name>
         <url-pattern>/task/*</url-pattern>
     </servlet-mapping>
-    
-    
     <!-- Employee Servlet-->
-    
     <servlet>
         <servlet-name>EmployeeController</servlet-name>
         <servlet-class>com.ats.atssystem.controllers.EmployeeController</servlet-class>
     </servlet>
-
     <!-- GET ALL EMPLOYEES-->
     <servlet-mapping>
         <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employees</url-pattern>
     </servlet-mapping>
-    
-       
-
     <!--EMPLOYEE MAINTENANCE-->
     <servlet-mapping>
         <servlet-name>EmployeeController</servlet-name>
         <url-pattern>/employee/*</url-pattern>
     </servlet-mapping>
-    
-    
-    
     <!--    TEAM SERVLET-->
     <servlet>
         <servlet-name>TeamController</servlet-name>
         <servlet-class>com.ats.atssystem.controllers.TeamController</servlet-class>
     </servlet>
-    
-    
+    <!--ALL TEAMS-->
+    <servlet-mapping>
+        <servlet-name>TeamController</servlet-name>
+        <url-pattern>/teams</url-pattern>
+    </servlet-mapping>
     <!--TEAM MAINTENANCE-->
     <servlet-mapping>
         <servlet-name>TeamController</servlet-name>
         <url-pattern>/team/*</url-pattern>
     </servlet-mapping>
-    
     <!--JOB SERVLET-->
     <servlet>
         <servlet-name>JobController</servlet-name>
@@ -83,14 +80,9 @@
         <servlet-name>JobController</servlet-name>
         <url-pattern>/job/*</url-pattern>
     </servlet-mapping>
-    
-    
     <!--ALL JOBS-->
     <servlet-mapping>
         <servlet-name>JobController</servlet-name>
         <url-pattern>/jobs</url-pattern>
     </servlet-mapping>
-  
-    
-    
 </web-app>

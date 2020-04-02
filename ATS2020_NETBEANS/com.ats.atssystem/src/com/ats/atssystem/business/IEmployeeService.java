@@ -8,8 +8,9 @@ import java.util.List;
  * @author Roman Pelikh
  */
 /**
- * IEmployee Interface Provides methods to work with repository and perform necessary manipulations with
- * employee to any class implementing this interface
+ * IEmployee Interface Provides methods to work with repository and perform
+ * necessary manipulations with employee to any class implementing this
+ * interface
  */
 public interface IEmployeeService {
 
@@ -33,9 +34,9 @@ public interface IEmployeeService {
      * Enables update operation of an employee
      *
      * @param employee employee to update
-     * @return id of updated employee
+     * @return updated employee with errors or not
      */
-    int updateEmployee(IEmployee employee);
+    IEmployee updateEmployee(IEmployee employee);
 
     /**
      * Enables deletion of an employee
@@ -46,30 +47,32 @@ public interface IEmployeeService {
     IEmployee deleteEmployee(IEmployee emp);
 
     /**
-     * 
+     *
      * @param id employeeId
-     * @param skillIds 
+     * @param skillIds
      * @return numberOfElementsAffected
      */
     int deleteEmployeeSkill(int id, String skillIds);
-    
-        /**
+
+    /**
      * Add skill set to employee record
+     *
      * @param id employeeId
-     * @param skillIds 
+     * @param skillIds
      * @return number of rows affected
      */
     int addEmployeeSkill(int id, String skillIds);
 
-     /**
+    /**
      * Updates skill set of employee record
-     * @param id employeeId 
+     *
+     * @param id employeeId
      * @param skillsDelete skill Ids to delete
      * @param skillsAdd skill Ids to add
      * @return number of rows affected
      */
     int updateEmployeeSkills(int id, String skillsDelete, String skillsAdd);
-    
+
     /**
      * Enables retrieve an employee
      *
@@ -92,10 +95,11 @@ public interface IEmployeeService {
      * @return List of all employees
      */
     List<IEmployee> getEmployees();
-    
+
     /**
-     * Enables to retrieve all employees
-     * that match search criteria by sin or last name 
+     * Enables to retrieve all employees that match search criteria by sin or
+     * last name
+     *
      * @param searchCriteria
      * @return List of all employees or null
      */

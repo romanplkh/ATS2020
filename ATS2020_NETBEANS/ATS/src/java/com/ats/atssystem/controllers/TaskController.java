@@ -127,7 +127,17 @@ public class TaskController extends CommonController {
                     break;
 
                 case "update":
+                    populateTaskProperties(request, task);
+                    task.setId(taskId);
+                    task.setUpdatedAt(LocalDateTime.now());
+                    if (service.isValid(task)) {
+                        //update
+                        task = service.updateTask(task);
 
+                    } else {
+                        request.setAttribute("task", task);
+                        super.setView(request, TASK_MAINT_VIEW);
+                    }
                     break;
 
                 case "delete":

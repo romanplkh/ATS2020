@@ -23,7 +23,7 @@
                 <h1 class="display-4 text-center mb-5">Job Details Information</h1>
 
 
-                <div class="row">
+                <div class="row">                 
                     <c:choose>
 
                         <c:when test="${error.errors != null}">
@@ -53,6 +53,11 @@
                                                     Client: </span>&nbsp; ${job.clientName}
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
+                                                   
+                                                    Billable Cost: </span>&nbsp; <fmt:formatNumber value="${job.totalRevenue}" 
+                                                                      type="currency" currencySymbol="$"/>
+                                            </li>
+                                            <li class="list-group-item"><span class="font-weight-bold">
                                                     Start: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${start}" />
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
@@ -66,14 +71,14 @@
                                 </div>
 
                                 <form method="POST" class="mt-4">
-                                    <input type="hidden" name="jobId" value="job.id">
+                                    <input type="hidden" name="jobId" value="${job.id}">
                                     <input class="btn btn-danger btn-lg" type="submit" value="Delete" name="action"/>
                                 </form>
                             </div>
                             <div class="col-lg-4 col-md-6 mt-md-0 mt-sm-4 ">
                                 <div class="card" style="width: 100%">
                                     <div class="card-body">
-                                        <h3 class="card-title">Current Team</h3>
+                                        <h3 class="card-title">Team</h3>
                                         <h1 class="card-subtitle mb-2 text-success display-4">
                                             ${job.getTeam().name}</h1>
                                     </div>

@@ -14,7 +14,7 @@
 <html>
 
     <head>
-        <title>Task</title>
+        <title>Task Record</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
 
@@ -25,7 +25,7 @@
                 <div class="row mb-4">
                     <div class="col-12 text-center">
                         <c:if test="${task.id != 0}">
-                            <h1 class="display-4">Update Task</h1>
+                            <h1 class="display-4">Manage Task</h1>
                         </c:if>
                         <c:if test="${task.id == 0}">
                             <h1 class="display-4">Create Task</h1>

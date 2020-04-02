@@ -1,27 +1,26 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Roman Pelikh
-  Date: 2020-02-24
-  Time: 7:44 p.m.
-  To change this template use File | Settings | File Templates.
+<%-- 
+    Document   : teams
+    Created on : 23-Mar-2020, 6:27:35 PM
+    Author     : Roman Pelikh
 --%>
+
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 
     <head>
-        <title>Employees</title>
+        <title>Teams</title>
         <%@include file="WEB-INF/jspf/header.jspf" %>
     </head>
 
     <body>
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
         <main>
-            <c:set var="employeeCount" value="${employees.size()}" />
+
             <div class="container">
 
-                <h1 class="display-4 text-center mt-5 mb-4">Employees</h1>
+                <h1 class="display-4 text-center mt-5 mb-4">Teams</h1>
 
                 <c:if test="${error.errors != null}">
                     <div class="row mb-3">
@@ -36,46 +35,46 @@
                     </div>
                 </c:if>
 
-                <div class="row">
-                    <div class="col-md-10">
-                        <form method="get" class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2 w-50" type="text" name="search" value="${search}"
-                                placeholder="Search by SIN or last name">
-                            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                        </form>
-
-                    </div>
-                </div>
 
                 <div class="row justify-content-center">
                     <div class="col">
                         <c:choose>
-                            <c:when test="${employeeCount > 0}">
+                            <c:when test="${teams.size() > 0}">
                                 <table class="table table-striped mt-5">
                                     <thead>
                                         <tr>
-                                            <th scope="col">First Name</th>
-                                            <th scope="col">Last Name</th>
+                                            <th>Name</th>
+                                            
+                                            <th>1st Member</th>
+                                            <th>2nd Member</th>
                                             <th></th>
-                                            <th></th>
-                                            <th></th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${employees}" var="employee">
+                                        <c:forEach items="${teams}" var="team">
                                             <tr>
-                                                <td>${employee.firstName}</td>
-                                                <td>${employee.lastName}</td>
-                                                <td><a href="employee/${employee.id}/details">Details</a></td>
-                                                <td><a href="employee/${employee.id}/update">Edit</a></td>
-                                                <td><a href="employee/${employee.id}/skills">Manage Skills</a></td>
+                                                <td>${team.name}  
+                                                <c:if test="${team.isOnCall}">
+                                                        <span class="badge badge-pill badge-danger ml-4">On Call</span> 
+                                                    </c:if>
+                                                </td>
+                                                
+                                                <c:forEach items="${team.teamMembers}" var="member">
+                                                    <td>
+                                                        <a href="employee/${member.id}/details">${member.fullName}</a>  
+                                                    </td>
+                                                </c:forEach>
+                                                <td><a href="team/${team.id}/details">Details</a></td>
+                                                
                                             </tr>
+
                                         </c:forEach>
                                     </tbody>
                                 </table>
                             </c:when>
                             <c:otherwise>
-                                <h4 class="mt-5">No employees to display</h4>
+                                <h4 class="mt-5">No teams to display</h4>
                             </c:otherwise>
                         </c:choose>
                     </div>
