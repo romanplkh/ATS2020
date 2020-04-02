@@ -69,7 +69,7 @@ public class JobService implements IJobService {
                         .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
             }
 
-            if (isTeamOnEmergencyCall(job) && isJobWithinBusinessHours(job)) {
+            if (isTeamOnEmergencyCall(job) && !isJobWithinBusinessHours(job)) {
                 job.addError(ErrorFactory
                         .createInstance(2, "OnCall team can be booked only off-hours"));
             }

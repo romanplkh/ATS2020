@@ -53,6 +53,11 @@
                                                     Client: </span>&nbsp; ${job.clientName}
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">
+                                                   
+                                                    Billable Cost: </span>&nbsp; <fmt:formatNumber value="${job.totalRevenue}" 
+                                                                      type="currency" currencySymbol="$"/>
+                                            </li>
+                                            <li class="list-group-item"><span class="font-weight-bold">
                                                     Start: </span>&nbsp; <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${start}" />
                                             </li>
                                             <li class="list-group-item"><span class="font-weight-bold">

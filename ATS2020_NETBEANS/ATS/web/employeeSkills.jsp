@@ -198,6 +198,8 @@
             //REF TO INPUT WHERE TO RECORD ALL SKILLS TO ADD
             const skillsToAdd = document.querySelector("input[name='skillsToAdd']");
 
+
+
             //DATA FROM DB
             const empSkills = document.querySelectorAll(".employeeSkillRemove");
 
@@ -232,7 +234,27 @@
 
                 //IF SKILL WAS NOT AVAILABLE FOR EMPLOYEE FROM DB SIMPLY DELETE FROM UI
                 addedTasks = addedTasks.filter(el => el != taskId)
+
+
+                //CLEAR ALL SKILLS TO ADD SO WE CAN REPOPULATE IT
+                skillsToAdd.value = "";
+
+                //REPOPULATE IDs TO ADD
+                addedTasks.forEach(el => {
+                    if (!skillsToAdd.value) {
+                        skillsToAdd.value += el;
+                    } else {
+                        skillsToAdd.value += "," + el;
+                    }
+                })
+
+
+
+
                 el.parentNode.remove();
+
+
+
 
                 //SHOW/HIDE MESSAGE IF NO TASKS
                 if (listOfTaskIds.length == 0) {
