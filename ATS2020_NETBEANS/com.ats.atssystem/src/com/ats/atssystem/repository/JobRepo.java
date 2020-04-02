@@ -33,11 +33,11 @@ enum FieldTypes {
     TaskId,
     Cost,
     Revenue
-
+    
 }
 
 public class JobRepo extends BaseRepo implements IJobRepo {
-
+    
     private final String SP_JOB_DETAILS = "CALL spGetJobDetails(?)";
     private final String SPROC_INSERT_JOB = "CALL spInsertJob(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private final String SPROC_DELETE_JOB = "CALL spDeleteJob(?, ?)";
@@ -53,18 +53,18 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 
     //Dependancy of Dataaccess layer
     private IDAL dataAccess = DALFactory.createInstance();
-
+    
     public DashboardVM getFinancialYearlyStats() {
-
+        
         DashboardVM vm = new DashboardVM();
-
+        
         try {
             List<IParameter> parms = ParameterFactory.createListInstance();
             CachedRowSet rs = this.dataAccess.executeFill(SP_GET_YEARLY_FINANCIAL_STATS, parms);
 
             //set yearly stats
             Pair<List<IJob>, List<IJob>> jobs = populateYearlyFinances(rs);
-
+            
             vm.setCurrentYear(jobs.getValue0());
             vm.setPreviousYear(jobs.getValue1());
 
@@ -72,7 +72,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             rs = this.dataAccess.executeFill(SP_GET_MONTHLY_JOB_COST, parms);
             rs.first();
             vm.setMonthlyCost(super.getDouble("monthlyCost", rs));
-
+            
             rs = this.dataAccess.executeFill(SP_GET_MONTHLY_JOB_REVENUE, parms);
             rs.first();
             vm.setMonthlyRevenue(super.getDouble("monthlyRevenue", rs));
@@ -81,7 +81,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             rs = this.dataAccess.executeFill(SP_GET_YEARLY_JOB_COST, parms);
             rs.first();
             vm.setYearlyCost(rs.getDouble("yearlyCost"));
-
+            
             rs = this.dataAccess.executeFill(SP_GET_YEARLY_JOB_REVENUE, parms);
             rs.first();
             vm.setYearlyRevenue(rs.getDouble("yearlyRevenue"));
@@ -108,11 +108,11 @@ public class JobRepo extends BaseRepo implements IJobRepo {
 
         //GET STRINGS 
         job.calculateTasksCost();
-
+        
         String taskparams = getStringValues(job.getTasksCost(), FieldTypes.TaskId);
         String costParams = getStringValues(job.getTasksCost(), FieldTypes.Cost);
         String revenueParams = getStringValues(job.getTasksCost(), FieldTypes.Revenue);
-
+        
         List<IParameter> params = ParameterFactory.createListInstance();
         params.add(ParameterFactory.createInstance(job.getDescription()));
         params.add(ParameterFactory.createInstance(job.getClientName()));
@@ -130,7 +130,7 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             if (returnedValues != null) {
                 returnedId = Integer.parseInt(returnedValues.get(0).toString());
             }
-
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -143,12 +143,12 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     @Override
     public IJob getJobDetails(int jobId) {
         IJob jobDetails = JobFactory.createInstance();
-
+        
         try {
             List<IParameter> parms = ParameterFactory.createListInstance();
             parms.add(ParameterFactory.createInstance(jobId, IParameter.Direction.IN, Types.INTEGER));
             CachedRowSet rs = this.dataAccess.executeFill(SP_JOB_DETAILS, parms);
-
+            
             jobDetails = populateJobDetails(rs);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -162,34 +162,35 @@ public class JobRepo extends BaseRepo implements IJobRepo {
     @Override
     public int deleteJob(int jobId) {
         int rowsAffected = 0;
-
+        
         List<Object> returnedValues;
-
+        
         List<IParameter> params = ParameterFactory.createListInstance();
-
+        
         params.add(ParameterFactory.createInstance(jobId));
         params.add(ParameterFactory.createInstance(rowsAffected, IParameter.Direction.OUT, Types.INTEGER));
         returnedValues = this.dataAccess.executeNonQuery(SPROC_DELETE_JOB, params);
-
+        
         try {
             if (returnedValues != null) {
                 rowsAffected = (int) returnedValues.get(0);
             }
-
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
+        
         return rowsAffected;
-
+        
     }
-
+    
     private IJob populateJobDetails(CachedRowSet rs) throws SQLException {
-
+        
         IJob job = null;
         ITeam team = null;
         List<ITask> tasks = null;
-
+        double totalREvenue = 0.0;
+        
         if (rs.next()) {
             job = JobFactory.createInstance();
             team = TeamFactory.createInstance();
@@ -202,59 +203,62 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             job.setDescription(rs.getString("description"));
             job.setStart(super.getLocalDate("start", rs));
             job.setEnd(super.getLocalDate("end", rs));
+
             //set team name
             team.setName(rs.getString("team"));
 
             //set list of tasks to a job
             rs.beforeFirst();
-
+            
             while (rs.next()) {
                 task = TaskFactory.createInstance();
                 task.setName(rs.getString("task"));
                 tasks.add(task);
+                totalREvenue += super.getDouble("totalRevenue", rs);
             }
-
+            
+            job.setTotalRevenue(totalREvenue);
             job.setTeam(team);
             job.setTasksList(tasks);
         }
-
+        
         return job;
     }
-
+    
     @Override
     public List<ITeam> getScheduledJobs(String date) {
         List<ITeam> teams = TeamFactory.createListInstance();
-
+        
         try {
             List<IParameter> parms = ParameterFactory.createListInstance();
             parms.add(ParameterFactory.createInstance(date, IParameter.Direction.IN, Types.VARCHAR));
             CachedRowSet rs = this.dataAccess.executeFill(SPROC_GET_SCHEDULED_JOBS, parms);
-
+            
             teams = populateTeamsWithJobs(rs);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
+        
         return teams;
     }
-
+    
     private List<ITeam> populateTeamsWithJobs(CachedRowSet rs) throws SQLException {
         List<ITeam> list = TeamFactory.createListInstance();
         ITeam team = null;
         List<IJob> jobs = null;
         IJob job = null;
-
+        
         while (rs.next()) {
             team = TeamFactory.createInstance();
             job = JobFactory.createInstance();
             jobs = JobFactory.createListInstance();
-
+            
             team.setName(rs.getString("team"));
             job.setId(super.getInt("id", rs));
             job.setStartTime(super.getLocalTime("start_time", rs));
             job.setEndTime(super.getLocalTime("end_time", rs));
             jobs.add(job);
-
+            
             if (rs.next()) {
                 if (team.getName().equalsIgnoreCase(rs.getString("team"))) {
                     rs.previous();
@@ -272,20 +276,20 @@ public class JobRepo extends BaseRepo implements IJobRepo {
             } else {
                 rs.previous();
             }
-
+            
             team.setJobs(jobs);
             list.add(team);
         }
-
+        
         return list;
     }
-
+    
     private String getStringValues(List<Triplet<Integer, Double, Double>> values, FieldTypes type) {
-
+        
         String result = "";
-
+        
         switch (type) {
-
+            
             case TaskId:
                 result = tripletValuesIterator(values, 0);
                 break;
@@ -296,33 +300,33 @@ public class JobRepo extends BaseRepo implements IJobRepo {
                 result = tripletValuesIterator(values, 2);
                 break;
         }
-
+        
         result = result.substring(0, result.lastIndexOf(","));
-
+        
         return result;
     }
-
+    
     private String tripletValuesIterator(List<Triplet<Integer, Double, Double>> values, int index) {
-
+        
         String val = "";
-
+        
         for (Triplet<Integer, Double, Double> entry : values) {
-
+            
             if (index == 1 || index == 2) {
                 double value = (double) entry.getValue(index);
-
+                
                 if (value % 1 == 0) {
                     val += Math.round(value) + ",";
                 } else {
                     val += entry.getValue(index) + ",";
                 }
-
+                
             } else {
                 val += entry.getValue(index) + ",";
             }
-
+            
         }
-
+        
         return val;
     }
 
@@ -331,25 +335,25 @@ public class JobRepo extends BaseRepo implements IJobRepo {
      */
     @Override
     public boolean isTeamAvailableToBook(IJob job) {
-
+        
         int retValue = -1;
-
+        
         List<IParameter> params = ParameterFactory.createListInstance();
-
+        
         params.add(ParameterFactory.createInstance(job.getTeam().getId()));
         params.add(ParameterFactory.createInstance(job.getStart()));
         params.add(ParameterFactory.createInstance(job.getEnd()));
-
+        
         try {
-
+            
             retValue = Integer.parseInt(this.dataAccess.executeScalar(SP_TEAM_IS_AVAILABLE, params).toString());
-
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
+        
         return retValue == 0;
-
+        
     }
 
     /**
@@ -357,48 +361,48 @@ public class JobRepo extends BaseRepo implements IJobRepo {
      */
     @Override
     public boolean isTeamOnEmergencyCall(IJob job) {
-
+        
         int retValue = -1;
-
+        
         List<IParameter> params = ParameterFactory.createListInstance();
-
+        
         params.add(ParameterFactory.createInstance(job.getTeam().getId()));
-
+        
         try {
             retValue = Integer.parseInt(this.dataAccess.executeScalar(SP_TEAM_IS_ON_EMERGENCY, params).toString());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
+        
         return retValue == 1;
-
+        
     }
-
+    
     private Pair<List<IJob>, List<IJob>> populateYearlyFinances(CachedRowSet rs) throws SQLException {
         List<IJob> currentYear = new ArrayList<>();
         List<IJob> previousYear = new ArrayList<>();
         Pair<List<IJob>, List<IJob>> jobs = Pair.with(currentYear, previousYear);
-
+        
         IJob job = null;
-
+        
         while (rs.next()) {
             LocalDateTime date = super.getLocalDate("start", rs);
-
+            
             job = JobFactory.createInstance();
             job.setStart(date);
             job.setTotalCost(super.getDouble("totalCost", rs));
             job.setTotalRevenue(super.getDouble("totalRevenue", rs));
-
+            
             if (date.getYear() == LocalDateTime.now().getYear()) {
                 currentYear.add(job);
-            } else {
+            } else if (date.getYear() == (LocalDateTime.now().getYear() - 1)) {
                 previousYear.add(job);
             }
-
+            
         }
-
+        
         return jobs;
-
+        
     }
-
+    
 }

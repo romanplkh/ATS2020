@@ -38,7 +38,7 @@ public class Job extends Base implements Serializable, IJob {
     private List<Triplet<Integer, Double, Double>> tasksCost;
 
     private double totalCost;
-    private double totalRevenue;
+    private double totalRevenue; //BILLABLE
 
     public double getTotalCost() {
         return totalCost;
@@ -52,6 +52,8 @@ public class Job extends Base implements Serializable, IJob {
         return totalRevenue;
     }
 
+    
+    //BILLABLE
     public void setTotalRevenue(double totalRevenue) {
         this.totalRevenue = calculateBillableCost(totalRevenue);
     }
@@ -131,6 +133,11 @@ public class Job extends Base implements Serializable, IJob {
             if (emp2.getSkills().contains(t)) {
                 jobTasksEmployeeSet.add(Pair.with(emp2, t));
             }
+
+            if (this.getIsEmergency() && !emp2.getSkills().contains(t) && !emp1.getSkills().contains(t)) {
+                jobTasksEmployeeSet.add(Pair.with(emp1, t));
+            }
+
         }
 
         //FILTER TASKS BY EMPLOYEE

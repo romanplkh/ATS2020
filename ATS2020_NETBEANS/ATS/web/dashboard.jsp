@@ -26,7 +26,7 @@
 
                 <div class="row">
                     <div class="col-md-6 col-lg-3">
-                        <div class="card border-primary mb-3 " style="max-width: 20rem; height: 17rem">
+                        <div class="card border-primary mb-3 " style=" height: 23rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Jobs Today</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <h1 class=" display-4 card-title text-info"
@@ -36,9 +36,9 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                        <div class="card border-primary mb-3" style=" height: 23rem">
                             <div class="card-header text-center" style="font-size: 1.2em">On Call Team</div>
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column justify-content-center flex-fill">
                                 <c:choose >
                                     <c:when test="${cardData.teamOnCall.name != null}">
                                         <h2 class="card-title display-4 text-danger text-center">
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                        <div class="card border-primary mb-3" style="height: 23rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Monthly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <div class="row text-center">
@@ -76,12 +76,20 @@
                                         <p class="text-center text-muted p-0 m-0">revenue</p>
                                     </div>
 
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.totalBillableMonthly}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">billable</p>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                        <div class="card border-primary mb-3" style=" height: 23rem">
                             <div class="card-header text-center" style="font-size: 1.2em">Yearly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
                                 <div class="row text-center">
@@ -98,6 +106,14 @@
                                     </div>
                                     <div class="col-12">
                                         <p class="text-center text-muted p-0 m-0">revenue</p>
+                                    </div>
+
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.totalBillableYearly}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">billable</p>
                                     </div>
 
                                 </div>
@@ -170,7 +186,7 @@
                 animationEnabled: true,
                 title: {
                     text: "Yearly Statistic Breakdown By Month",
-                    fontFamily: "Lato",
+                    fontFamily: "Lato, sans-serif",
                     fontSize: 46
                 },
                 axisY: {
@@ -192,7 +208,7 @@
                 },
                 legend: {
                     cursor: "pointer",
-                    fontFamily: "Lato",
+                    fontFamily: "Lato, sans-serif",
                     itemclick: toggleDataSeries
 
                 },

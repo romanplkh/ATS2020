@@ -516,7 +516,7 @@ CREATE PROCEDURE spGetJobDetails(
 BEGIN
 
 	SELECT jobs.id, jobs.description, clientName, 
-		   start, end, 
+		   start, end, concat(jobstasks.operatingRevenue) as totalRevenue,  
            CONCAT(teams.Name) AS team, 
            CONCAT(tasks.name) AS task
 	FROM jobs
@@ -524,12 +524,14 @@ BEGIN
     ON jobs.teamId = teams.id
     INNER JOIN jobstasks
     ON jobs.id = jobstasks.jobId
-    INNER JOIN tasks
+    LEFT JOIN tasks
     ON jobstasks.taskId = tasks.id
     WHERE jobs.id = jobId_param;
 END //
 
 DELIMITER ;
+
+
 
 -- ASSIGN TASKS TO EMPLOYEE --------
 DELIMITER //
@@ -1132,6 +1134,7 @@ SELECT  SUM(operatingCost) AS 'totalCost',
 SUM(operatingRevenue) AS 'totalRevenue',
 jobs.start
 FROM jobs INNER JOIN jobstasks ON jobs.id = jobstasks.jobId
+WHERE jobs.start <= now()
 GROUP BY MONTH(jobs.start), YEAR(jobs.start)
 ORDER BY jobs.start;
 END$$
@@ -1184,9 +1187,8 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE year(jobs.start) = year(current_date())
-AND month(jobs.start) <= month(current_date())
-AND day(jobs.start)  <= day(current_date());
+WHERE year(jobs.start) = year(now())
+AND jobs.start <= now();
 
 END$$
 
@@ -1203,9 +1205,8 @@ BEGIN
 FROM jobs 
 INNER JOIN jobstasks 
 ON jobs.id = jobstasks.jobId
-WHERE year(jobs.start) = year(current_date())
-AND month(jobs.start) <= month(current_date())
-AND day(jobs.start)  <= day(current_date());
+WHERE year(jobs.start) = year(now())
+AND jobs.start <= now();
 END$$
 
 DELIMITER ;

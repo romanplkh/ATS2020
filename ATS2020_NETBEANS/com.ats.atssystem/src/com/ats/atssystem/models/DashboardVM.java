@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class DashboardVM implements Serializable {
 
+    private final double TAX = 0.15;
     private List<IJob> currentYear;
     private List<IJob> previousYear;
     private double monthlyRevenue;
@@ -23,6 +24,8 @@ public class DashboardVM implements Serializable {
     private double yearlyCost;
     private ITeam teamOnCall;
     private int jobsCountToday;
+    private double totalBillableYearly;
+    private double totalBillableMonthly;
 
     public DashboardVM() {
         currentYear = new ArrayList<>();
@@ -52,6 +55,7 @@ public class DashboardVM implements Serializable {
 
     public void setMonthlyRevenue(double monthlyRevenue) {
         this.monthlyRevenue = monthlyRevenue;
+
     }
 
     public double getYearlyRevenue() {
@@ -92,6 +96,15 @@ public class DashboardVM implements Serializable {
 
     public void setJobsCountToday(int jobsCountToday) {
         this.jobsCountToday = jobsCountToday;
+    }
+
+    public double getTotalBillableYearly() {
+        this.totalBillableYearly = this.getYearlyRevenue() + (this.getYearlyRevenue() * this.TAX);
+        return this.totalBillableYearly;
+    }
+
+    public double getTotalBillableMonthly() {
+        return this.totalBillableMonthly = this.getMonthlyRevenue() + (this.getMonthlyRevenue() * this.TAX);
     }
 
 }
