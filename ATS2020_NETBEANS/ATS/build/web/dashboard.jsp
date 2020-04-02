@@ -20,51 +20,87 @@
         <%@include file="WEB-INF/jspf/navigation.jspf" %>
         <main class="py-5">
 
-            <h2 class="display-4 text-center my-5">Welcome to ATS!</h2>
+            <h2 class="display-4 text-center my-5">Welcome to Advanced Technology Solutions</h2>
 
-            <div class="container">
+            <div class="container-fluid">
 
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="card border-primary mb-3 " style="max-width: 20rem; min-height: 16rem">
-                            <div class="card-header text-center font-weight-bold">Current Jobs</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-primary mb-3 " style="max-width: 20rem; height: 17rem">
+                            <div class="card-header text-center" style="font-size: 1.2em">Jobs Today</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
-                                <h1 class=" display-4 card-title text-success">${cardData.jobsCountToday}</h2>
+                                <h1 class=" display-4 card-title text-info"
+                                    style="font-size: 5em;"
+                                    >${cardData.jobsCountToday}</h2>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
-                            <div class="card-header text-center font-weight-bold">Team On Call</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                            <div class="card-header text-center" style="font-size: 1.2em">On Call Team</div>
                             <div class="card-body">
-                                <h2 class="card-title text-center">${cardData.teamOnCall.name}</h2>
-                                <ul class="list-group list-group-flush">
-                                    <c:forEach items="${cardData.teamOnCall.teamMembers}" var="member">
-                                        <li class="list-group-item text-muted text-center">${member.fullName}</li>
-                                        </c:forEach>
-                                </ul>
+                                <c:choose >
+                                    <c:when test="${cardData.teamOnCall.name != null}">
+                                        <h2 class="card-title display-4 text-danger text-center">
+                                            ${cardData.teamOnCall.name}</h2>
+                                        <ul class="list-group list-group-flush mt-0">
+                                            <c:forEach items="${cardData.teamOnCall.teamMembers}" var="member">
+                                                <li class="list-group-item text-muted text-center">${member.fullName}</li>
+                                                </c:forEach>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="display-4 text-center text-muted">No team on call</div>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
-                            <div class="card-header text-center font-weight-bold">Monthly Finances</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                            <div class="card-header text-center" style="font-size: 1.2em">Monthly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
-                                <ul class="list-group list-group-flush"> 
-                                    <span class="text-success display-4 font-weight-bold"><fmt:formatNumber value="${cardData.monthlyRevenue}" type="currency" currencySymbol="$"/></span> Revenue: 
-                                    <span class="text-success display-4 font-weight-bold"><fmt:formatNumber value="${cardData.monthlyCost}" type="currency" currencySymbol="$"/> </span>Cost: 
-                                </ul>
+                                <div class="row text-center">
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.monthlyCost}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">cost</p>
+                                    </div>
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.monthlyRevenue}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">revenue</p>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card border-primary mb-3" style="max-width: 20rem; min-height: 16rem">
-                            <div class="card-header text-center font-weight-bold">Yearly Finances</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-primary mb-3" style="max-width: 20rem; height: 17rem">
+                            <div class="card-header text-center" style="font-size: 1.2em">Yearly Statistic</div>
                             <div class="card-body d-flex justify-content-center align-items-center">
-                                <ul class="list-group list-group-flush"> 
-                                    <li class="list-group-item  text-center font-weight-bold">Revenue:  <span class="text-success font-weight-bold"><fmt:formatNumber value="${cardData.yearlyRevenue}" type="currency" currencySymbol="$"/></span>  </li>
-                                    <li class="list-group-item  text-center font-weight-bold">Cost:  <span class="text-success font-weight-bold"><fmt:formatNumber value="${cardData.yearlyCost}" type="currency" currencySymbol="$"/></span>  </li>
-                                </ul>
+                                <div class="row text-center">
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.yearlyCost}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">cost</p>
+                                    </div>
+                                    <div class="col-12 text-success display-4">
+                                        <fmt:formatNumber value="${cardData.yearlyRevenue}" 
+                                                          type="currency" currencySymbol="$"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="text-center text-muted p-0 m-0">revenue</p>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -133,7 +169,9 @@
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
                 title: {
-                    text: "Yearly Revenue"
+                    text: "Yearly Statistic Breakdown By Month",
+                    fontFamily: "Lato",
+                    fontSize: 46
                 },
                 axisY: {
                     title: "$ Amount",
@@ -142,19 +180,21 @@
                     labelFontColor: "#4F81BC",
                     tickColor: "#4F81BC"
                 },
-                axisY2: {
-                    title: "Millions of Barrels/day",
-                    titleFontColor: "#C0504E",
-                    lineColor: "#C0504E",
-                    labelFontColor: "#C0504E",
-                    tickColor: "#C0504E"
-                },
+//                axisY2: {
+//                    title: "Millions of Barrels/day",
+//                    titleFontColor: "#C0504E",
+//                    lineColor: "#C0504E",
+//                    labelFontColor: "#C0504E",
+//                    tickColor: "#C0504E"
+//                },
                 toolTip: {
                     shared: true
                 },
                 legend: {
                     cursor: "pointer",
+                    fontFamily: "Lato",
                     itemclick: toggleDataSeries
+
                 },
                 data: [{
                         type: "column",
@@ -162,6 +202,7 @@
                         legendText: "Current Year Cost",
                         showInLegend: true,
                         dataPoints: currentYearDataSet.cost
+
                     },
                     {
                         type: "column",
@@ -172,14 +213,14 @@
                     },
                     {
                         type: "column",
-                        name: "Cost Prevoious Year  ($/month)",
-                        legendText: "Prevoious Year Cost",
+                        name: "Cost Previous Year  ($/month)",
+                        legendText: "Previous Year Cost",
                         showInLegend: true,
                         dataPoints: previousYearDataSet.cost
                     },
                     {
                         type: "column",
-                        name: "Revenue Prevoious Year ($/month)",
+                        name: "Revenue Previous Year ($/month)",
                         legendText: "Previous Year Revenue",
                         showInLegend: true,
                         dataPoints: previousYearDataSet.revenue
