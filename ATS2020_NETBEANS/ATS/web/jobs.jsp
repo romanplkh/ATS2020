@@ -11,6 +11,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file="WEB-INF/jspf/header.jspf" %>
@@ -31,7 +32,8 @@
                                 <form method="get">
                                     <div class="form-group">
                                         <div class="input-group mb-3">
-                                            <input type="date" class="form-control" value="${searchDate}" name="searchDate" max="2021-01-01" min="2000-01-01" >
+                                            <input type="date" class="form-control" value="${searchDate}"
+                                                name="searchDate" max="2021-01-01" min="2000-01-01">
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-primary" type="submit">Search</button>
                                             </div>
@@ -81,10 +83,11 @@
 
                                             <c:if test="${startJob.getHour() >= 17}">
                                                 <li class="list-group-item  justify-content-between">
-                                                    <span class="badge badge-primary badge-pill mr-5">${startJob} - ${endJob} </span>
+                                                    <span class="badge badge-primary badge-pill mr-5">${startJob} -
+                                                        ${endJob} </span>
                                                     <a href="job/${job.id}/details" class="pl-5">Details</a>
                                                 </li>
-                                                <c:set var="count" value="${count + 1}" scope="page"/>
+                                                <c:set var="count" value="${count + 1}" scope="page" />
                                             </c:if>
 
                                         </c:forEach>
@@ -101,12 +104,6 @@
                 </div>
             </div>
 
-
-
-
-
-
-
         </main>
 
 
@@ -118,9 +115,10 @@
 
 
 
-            let data = ${teamsJSON}
-            let searchDate = ${searchDateJSON} + " 08:00";
-            let srchDate = ${searchDateJSON};
+
+            let data = ${ teamsJSON }
+            let searchDate = ${ searchDateJSON } + " 08:00";
+            let srchDate = ${ searchDateJSON };
 
 
             let dataPoints = [];
@@ -133,7 +131,7 @@
                 let x = dataPoints.length + 1;
 
                 el.jobs.forEach(job => {
-                    let dataEntry = {x: x, label: "", y: [], click: null}
+                    let dataEntry = { x: x, label: "", y: [], click: null }
 
                     let datePointStart = undefined;
                     let datePointEnd = undefined;
@@ -184,33 +182,34 @@
 
 
             var chart = new CanvasJS.Chart("chartContainer",
-                    {
-                        title: {
-                            text: "Jobs Schedule For " + ${searchDateJSON},
-                            fontFamily: "Lato, sans-serif",
-                            fontSize: 46
+                {
+                    title: {
+                        text: "Jobs Schedule For " + ${ searchDateJSON },
+                fontFamily: "Lato, sans-serif",
+                fontSize: 46
                         },
-                        axisY: {
-                            minimum: Date.parse(searchDate),
-                            interval: ((1 * 60 * 60 * 1000) / 2),
-                            labelFormatter: function (e) {
-                                return CanvasJS.formatDate(e.value, "h:mm TT");
-                            },
-                            gridThickness: 2
+            axisY: {
+                minimum: Date.parse(searchDate),
+                    interval: ((1 * 60 * 60 * 1000) / 2),
+                        labelFormatter: function (e) {
+                            return CanvasJS.formatDate(e.value, "h:mm TT");
                         },
+                gridThickness: 2
+            },
 
-                        toolTip: {
-                            contentFormatter: function (e) {
-                                return "Start: " + CanvasJS.formatDate(e.entries[0].dataPoint.y[0], "h:mm TT") + "</br>End : " + CanvasJS.formatDate(e.entries[0].dataPoint.y[1], "h:mm TT");
-                            }},
+            toolTip: {
+                contentFormatter: function (e) {
+                    return "Start: " + CanvasJS.formatDate(e.entries[0].dataPoint.y[0], "h:mm TT") + "</br>End : " + CanvasJS.formatDate(e.entries[0].dataPoint.y[1], "h:mm TT");
+                }
+            },
 
-                        data: [
-                            {
-                                type: "rangeBar",
-                                dataPoints: dataPoints
-                            }
+            data: [
+                {
+                    type: "rangeBar",
+                    dataPoints: dataPoints
+                }
 
-                        ]
+            ]
                     });
 
 
@@ -219,6 +218,6 @@
 
         </script>
 
-
     </body>
+
 </html>
