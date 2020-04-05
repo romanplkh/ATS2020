@@ -71,8 +71,7 @@ public class Job extends Base implements Serializable, IJob {
     //Called inside  calculateDuration of JOB
     private void calculateJobTime() {
         if (this.isOnSite) {
-            this.setStart(this.getStart().minusMinutes(30));
-            this.setEnd(this.getStart().plusMinutes(this.totalJobDuration).plusMinutes(30));
+            this.setEnd(this.getStart().plusMinutes(this.totalJobDuration).plusMinutes(60));
         } else {
             this.setEnd(this.getStart().plusMinutes(this.totalJobDuration));
         }
