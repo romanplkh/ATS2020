@@ -38,52 +38,54 @@ public class JobService implements IJobService {
     @Override
     public boolean isValid(IJob job) {
 
-        //IF model is not valid ->>> other validations will crash
+        // IF model is not valid ->>> other validations will crash
         if (job.getErrors().size() > 0) {
             return job.getErrors().isEmpty();
         } else {
 
-            //5. On call team does not matter skills
+            // 5. On call team does not matter skills
             if (!job.getIsEmergency()) {
                 validateSkillset(job);
             }
 
-            //Calculate cost of a job and get End Time
+            // Calculate cost of a job and get End Time
             job.calculateTasksCost();
 
             // 1. Validate that team is not doublebooked
             if (!isTeamAvailableToBook(job)) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "Selected team is already scheduled for a job during this hours. "
+                job.addError(ErrorFactory.createInstance(2,
+                        "Selected team is already scheduled for a job during this hours. "
                                 + "Please select diferent date or time"));
             }
             if (job.getStart().isBefore(LocalDateTime.now())) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "Jobs cannot be scheduled in the past"));
+                job.addError(ErrorFactory.createInstance(2, "Jobs cannot be scheduled in the past"));
             }
 
-            //2. Validate job within business hours if it is not emergency
-            //4. Emergency only off hours
+            // 2. Validate job within business hours if it is not emergency
+            // 4. Emergency only off hours
             if (!job.getIsEmergency() && !isJobWithinBusinessHours(job)) {
 
                 if (job.getIsOnSite()) {
-                    job.addError(ErrorFactory
-                            .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm. This is on site job. Please allow 30 minutes to get to job site and to return from "));
+                    job.addError(ErrorFactory.createInstance(2,
+                            "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm. This is on site job. Please allow 30 minutes to get to job site and to return from "));
                 } else {
-                    job.addError(ErrorFactory
-                            .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
+                    job.addError(ErrorFactory.createInstance(2,
+                            "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
                 }
             }
 
             if (isTeamOnEmergencyCall(job) && !isJobWithinBusinessHours(job)) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "OnCall team can be booked only off-hours"));
+                job.addError(ErrorFactory.createInstance(2, "OnCall team can be booked only off-hours"));
+            }
+
+            if (isTeamOnEmergencyCall(job) && !isJobWithinBusinessHours(job)) {
+                job.addError(ErrorFactory.createInstance(2, "OnCall team can be booked only off-hours"));
             }
 
             // 3. I can book onCall Team for Emergency calls
             if (job.getIsEmergency() && !isTeamOnEmergencyCall(job)) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "Selected team is not on emergency call and cannot be scheduled for emergency calls"));
+                job.addError(ErrorFactory.createInstance(2,
+                        "Selected team is not on emergency call and cannot be scheduled for emergency calls"));
             }
 
             return job.getErrors().isEmpty();
@@ -105,8 +107,7 @@ public class JobService implements IJobService {
     @Override
     public IJob deleteJob(IJob job) {
         if (repo.deleteJob(job.getId()) == 0) {
-            job.addError(ErrorFactory
-                    .createInstance(1, "Something went wrong. Job was not deleted. Try again"));
+            job.addError(ErrorFactory.createInstance(1, "Something went wrong. Job was not deleted. Try again"));
 
         }
         return job;
@@ -119,7 +120,7 @@ public class JobService implements IJobService {
 
     @Override
     public void validateSkillset(IJob job) {
-        //Team skillset should correspond to selected tasks
+        // Team skillset should correspond to selected tasks
         List<ITask> jobSkillset = job.getTasksList();
 
         if (jobSkillset.size() > 0) {
@@ -127,7 +128,7 @@ public class JobService implements IJobService {
 
             List<ITask> empSkillset = TaskFactory.createListInstance();
 
-            //ADD ALL SKILLS FROM EMPLOYEE TO ARRAY OF SKILLS
+            // ADD ALL SKILLS FROM EMPLOYEE TO ARRAY OF SKILLS
             for (IEmployee e : employees) {
                 empSkillset.addAll(e.getSkills());
             }
@@ -140,8 +141,7 @@ public class JobService implements IJobService {
             }
 
             if (count > 0) {
-                job.addError(ErrorFactory
-                        .createInstance(5, "There is no matching skillset to perform this job"));
+                job.addError(ErrorFactory.createInstance(5, "There is no matching skillset to perform this job"));
             }
         }
 
@@ -163,14 +163,12 @@ public class JobService implements IJobService {
         boolean isValid = true;
         if (!job.getIsEmergency()) {
 
-            //Validate DAY 
+            // Validate DAY
             DayOfWeek startDOW = job.getStart().getDayOfWeek();
 
             DayOfWeek endDOW = job.getEnd().getDayOfWeek();
 
-            if (startDOW == DayOfWeek.SATURDAY
-                    || startDOW == DayOfWeek.SUNDAY
-                    || endDOW == DayOfWeek.SATURDAY
+            if (startDOW == DayOfWeek.SATURDAY || startDOW == DayOfWeek.SUNDAY || endDOW == DayOfWeek.SATURDAY
                     || endDOW == DayOfWeek.SUNDAY) {
 
                 isValid = false;
@@ -188,14 +186,14 @@ public class JobService implements IJobService {
                 isValid = false;
             }
 
-//            if (job.get) {
-//                if (job.getStart().getHour() < 8
-//                        || job.getStart().getHour() >= 17
-//                        || (job.getEnd().getHour() == 17 && job.getEnd().getMinute() > 0)
-//                        || job.getEnd().getHour() > 17) {
-//                    isValid = false;
-//                }
-//            }
+            // if (job.get) {
+            // if (job.getStart().getHour() < 8
+            // || job.getStart().getHour() >= 17
+            // || (job.getEnd().getHour() == 17 && job.getEnd().getMinute() > 0)
+            // || job.getEnd().getHour() > 17) {
+            // isValid = false;
+            // }
+            // }
         }
 
         return isValid;
