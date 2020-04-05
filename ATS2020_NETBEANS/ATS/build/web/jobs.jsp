@@ -14,47 +14,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@include file="WEB-INF/jspf/header.jspf" %>
-
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
         <title>Jobs Schedule</title>
     </head>
-    <style>
-
-
-
-        .mylink{
-            color: #fff;
-
-        }
-
-
-
-
-        .booked {
-            background-color: #18BC9C;
-        }
-
-        .divider-r {
-            border-right: 4px solid #2C3E50;
-        }
-
-        .divider-l {
-            border-left: 4px solid #2C3E50;
-        }
-
-        table {
-            border-collapse: separate;
-            border-spacing: 0 1em;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .hh{
-            padding: 0 4px;
-
-        }
-
-
-    </style>
 
     <body>
 
@@ -84,142 +46,26 @@
                     </div>
                 </div>
 
-                <c:choose>
-                    <c:when test="${teams.size() > 0}">
-                        <c:choose>
-                            <c:when test="${teams.size() == 1 && teams.get(0).isJobsAfterHours()}">
-                                <h3 class="text-center text-success my-auto">No regular jobs scheduled for ${searchDate}</h3>
-                            </c:when>
-                            <c:otherwise>
-                                <div>
-                                    <table >
-                                        <c:forEach items="${teams}" var="team" varStatus="currTeam">
-                                            <!--BUILD TIME HEADERS-->
-                                            <c:if test="${currTeam.index == 0}">
-                                                <tr>
-                                                    <!--1st EMPTY-->
-                                                    <td></td>
-                                                    <c:forEach var="h" begin="8" end="17">
-                                                        <c:choose>
-                                                            <c:when test="${h != 17}">
-                                                                <c:forEach var="min" begin="0" end="45" step="15">
-                                                                    <td class="hh">
-                                                                        <c:choose>
-                                                                            <c:when test="${min == 0}">
-                                                                                <!--TEST-->
-                                                                                ${h}:${min}0
-                                                                            </c:when>
-                                                                            <c:otherwise>
-                                                                                ${h}:${min}
-                                                                            </c:otherwise>
-                                                                        </c:choose>
-                                                                    </td>
-                                                                </c:forEach>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <td class="hh">
-                                                                    17:00
-                                                                </td>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                        <!--<td></td>-->
-                                                    </c:forEach>
-                                                </tr>
+
+                <c:if test="${teams.size() > 0}">
+                    <div class="container-fluid mt-5">
+                        <div class="row">
+                            <div class="col">
+                                <div id="chartContainer" class="mt-5" style="height: 600px; width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
 
 
-                                            </c:if>
-                                            <!--BUILD TEAMS SCHEDULE-->
-                                            <!--EMPTY ROW SWPARATOR-->
-                                            <!--                                            <tr style="background: red; padding: 10px"></tr>-->
-
-                                            <c:if test="${!team.isOnCall && !team.isJobsAfterHours()}">
-                                                <tr>
-                                                    <td>${team.name}</td>
-                                                    <!--FIRST COL TEAM NAME-->
+                <c:if test="${teams.size() == 0}">
+                    <div class="row justify-content-center">
+                        <h1 class="display-4 text-success">No Jobs Scheduled</h1>
+                    </div>
+                </c:if>
 
 
 
-                                                    <!--ALL JOBS TEAM-->
-                                                    <c:set var="tJobs" value="${ team.jobs }" />
-                                                    <!--NUM OF JOBS-->
-                                                    <c:set var="jSize" value="${ tJobs.size()}"/>
-                                                    <!--CURRENT JOB COUNTER-->
-                                                    <c:set var="cJCount" value="0"/>
-
-                                                    <c:forEach var="h" begin="8" end="17">
-
-                                                        <c:forEach var="min" begin="0" end="45" step="15">
-                                                            <c:if test="${h < 17 || (h == 17 && min == 0)}">
-                                                                <c:choose>
-                                                                    <c:when test="${cJCount <  jSize}">
-                                                                        <c:set var="start" value="${ tJobs.get(cJCount).startTime}" />
-                                                                        <c:set var="end" value="${tJobs.get(cJCount).endTime}" />
-                                                                        <c:set var="mm" value="${min}" />
-
-
-                                                                        <c:if test="${min == 0}">
-                                                                            <c:set var="mm" value="00"/>
-                                                                        </c:if>
-
-                                                                        <!--PARSE DATES-->
-                                                                        <fmt:parseDate value="${h}:${mm}:00" var="currentTime" pattern="HH:mm:ss" />
-                                                                        <fmt:parseDate value="${start.getHour()}:${start.getMinute()}:00" var="startTime"
-                                                                                       pattern="HH:mm:ss" />
-                                                                        <fmt:parseDate value="${end.getHour()}:${end.getMinute()}:00" var="endTime"
-                                                                                       pattern="HH:mm:ss" />
-
-
-                                                                        <!--WHAT TO COLOR job/:id/[details]-->
-                                                                        <c:choose>
-                                                                            <c:when test="${start.getHour() == h && start.getMinute() == min}">
-                                                                                <td class="booked divider-l"><a class="mylink" href="job/${tJobs.get(cJCount).id}/details">Details</a> </td>
-                                                                            </c:when>
-                                                                            <c:when test="${end.getHour() == h && end.getMinute() == min}">
-                                                                                <c:set var="cJCount" value="${cJCount + 1}"/>
-                                                                                <c:choose>
-                                                                                    <c:when test="${cJCount < jSize}">
-                                                                                        <c:set var="newJ" value="${tJobs.get(cJCount)}"/>
-                                                                                        <c:choose >
-
-                                                                                            <c:when test="${newJ.startTime.getHour() == h && newJ.startTime.getMinute() == min}">
-                                                                                                <td class="booked divider-l"><a class="mylink" href="job/${tJobs.get(cJCount).id}/details">Details</a></td>
-                                                                                            </c:when>
-                                                                                            <c:otherwise>
-                                                                                                <td></td>
-                                                                                            </c:otherwise>
-                                                                                        </c:choose>
-                                                                                    </c:when>
-                                                                                </c:choose>
-                                                                            </c:when>
-                                                                            <c:when test="${currentTime > startTime && currentTime < endTime}">
-                                                                                <td class="booked"></td>
-                                                                            </c:when>
-                                                                            <c:otherwise>
-                                                                                <td></td>
-                                                                            </c:otherwise>
-                                                                        </c:choose>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <!--NO JOB? ADD TD-->
-                                                                        <td></td>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                                <!--END MINUTES-->
-                                                            </c:if>
-                                                        </c:forEach>
-                                                    </c:forEach>
-                                                </tr>
-                                            </c:if>
-                                        </c:forEach>
-                                    </table>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:when>
-                    <c:otherwise>
-                        <h3 class="text-center text-success my-auto">No regular jobs scheduled for ${searchDate}</h3>
-                    </c:otherwise>     
-                </c:choose>
 
                 <div class="container-fluid mt-5">
                     <div class="row">
@@ -258,8 +104,11 @@
 
 
 
-            <canvas id="myChart"></canvas>
+
+
+
         </main>
+
 
 
 
@@ -269,49 +118,107 @@
 
 
 
+            let data = ${teamsJSON}
+            let searchDate = ${searchDateJSON} + " 08:00";
+            let srchDate = ${searchDateJSON};
 
-            const data = ${GSON}
 
-            console.log(data)
+            let dataPoints = [];
 
-            var ctx = document.getElementById('myChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    datasets: [{
-                            label: '# of Votes',
-                            data: [12, 19, 3, 5, 2, 3],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
+            let datesArray = [];
+
+
+            data.forEach(el => {
+
+                let x = dataPoints.length + 1;
+
+                el.jobs.forEach(job => {
+                    let dataEntry = {x: x, label: "", y: [], click: null}
+
+                    let datePointStart = undefined;
+                    let datePointEnd = undefined;
+
+                    dataEntry.label = el.name;
+                    dataEntry.y = [];
+                    dataEntry.click = null;
+
+
+                    datesArray = [];
+
+                    let startTime = job.startTime;
+                    let endTime = job.endTime;
+                    datePointStart = Date.parse(srchDate + " " + startTime.hour + ":" + startTime.minute);
+                    datePointEnd = Date.parse(srchDate + " " + endTime.hour + ":" + endTime.minute);
+
+
+                    datesArray.push(datePointStart);
+                    datesArray.push(datePointEnd);
+
+
+
+                    dataEntry.y = datesArray;
+
+
+                    dataEntry.click = function (e) {
+                        onClick(job.id)
                     }
-                }
-            });
+
+
+
+                    dataPoints.push(dataEntry);
+
+
+
+                })
+
+
+
+            })
+
+
+
+            const onClick = (id) => {
+                window.location.href = "job/" + id + "/details";
+            };
+
+
+
+            var chart = new CanvasJS.Chart("chartContainer",
+                    {
+                        title: {
+                            text: "Jobs Schedule For " + ${searchDateJSON},
+                            fontFamily: "Lato, sans-serif",
+                            fontSize: 46
+                        },
+                        axisY: {
+                            minimum: Date.parse(searchDate),
+                            interval: ((1 * 60 * 60 * 1000) / 2),
+                            labelFormatter: function (e) {
+                                return CanvasJS.formatDate(e.value, "h:mm TT");
+                            },
+                            gridThickness: 2
+                        },
+
+                        toolTip: {
+                            contentFormatter: function (e) {
+                                return "Start: " + CanvasJS.formatDate(e.entries[0].dataPoint.y[0], "h:mm TT") + "</br>End : " + CanvasJS.formatDate(e.entries[0].dataPoint.y[1], "h:mm TT");
+                            }},
+
+                        data: [
+                            {
+                                type: "rangeBar",
+                                dataPoints: dataPoints
+                            }
+
+                        ]
+                    });
+
+
+            chart.render();
+
 
         </script>
+
+
     </body>
 </html>

@@ -62,12 +62,11 @@ public class JobController extends CommonController {
             request.setAttribute("teams", teams);
             Gson gson = new Gson();
 
-            String teamsJSON = gson.toJson(teams);
-
-            request.setAttribute("GSON", teamsJSON);
+            request.setAttribute("teamsJSON", gson.toJson(teams));
 
             // Display date if not found for this date
             request.setAttribute("searchDate", currentDate);
+            request.setAttribute("searchDateJSON", gson.toJson(currentDate));
 
             super.setView(request, JOBS_VIEW);
         } else {

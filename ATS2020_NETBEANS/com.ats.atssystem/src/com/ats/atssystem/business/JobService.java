@@ -65,8 +65,14 @@ public class JobService implements IJobService {
             //2. Validate job within business hours if it is not emergency
             //4. Emergency only off hours
             if (!job.getIsEmergency() && !isJobWithinBusinessHours(job)) {
-                job.addError(ErrorFactory
-                        .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
+
+                if (job.getIsOnSite()) {
+                    job.addError(ErrorFactory
+                            .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm. This is on site job. Please allow 30 minutes to get to job site and to return from "));
+                } else {
+                    job.addError(ErrorFactory
+                            .createInstance(2, "Non emergency jobs can be scheduled only within business hours, Mon-Fri 8am - 5pm"));
+                }
             }
 
             if (isTeamOnEmergencyCall(job) && !isJobWithinBusinessHours(job)) {
@@ -170,13 +176,26 @@ public class JobService implements IJobService {
                 isValid = false;
             }
 
-            if (job.getStart().getHour() < 8
-                    || job.getStart().getHour() >= 17
-                    || (job.getEnd().getHour() == 17 && job.getEnd().getMinute() > 0)
-                    || job.getEnd().getHour() > 17) {
+            LocalTime businessStart = LocalTime.of(8, 0);
+            LocalTime businessEnd = LocalTime.of(17, 0);
+
+            if (job.getStart().toLocalTime().compareTo(businessStart) < 0) {
+                isValid = false;
+
+            }
+
+            if (job.getEnd().toLocalTime().compareTo(businessEnd) > 0) {
                 isValid = false;
             }
 
+//            if (job.get) {
+//                if (job.getStart().getHour() < 8
+//                        || job.getStart().getHour() >= 17
+//                        || (job.getEnd().getHour() == 17 && job.getEnd().getMinute() > 0)
+//                        || job.getEnd().getHour() > 17) {
+//                    isValid = false;
+//                }
+//            }
         }
 
         return isValid;
